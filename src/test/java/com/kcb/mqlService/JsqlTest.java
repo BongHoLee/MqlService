@@ -21,7 +21,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 public class JsqlTest {
 
-    private String selectClause;
     private String whereCondition;
     private Select select;
     private PlainSelect plainSelect;
@@ -29,7 +28,7 @@ public class JsqlTest {
     @Before
     public void beforeSet() throws JSQLParserException {
         //selectClause = "SELECT DS1.key, DS2.key FROM DS1, DS2 WHERE (DS1.a=3 AND DS2.=3) AND DS1.key=5";
-        selectClause = "SELECT DS1.column, DS2.column FROM DS1, DS2 WHERE (DS1.key = DS2.key) AND DS1.a = 1";
+        String selectClause = "SELECT DS1.column, DS2.column FROM DS1, DS2 WHERE (DS1.key = DS2.key) AND DS1.a = 1";
         whereCondition = "(a.key=3 AND b.key=4) OR c=5";
 
         select = (Select) CCJSqlParserUtil.parse(selectClause);
