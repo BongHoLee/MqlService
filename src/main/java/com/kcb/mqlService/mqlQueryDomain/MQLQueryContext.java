@@ -11,7 +11,7 @@ public class MQLQueryContext {
         this.queryId = queryId;
     }
 
-    public List<Map<String, Object>> executeQuery(List<Map<String, Object>> ... rawDataSources) {
+    public List<Map<String, Object>> executeQuery(Map<String, List<Map<String, Object>>> rawDataSources) {
         return  null;
     }
 

@@ -19,7 +19,7 @@ public class MQLQueryGroup  {
         return queryGroup.remove(queryId);
     }
 
-    public List<Map<String, Object>> executeQuery(String queryId, List<Map<String, Object>> ... rawDataSources) {
+    public List<Map<String, Object>> executeQuery(String queryId, Map<String, List<Map<String, Object>>> rawDataSources) {
         if (queryGroup.containsKey(queryId) || queryGroup.get(queryId) != null) {
             return queryGroup.get(queryId).executeQuery(rawDataSources);
         } else {

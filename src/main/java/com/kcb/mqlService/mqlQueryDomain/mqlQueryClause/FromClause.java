@@ -6,20 +6,18 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class FromClause {
-    List<String> dataSourceIds = new ArrayList<>();
 
+    Set<String> dataSourceIds = new HashSet<>();
     public boolean addDataSourceIds(String dataSourceId) {
         return dataSourceIds.add(dataSourceId);
     }
 
-    // stream으로 어케 변환 안될까?
-    public Map<String, List<Map<String, Object>>> makeMqlDataSources(List<Map<String, Object>> ... rawDataSources) {
+
+    public Map<String, List<Map<String, Object>>> makeMqlDataSources(Map<String, List<Map<String, Object>>> rawDataSources) {
         Map<String, List<Map<String, Object>>> mqlDataSources = new HashMap<>();
 
-        for (int i=0; i<dataSourceIds.size(); i++) {
-            String dataSourceId = dataSourceIds.get(i);
-            List<Map<String, Object>> rawDataSource = rawDataSources[i];
-
+        for (String dataSourceId : dataSourceIds) {
+            List<Map<String, Object>> rawDataSource = rawDataSources.get(dataSourceId);
             List<Map<String, Object>> mqlDataSource = rawDataSource.stream().map(
                     eachMap -> eachMap.entrySet().stream().collect(Collectors.toMap(entry -> dataSourceId + "." + entry.getKey(), Map.Entry::getValue))
             ).collect(Collectors.toList());
