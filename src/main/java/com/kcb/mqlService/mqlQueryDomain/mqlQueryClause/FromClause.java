@@ -6,12 +6,10 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class FromClause {
-
     Set<String> dataSourceIds = new HashSet<>();
     public boolean addDataSourceIds(String dataSourceId) {
         return dataSourceIds.add(dataSourceId);
     }
-
 
     public Map<String, List<Map<String, Object>>> makeMqlDataSources(Map<String, List<Map<String, Object>>> rawDataSources) {
         Map<String, List<Map<String, Object>>> mqlDataSources = new HashMap<>();

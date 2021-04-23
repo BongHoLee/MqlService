@@ -1,7 +1,5 @@
 package com.kcb.mqlService.mqlQueryDomain.mqlQueryClause;
 
-import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.util.*;
@@ -13,6 +11,7 @@ public class FromClauseTest {
 
     @Test
     public void makeMqlDataSourcesTest() {
+
         FromClause fromClause = new FromClause();
         fromClause.addDataSourceIds("dataSourceId1");
         fromClause.addDataSourceIds("dataSourceId2");

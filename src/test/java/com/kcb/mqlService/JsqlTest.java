@@ -4,20 +4,10 @@ import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.expression.BinaryExpression;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.ExpressionVisitorAdapter;
-import net.sf.jsqlparser.parser.CCJSqlParserManager;
-import net.sf.jsqlparser.parser.CCJSqlParserUtil;
-import net.sf.jsqlparser.schema.Table;
-import net.sf.jsqlparser.statement.Statement;
-import net.sf.jsqlparser.statement.select.Join;
+import net.sf.jsqlparser.parser.*;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
-import net.sf.jsqlparser.statement.select.SelectBody;
 import net.sf.jsqlparser.util.TablesNamesFinder;
-import org.jooq.Configuration;
-import org.jooq.Query;
-import org.jooq.ResultQuery;
-import org.jooq.SQLDialect;
-import org.jooq.impl.DSL;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -33,16 +23,20 @@ public class JsqlTest {
     private String whereCondition;
     private Select select;
     private PlainSelect plainSelect;
+    private CCJSqlParserManager parserManager;
 
     @Before
     public void beforeSet() throws JSQLParserException {
-        //selectClause = "SELECT DS1.key, DS2.key FROM DS1, DS2 WHERE (DS1.a=3 AND DS2.=3) AND DS1.key=5";
+
+        parserManager = new CCJSqlParserManager();
+
         String selectClause = "SELECT DS1.column, DS2.column FROM DS1, DS2 WHERE DS1.key = DS2.key";
-        //String selectClause = "SELECT DS1.column, DS2.column FROM DS1 INNER JOIN DS2 ON DS1.key=DS2.key";
         whereCondition = "(a.key=b.key)";
+
 
         select = (Select) CCJSqlParserUtil.parse(selectClause);
         plainSelect = (PlainSelect) select.getSelectBody();
+
     }
 
     @Test
@@ -69,19 +63,45 @@ public class JsqlTest {
     }
 
     @Test
-    public void getJoinFromPlainSelect() throws JSQLParserException {
-        System.out.println(plainSelect);
-
-        Join join = plainSelect.getJoins().get(0);
-        System.out.println(join);
-        //ResultQuery<?> query  = DSL.using(SQLDialect.H2).parser().parseResultQuery("SELECT DS1.column, DS2.column FROM DS1 INNER JOIN DS2 ON DS1.key=DS2.key");
-       // Query query  = DSL.using(SQLDialect.SQLITE).parser().parseQuery("SELECT DS1.column, DS2.column FROM DS1, DS2 WHERE DS1.key=DS2.key(+)");
-
-
-
-
-
+    public void oneLeftOuterJoinTest() throws JSQLParserException {
+        String sql = "SELECT A.*, B.* " +
+                "FROM Customers A  " +
+                "INNER JOIN Categories B ON A.CustomerID=B.CategoryID" +
+                " AND A.CITY!='Berlin'" +
+                " OR C.CITY != 'Seoul'";
+        Select select = (Select) parserManager.parse(new StringReader(sql));
+        PlainSelect plainSelect = (PlainSelect) select.getSelectBody();
+        assertThat(1, equalTo(plainSelect.getJoins().size()));
 
     }
+
+    @Test
+    public void doubleJoinTestWithoutOnCondition() throws JSQLParserException {
+        String sql = "SELECT A.CustomerID, B.CategoryID\n" +
+                "FROM Customers A\n" +
+                "INNER JOIN Categories B ON A.CustomerID = B.CategoryID\n" +
+                "LEFT OUTER JOIN Employees C ON A.CustomerID = C.EmployeeID";
+
+        Select select = (Select) parserManager.parse(new StringReader(sql));
+        PlainSelect plainSelect = (PlainSelect) select.getSelectBody();
+        assertThat(2, equalTo(plainSelect.getJoins().size()));
+
+    }
+
+    @Test
+    public void getTableListTest() throws JSQLParserException {
+        String sql = "SELECT A.CustomerID, B.CategoryID\n" +
+                "FROM Customers A\n" +
+                "INNER JOIN Categories B ON A.CustomerID = B.CategoryID\n" +
+                "INNER JOIN Employees C ON A.CustomerID = C.EmployeeID";
+
+        Select select = (Select) parserManager.parse(new StringReader(sql));
+        TablesNamesFinder tblFinder = new TablesNamesFinder();
+        List<String> tableNames = tblFinder.getTableList(select);
+
+        assertThat(Arrays.asList("Customers", "Categories", "Employees"), equalTo(tableNames));
+    }
+
+
 
 }

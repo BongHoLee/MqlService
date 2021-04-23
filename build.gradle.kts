@@ -17,7 +17,6 @@ dependencies {
     testCompile("junit", "junit", "4.12")
 
     implementation ("com.github.jsqlparser:jsqlparser:4.0")
-    implementation ("org.jooq:jooq:3.14.8")
 }
 
 configure<JavaPluginConvention> {
