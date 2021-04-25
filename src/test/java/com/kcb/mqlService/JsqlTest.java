@@ -68,7 +68,8 @@ public class JsqlTest {
                 "FROM Customers A  " +
                 "INNER JOIN Categories B ON A.CustomerID=B.CategoryID" +
                 " AND A.CITY!='Berlin'" +
-                " OR C.CITY != 'Seoul'";
+                " OR C.CITY != 'Seoul'" +
+                " OR C.NAME = 1";
         Select select = (Select) parserManager.parse(new StringReader(sql));
         PlainSelect plainSelect = (PlainSelect) select.getSelectBody();
         assertThat(1, equalTo(plainSelect.getJoins().size()));

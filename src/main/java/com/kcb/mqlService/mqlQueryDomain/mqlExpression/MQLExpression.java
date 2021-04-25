@@ -1,4 +1,4 @@
-package com.kcb.mqlService.mqlQueryDomain.mqlExpression.mqlOperation;
+package com.kcb.mqlService.mqlQueryDomain.mqlExpression;
 
 import java.util.List;
 import java.util.Map;
