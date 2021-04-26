@@ -12,6 +12,7 @@ public class FromClauseTest {
     @Test
     public void makeMqlDataSourcesTest() {
 
+
         FromClause fromClause = new FromClause();
         fromClause.addDataSourceIds("dataSourceId1");
         fromClause.addDataSourceIds("dataSourceId2");
@@ -22,7 +23,15 @@ public class FromClauseTest {
         rawDataSources.put("dataSourceId2", makeRawDataSource("second"));
         rawDataSources.put("dataSourceId3", makeRawDataSource("third"));
 
-        assertThat(true, equalTo(isConvertedWithoutLeak(rawDataSources, fromClause.makeMqlDataSources(rawDataSources))));
+        int crossProductSize = 1;
+        for (String key : rawDataSources.keySet()) {
+            crossProductSize *= rawDataSources.get(key).size();
+        }
+
+        System.out.println(crossProductSize);
+        assertThat(crossProductSize, equalTo((fromClause.makeMqlDataSources(rawDataSources)).size()));
+
+
     }
 
     public boolean isConvertedWithoutLeak(Map<String, List<Map<String, Object>>> rawDataSources, Map<String, List<Map<String, Object>>> mqlDataSources ) {
@@ -59,7 +68,7 @@ public class FromClauseTest {
     public List<Map<String, Object>> makeRawDataSource(String key) {
         List<Map<String, Object>> rawDataSource = new ArrayList<>();
 
-        for (int i=0; i<10; i++) {
+        for (int i=0; i<1000; i++) {
             Map<String, Object> eachRow = new HashMap<>();
             for (int j = 0; j < 3; j++) {
                 eachRow.put(key + i, UUID.randomUUID().toString());

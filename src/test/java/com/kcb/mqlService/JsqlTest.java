@@ -13,7 +13,9 @@ import org.junit.Test;
 
 import java.io.StringReader;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -102,7 +104,5 @@ public class JsqlTest {
 
         assertThat(Arrays.asList("Customers", "Categories", "Employees"), equalTo(tableNames));
     }
-
-
 
 }

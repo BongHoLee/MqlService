@@ -7,7 +7,6 @@ import java.util.Map;
 /**
  *
  *
- *
  */
 
 public class OperatingMQLExpression implements MQLExpression {
@@ -23,6 +22,6 @@ public class OperatingMQLExpression implements MQLExpression {
 
     @Override
     public List<Map<String, Object>> operateWith(Map<String, List<Map<String, Object>>> mqlDataSource) {
-
+        return null;
     }
 }
