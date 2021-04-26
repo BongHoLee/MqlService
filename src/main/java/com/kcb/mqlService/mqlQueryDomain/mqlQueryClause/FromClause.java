@@ -28,8 +28,8 @@ public class FromClause {
     }
 
     private List<Map<String,Object>> makeDataDictionary(List<List<Map<String, Object>>> mqlDataSources) {
-        List<Map<String, Object>> dataDictionary = new ArrayList<>();
-        crossProduct(mqlDataSources.size()-1, 0, new HashMap<>(), mqlDataSources, dataDictionary);
+        List<Map<String, Object>> dataDictionary = new ArrayList<>(27000010);
+        crossProduct(mqlDataSources.size()-1, 0, mqlDataSources, dataDictionary, new ArrayList<>());
 
         return dataDictionary;
     }
@@ -37,21 +37,30 @@ public class FromClause {
     private void crossProduct(
             int end,
             int pos,
-            Map<String, Object> curMap,
             List<List<Map<String, Object>>> mqlDataSources,
-            List<Map<String, Object>> dataDictionary
+            List<Map<String, Object>> dataDictionary,
+            List<Map<String, Object>> forwardedMaps
     ) {
         if (end >= pos) {
             List<Map<String, Object>> eachDataSource = mqlDataSources.get(pos);
 
-            // NOTE: curMap을 계속 copy 함으로써 생기는 공간 문제도 계산해봐야함..
             for (Map<String, Object> eachRowMap : eachDataSource) {
-                Map<String, Object> copiedMap = new HashMap<>(curMap);
-                copiedMap.putAll(eachRowMap);
-                crossProduct(end, pos + 1, copiedMap, mqlDataSources, dataDictionary);
+                //Map<String, Object> copiedMap = new HashMap<>(curMap);
+                //copiedMap.putAll(eachRowMap);
+                //crossProduct(end, pos + 1, copiedMap, mqlDataSources, dataDictionary);
+
+                forwardedMaps.add(eachRowMap);
+                crossProduct(end, pos + 1, mqlDataSources, dataDictionary, forwardedMaps);
+                forwardedMaps.remove(forwardedMaps.size()-1);
             }
         } else {
-            dataDictionary.add(curMap);
+            //dataDictionary.add(curMap);
+            Map<String, Object> copiedMap = new HashMap<>();
+            for (Map<String, Object> forwardedMap : forwardedMaps)
+                copiedMap.putAll(forwardedMap);
+
+            dataDictionary.add(copiedMap);
+
         }
     }
 
