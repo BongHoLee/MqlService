@@ -12,7 +12,6 @@ public class FromClauseTest {
     @Test
     public void makeMqlDataSourcesTest() {
 
-
         FromClause fromClause = new FromClause();
         fromClause.addDataSourceIds("dataSourceId1");
         fromClause.addDataSourceIds("dataSourceId2");
@@ -68,7 +67,7 @@ public class FromClauseTest {
     public List<Map<String, Object>> makeRawDataSource(String key) {
         List<Map<String, Object>> rawDataSource = new ArrayList<>();
 
-        for (int i=0; i<1000; i++) {
+        for (int i=0; i<200; i++) {
             Map<String, Object> eachRow = new HashMap<>();
             for (int j = 0; j < 3; j++) {
                 eachRow.put(key + i, UUID.randomUUID().toString());
@@ -77,5 +76,39 @@ public class FromClauseTest {
         }
 
         return rawDataSource;
+    }
+
+    @Test
+    public void mapCopyAndRemoveTest() {
+        List<Map<String, Object>> storeList = new ArrayList<>();
+
+        Map<String, Object> map1 = new HashMap<>();
+        map1.put("a", 1);
+        map1.put("b", 1);
+        map1.put("c", 1);
+        map1.put("d", 1);
+        map1.put("e", 1);
+
+        Map<String, Object> map2 = new HashMap<>();
+        map2.put("AA", 1);
+        map2.put("BB", 1);
+
+        map1.putAll(map2);
+
+        Map<String, Object> map3 = new HashMap<>(map1);
+        storeList.add(map3);
+
+        map1.keySet().removeAll(map2.keySet());
+
+        System.out.println(map1);
+        System.out.println(map2);
+        System.out.println(map3);
+        System.out.println(storeList.get(0));
+
+        assertThat(map1, equalTo(storeList.get(0)));
+
+
+
+
     }
 }

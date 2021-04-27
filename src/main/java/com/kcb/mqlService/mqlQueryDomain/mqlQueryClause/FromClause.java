@@ -48,9 +48,12 @@ public class FromClause {
             for (Map<String, Object> eachRowMap : eachDataSource) {
                 Map<String, Object> copiedMap = new HashMap<>(curMap);
                 copiedMap.putAll(eachRowMap);
+                //curMap.putAll(eachRowMap);
                 crossProduct(end, pos + 1, copiedMap, mqlDataSources, dataDictionary);
+                //curMap.keySet().removeAll(eachRowMap.keySet());
             }
         } else {
+            //Map<String, Object> copiedMap = new HashMap<>(curMap);
             dataDictionary.add(curMap);
         }
     }
