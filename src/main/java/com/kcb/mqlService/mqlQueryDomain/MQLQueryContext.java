@@ -18,7 +18,7 @@ public class MQLQueryContext {
     }
 
     public List<Map<String, Object>> executeQuery(Map<String, List<Map<String, Object>>> rawDataSources) {
-        List<Map<String, Object>> dataDictionary = fromClause.makeMqlDataSources(rawDataSources);
+        //List<Map<String, Object>> dataDictionary = fromClause.makeMqlDataSources(rawDataSources);
 
 
         return  null;

@@ -9,7 +9,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 public class FromClauseTest {
 
-    //@Test
+    @Test
     public void makeMqlDataSourcesTest() {
 
         FromClause fromClause = new FromClause();
@@ -22,13 +22,9 @@ public class FromClauseTest {
         rawDataSources.put("dataSourceId2", makeRawDataSource("second"));
         rawDataSources.put("dataSourceId3", makeRawDataSource("third"));
 
-        int crossProductSize = 1;
-        for (String key : rawDataSources.keySet()) {
-            crossProductSize *= rawDataSources.get(key).size();
-        }
-
-        System.out.println(crossProductSize);
-        assertThat(crossProductSize, equalTo((fromClause.makeMqlDataSources(rawDataSources)).size()));
+        Map<String, List<Map<String, Object>>> mqlDataSource = fromClause.makeMqlDataSources(rawDataSources);
+        System.out.println(mqlDataSource);
+        assertThat(true, equalTo(isConvertedWithoutLeak(rawDataSources,mqlDataSource)));
 
 
     }
@@ -71,7 +67,7 @@ public class FromClauseTest {
         for (int i=0; i<500; i++) {
             Map<String, Object> eachRow = new HashMap<>();
             for (int j = 0; j < 3; j++) {
-                eachRow.put(key + i, UUID.randomUUID().toString());
+                eachRow.put(key + i, UUID.randomUUID().toString().substring(0, 3));
             }
             rawDataSource.add(eachRow);
         }
@@ -107,9 +103,6 @@ public class FromClauseTest {
         System.out.println(storeList.get(0));
 
         assertThat(map1, equalTo(storeList.get(0)));
-
-
-
 
     }
 }
