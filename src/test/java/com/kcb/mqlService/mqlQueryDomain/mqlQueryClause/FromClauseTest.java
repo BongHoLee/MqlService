@@ -9,7 +9,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 public class FromClauseTest {
 
-    @Test
+    //@Test
     public void makeMqlDataSourcesTest() {
 
         FromClause fromClause = new FromClause();
@@ -67,7 +67,8 @@ public class FromClauseTest {
     public List<Map<String, Object>> makeRawDataSource(String key) {
         List<Map<String, Object>> rawDataSource = new ArrayList<>();
 
-        for (int i=0; i<200; i++) {
+
+        for (int i=0; i<500; i++) {
             Map<String, Object> eachRow = new HashMap<>();
             for (int j = 0; j < 3; j++) {
                 eachRow.put(key + i, UUID.randomUUID().toString());
