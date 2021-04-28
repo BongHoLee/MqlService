@@ -2,20 +2,22 @@ package com.kcb.mqlService.mqlQueryDomain.mqlOperand;
 
 public class ColumnOperand implements MQLOperand {
 
+    // A.KEY
     private String expression;
     private String dataSourceId;
 
     public ColumnOperand(String expression) {
         this.expression = expression;
+        splitExpression();
     }
 
     @Override
-    public String getExpression() {
+    public String getExpressionToString() {
         return expression;
     }
 
     private void splitExpression() {
-        String[] splited = expression.split(".");
+        String[] splited = expression.split("\\.");
         if (splited.length > 0) {
             dataSourceId = splited[0];
         } else {

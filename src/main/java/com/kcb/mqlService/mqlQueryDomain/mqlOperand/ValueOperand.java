@@ -1,15 +1,10 @@
 package com.kcb.mqlService.mqlQueryDomain.mqlOperand;
 
-public class ValueOperand implements MQLOperand {
-
-    private String expression;
-
-    public ValueOperand(String expression) {
-        this.expression = expression;
-    }
-
-    @Override
-    public String getExpression() {
-        return expression;
-    }
+public interface ValueOperand extends MQLOperand {
+    boolean equalTo(Object target);
+    boolean notEqualTo(Object target);
+    boolean lessThan(Object target);
+    boolean largerThan(Object target);
+    boolean lessThanOrEqualTo(Object target);
+    boolean largerThanOrEqualTo(Object target);
 }

@@ -1,4 +1,4 @@
 package com.kcb.mqlService.mqlQueryDomain.mqlQueryClause;
 
-public class SelectClause {
+public class SelectClause{
 }

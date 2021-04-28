@@ -23,9 +23,11 @@ public class FromClauseTest {
         rawDataSources.put("dataSourceId3", makeRawDataSource("third"));
 
         Map<String, List<Map<String, Object>>> mqlDataSource = fromClause.makeMqlDataSources(rawDataSources);
-        System.out.println(mqlDataSource);
-        assertThat(true, equalTo(isConvertedWithoutLeak(rawDataSources,mqlDataSource)));
 
+        System.out.println(mqlDataSource);
+
+
+        assertThat(true, equalTo(isConvertedWithoutLeak(rawDataSources,mqlDataSource)));
 
     }
 
@@ -64,7 +66,7 @@ public class FromClauseTest {
         List<Map<String, Object>> rawDataSource = new ArrayList<>();
 
 
-        for (int i=0; i<500; i++) {
+        for (int i=0; i<10; i++) {
             Map<String, Object> eachRow = new HashMap<>();
             for (int j = 0; j < 3; j++) {
                 eachRow.put(key + i, UUID.randomUUID().toString().substring(0, 3));

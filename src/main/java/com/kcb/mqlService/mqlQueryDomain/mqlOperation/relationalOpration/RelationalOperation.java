@@ -28,6 +28,9 @@ public abstract class RelationalOperation implements MQLOperation {
         else if (leftOperand instanceof ColumnOperand && rightOperand instanceof ValueOperand) {
             return operate((ColumnOperand) leftOperand, (ValueOperand) rightOperand, mqlDataSource);
         }
+        else if (leftOperand instanceof ValueOperand && rightOperand instanceof ColumnOperand) {
+            return operate((ColumnOperand) rightOperand, (ValueOperand) leftOperand, mqlDataSource);
+        }
         else {
             throw new RuntimeException("NOT VALID OPERAND TYPE");
         }
