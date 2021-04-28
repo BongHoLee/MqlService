@@ -40,7 +40,6 @@ public class EqualToOperation extends RelationalOperation {
     @Override
     protected List<Map<String, Object>> operate(ColumnOperand leftOperand, ValueOperand rightOperand, Map<String, List<Map<String, Object>>> mqlDataSource) {
 
-        // Stream으로 해보자.
         List<Map<String, Object>> leftDataSource = mqlDataSource.get(leftOperand.getDataSourceId());
 
         List<Map<String, Object>> result = leftDataSource.stream()

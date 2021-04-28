@@ -2,6 +2,9 @@ package com.kcb.mqlService.utils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class DateFormatUtil {
     private static final String[] formats = {
@@ -28,4 +31,47 @@ public class DateFormatUtil {
         }
         return false;
     }
+
+    public static boolean lessThan(String date1, String date2, String pattern) {
+        SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+
+        try {
+            return sdf.parse(date1).before(sdf.parse(date2));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    public static String matchedPattern(String date1, String date2) {
+        Map<String, Object> result = new HashMap<>();
+
+        if (date1 != null && date2 != null) {
+            for (String pattern : formats) {
+                SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+                try {
+                    sdf.parse(date1);
+                    sdf.parse(date2);
+                    return pattern;
+                } catch (ParseException e) { }
+            }
+        }
+        return null;
+    }
+
+    public static Date parse(String dateValue) {
+        Date date = null;
+
+        for (String pattern : formats) {
+            SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+            try {
+                date = sdf.parse(dateValue);
+                break;
+            } catch (ParseException e) { }
+        }
+
+        return date;
+    }
+
 }

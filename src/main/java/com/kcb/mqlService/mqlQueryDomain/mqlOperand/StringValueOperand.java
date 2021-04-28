@@ -1,5 +1,7 @@
 package com.kcb.mqlService.mqlQueryDomain.mqlOperand;
 
+import com.kcb.mqlService.utils.DateFormatUtil;
+
 import java.util.Date;
 
 public class StringValueOperand implements ValueOperand {
@@ -36,6 +38,11 @@ public class StringValueOperand implements ValueOperand {
 
     @Override
     public boolean lessThan(Object target) {
+        if (target instanceof String) {
+            if (DateFormatUtil.isDateFormat((String)target) && DateFormatUtil.isDateFormat(value)) {
+
+            }
+        }
         return false;
     }
 
