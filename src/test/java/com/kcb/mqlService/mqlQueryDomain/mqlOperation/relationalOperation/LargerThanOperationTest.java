@@ -1,21 +1,27 @@
 package com.kcb.mqlService.mqlQueryDomain.mqlOperation.relationalOperation;
 
+
 import com.kcb.mqlService.mqlQueryDomain.mqlOperand.ColumnOperand;
 import com.kcb.mqlService.mqlQueryDomain.mqlOperand.MQLOperand;
-import com.kcb.mqlService.mqlQueryDomain.mqlOperand.NumberValueOperand;
-import com.kcb.mqlService.mqlQueryDomain.mqlOperand.StringValueOperand;
 import com.kcb.mqlService.mqlQueryDomain.mqlOperation.MQLOperation;
 import com.kcb.mqlService.mqlQueryDomain.mqlOperation.relationalOpration.EqualToOperation;
+import com.kcb.mqlService.mqlQueryDomain.mqlOperation.relationalOpration.LargerThanOperation;
 import com.kcb.mqlService.mqlQueryDomain.mqlQueryClause.FromClause;
+import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertThat;
 
-public class EqualToOperationTest {
+
+
+public class LargerThanOperationTest {
 
     private Map<String, List<Map<String, Object>>> mqlDataSource;
 
@@ -55,60 +61,19 @@ public class EqualToOperationTest {
         mqlDataSource = from.makeMqlDataSources(rowDataSource);
     }
 
-    /**
-     *  'A.KEY = B.KEY' test
-     */
     @Test
-    public void columnWithColumnTest() {
+    public void columnLargerThanColumnTest() {
         String leftExpression = "A.KEY";
         String rightExpression = "B.KEY";
 
         MQLOperand leftOperand = new ColumnOperand(leftExpression);
         MQLOperand rightOperand = new ColumnOperand(rightExpression);
 
-        MQLOperation operation = new EqualToOperation(leftOperand, rightOperand);
+        MQLOperation operation = new LargerThanOperation(leftOperand, rightOperand);
 
         List<Map<String, Object>> result = operation.operateWith(mqlDataSource);
 
-        assertThat(5, is(result.size()));
-
-        result.forEach(mergedRow -> assertThat(mergedRow.get("A.KEY"), equalTo(mergedRow.get("B.KEY"))));
+        assertThat(10, is(result.size()));
+        result.forEach(mergedRow -> assertThat(true, is((int)mergedRow.get("A.KEY") > (int)mergedRow.get("B.KEY"))));
     }
-
-    /**
-     * 'A.KEY = "KEY"' test
-     */
-
-    @Test
-    public void columnWithStringValueOperandTest() {
-        String leftExpression = "A.COLUMN3";
-        String stringExpression = "3";
-
-        MQLOperand leftOperand = new ColumnOperand(leftExpression);
-        MQLOperand rightOperand = new StringValueOperand(stringExpression);
-
-        MQLOperation operation = new EqualToOperation(leftOperand, rightOperand);
-
-        List<Map<String, Object>> result = operation.operateWith(mqlDataSource);
-
-        assertThat(1, is(result.size()));
-        assertThat(stringExpression, equalTo(result.get(0).get(leftOperand.getExpressionToString())));
-    }
-
-    @Test
-    public void columnWithNumberValueOperationTest() {
-        String leftExpression = "A.KEY";
-        int intExpression = 0;
-
-        MQLOperand leftOperand = new ColumnOperand(leftExpression);
-        MQLOperand rightOperand = new NumberValueOperand(intExpression);
-
-        MQLOperation operation = new EqualToOperation(leftOperand, rightOperand);
-
-        List<Map<String, Object>> result = operation.operateWith(mqlDataSource);
-
-        assertThat(1, is(result.size()));
-        assertThat(intExpression, equalTo(result.get(0).get(leftOperand.getExpressionToString())));
-    }
-
 }

@@ -29,7 +29,7 @@ public abstract class RelationalOperation implements MQLOperation {
             return operate((ColumnOperand) leftOperand, (ValueOperand) rightOperand, mqlDataSource);
         }
         else if (leftOperand instanceof ValueOperand && rightOperand instanceof ColumnOperand) {
-            return operate((ColumnOperand) rightOperand, (ValueOperand) leftOperand, mqlDataSource);
+            return operate( (ValueOperand) leftOperand, (ColumnOperand) rightOperand, mqlDataSource);
         }
         else {
             throw new RuntimeException("NOT VALID OPERAND TYPE");
@@ -42,4 +42,8 @@ public abstract class RelationalOperation implements MQLOperation {
     // A.column = 'city'
     protected abstract List<Map<String, Object>> operate(ColumnOperand leftOperand, ValueOperand rightOperand, Map<String, List<Map<String, Object>>> mqlDataSource);
 
+    // 'city' = A.column
+    protected abstract List<Map<String, Object>> operate(ValueOperand rightOperand, ColumnOperand leftOperand, Map<String, List<Map<String, Object>>> mqlDataSource);
+
 }
+

@@ -21,16 +21,14 @@ public class DateFormatUtilTest {
 
     @Test
     public void dateFormatCompareTest() {
-        String s1 = "2020-01-01 23:00:00";
-        String s2 = "2020-01-02 23:00:00";
-        String s3 = "2020-01-02";
+        String date1 = "2020-01-01 23:10:00";
+        String date11 = "2020-01-01 23:10:00";
+        String date2 = "2020-01-02 23:00:00";
+        String date22 = "2020-01-02 23:00:00";
 
-        LocalDateTime date1 = LocalDateTime.parse(s1);
-        LocalDateTime date2 = LocalDateTime.parse(s2);
-        LocalDateTime date3 = LocalDateTime.parse(s3);
-
-        System.out.println(date1.compareTo(date2));
-        System.out.println(date1.compareTo(date3));
-        
+        assertThat(true, equalTo(DateFormatUtil.lessThan(date1,date2)));
+        assertThat(true, equalTo(DateFormatUtil.lessThanOrEqual(date1,date11)));
+        assertThat(true, equalTo(DateFormatUtil.largerThan(date2, date1)));
+        assertThat(true, equalTo(DateFormatUtil.largerThanOrEqual(date2, date22)));
     }
 }

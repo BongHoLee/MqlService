@@ -32,46 +32,51 @@ public class DateFormatUtil {
         return false;
     }
 
-    public static boolean lessThan(String date1, String date2, String pattern) {
-        SimpleDateFormat sdf = new SimpleDateFormat(pattern);
-
-        try {
-            return sdf.parse(date1).before(sdf.parse(date2));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        return false;
+    public static boolean lessThan(String date1, String date2) {
+        return (compareTo(date1, date2) < 0);
     }
 
-    public static String matchedPattern(String date1, String date2) {
-        Map<String, Object> result = new HashMap<>();
+    public static boolean largerThan(String date1, String date2) {
+        return (compareTo(date1, date2) > 0);
+    }
 
-        if (date1 != null && date2 != null) {
-            for (String pattern : formats) {
-                SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+    public static boolean equalTo(String date1, String date2) {
+        return (compareTo(date1, date2) == 0);
+    }
+
+    public static boolean lessThanOrEqual(String date1, String date2) {
+        return lessThan(date1, date2) || equalTo(date1, date2);
+    }
+
+    public static boolean largerThanOrEqual(String date1, String date2) {
+        return largerThan(date1, date2) || equalTo(date1, date2);
+    }
+
+    public static String getPattern(String date) {
+        if (date != null) {
+            for (String parse : formats) {
+                SimpleDateFormat sdf = new SimpleDateFormat(parse);
                 try {
-                    sdf.parse(date1);
-                    sdf.parse(date2);
-                    return pattern;
-                } catch (ParseException e) { }
+                    sdf.parse(date);
+                    return parse;
+                } catch (ParseException e) {
+
+                }
             }
         }
         return null;
     }
 
-    public static Date parse(String dateValue) {
-        Date date = null;
+    private static int compareTo(String date1, String date2) {
+        SimpleDateFormat sdf = new SimpleDateFormat(getPattern(date1));
 
-        for (String pattern : formats) {
-            SimpleDateFormat sdf = new SimpleDateFormat(pattern);
-            try {
-                date = sdf.parse(dateValue);
-                break;
-            } catch (ParseException e) { }
+        try {
+            return sdf.parse(date1).compareTo(sdf.parse(date2));
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
 
-        return date;
+        return -999;
     }
 
 }

@@ -11,13 +11,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class EqualToOperation extends RelationalOperation {
+public class LargerThanOperation extends RelationalOperation {
 
-    public EqualToOperation(MQLOperand leftOperand, MQLOperand rightOperand) {
+    public LargerThanOperation(MQLOperand leftOperand, MQLOperand rightOperand) {
         super(leftOperand, rightOperand);
     }
 
-    // join
     @Override
     protected List<Map<String, Object>> operate(ColumnOperand leftOperand, ColumnOperand rightOperand, Map<String, List<Map<String, Object>>> mqlDataSource) {
         List<Map<String, Object>> result = new ArrayList<>();
@@ -29,7 +28,7 @@ public class EqualToOperation extends RelationalOperation {
         leftDataSource.forEach(leftRow -> rightDataSource.forEach(rightRow -> {
             ValueOperand operand = factory.create(leftRow.get(leftOperand.getExpressionToString()));
 
-            if (operand.equalTo(rightRow.get(rightOperand.getExpressionToString()))){
+            if (operand.largerThan(rightRow.get(rightOperand.getExpressionToString()))){
                 Map<String, Object> mergedRow = new HashMap<>();
                 mergedRow.putAll(rightRow);
                 mergedRow.putAll(leftRow);
@@ -44,10 +43,14 @@ public class EqualToOperation extends RelationalOperation {
     protected List<Map<String, Object>> operate(ColumnOperand leftOperand, ValueOperand rightOperand, Map<String, List<Map<String, Object>>> mqlDataSource) {
 
         List<Map<String, Object>> leftDataSource = mqlDataSource.get(leftOperand.getDataSourceId());
+        MQLOperandFactory factory = MQLOperandFactory.getInstance();
 
         List<Map<String, Object>> result = leftDataSource.stream()
                 .filter(
-                        eachRow -> (rightOperand.equalTo(eachRow.get(leftOperand.getExpressionToString())))
+                        eachRow -> {
+                            ValueOperand operand = factory.create(eachRow.get(leftOperand.getExpressionToString()));
+                            return operand.largerThan(rightOperand);
+                        }
                 )
                 .collect(Collectors.toList());
 
@@ -56,7 +59,18 @@ public class EqualToOperation extends RelationalOperation {
 
     @Override
     protected List<Map<String, Object>> operate(ValueOperand rightOperand, ColumnOperand leftOperand, Map<String, List<Map<String, Object>>> mqlDataSource) {
-        return operate(leftOperand, rightOperand, mqlDataSource);
-    }
+        List<Map<String, Object>> leftDataSource = mqlDataSource.get(leftOperand.getDataSourceId());
+        MQLOperandFactory factory = MQLOperandFactory.getInstance();
 
+        List<Map<String, Object>> result = leftDataSource.stream()
+                .filter(
+                        eachRow -> {
+                            ValueOperand rightColumnOperandValue = factory.create(eachRow.get(leftOperand.getExpressionToString()));
+                            return rightOperand.largerThan(rightColumnOperandValue);
+                        }
+                )
+                .collect(Collectors.toList());
+
+        return result;
+    }
 }
