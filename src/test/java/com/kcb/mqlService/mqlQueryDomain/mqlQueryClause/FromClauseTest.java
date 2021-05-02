@@ -1,5 +1,6 @@
 package com.kcb.mqlService.mqlQueryDomain.mqlQueryClause;
 
+import com.kcb.mqlService.mqlQueryDomain.mqlData.MQLDataSource;
 import org.junit.Test;
 
 import java.util.*;
@@ -22,13 +23,13 @@ public class FromClauseTest {
         rawDataSources.put("dataSourceId2", makeRawDataSource("second"));
         rawDataSources.put("dataSourceId3", makeRawDataSource("third"));
 
-        Map<String, List<Map<String, Object>>> mqlDataSource = fromClause.makeMqlDataSources(rawDataSources);
+        MQLDataSource mqlDataSource = fromClause.makeMqlDataSources(rawDataSources);
 
-        System.out.println(mqlDataSource);
+        System.out.println(mqlDataSource.getDataSourcesId());
+        System.out.println(mqlDataSource.getMqlDataSources());
 
 
-        assertThat(true, equalTo(isConvertedWithoutLeak(rawDataSources,mqlDataSource)));
-
+        assertThat(true, equalTo(isConvertedWithoutLeak(rawDataSources, mqlDataSource.getMqlDataSources())));
     }
 
     public boolean isConvertedWithoutLeak(Map<String, List<Map<String, Object>>> rawDataSources, Map<String, List<Map<String, Object>>> mqlDataSources ) {

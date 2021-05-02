@@ -1,0 +1,13 @@
+package com.kcb.mqlService.mqlQueryDomain.mqlOperator.logicalOperator;
+
+import com.kcb.mqlService.mqlQueryDomain.mqlData.MQLDataSource;
+import com.kcb.mqlService.mqlQueryDomain.mqlData.MQLTable;
+import com.kcb.mqlService.mqlQueryDomain.mqlOperator.MQLOperator;
+
+public class OrOperator implements MQLOperator {
+
+    @Override
+    public MQLTable operateWith(MQLDataSource mqlDataSource) {
+        return null;
+    }
+}
