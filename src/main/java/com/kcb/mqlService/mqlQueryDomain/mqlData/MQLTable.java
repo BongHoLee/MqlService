@@ -1,6 +1,7 @@
 package com.kcb.mqlService.mqlQueryDomain.mqlData;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class MQLTable {
     private Set<String> joinSet;
@@ -33,6 +34,10 @@ public class MQLTable {
 
     public boolean alreadyJoined(Collection<String> dataSources) {
         return joinSet.containsAll(dataSources);
+    }
+
+    public List<String> matchedDataSourceId(MQLTable compareTable) {
+        return joinSet.stream().filter(eachDataSourceId -> compareTable.getJoinSet().contains(eachDataSourceId)).collect(Collectors.toList());
     }
 
     public List<Map<String, Object>> getTableData() {
