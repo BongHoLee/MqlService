@@ -1,4 +1,4 @@
-package com.kcb.mqlService.mqlQueryDomain.mqlQueryClause.mqlOperator.relationalOperator.valueOperator;
+package com.kcb.mqlService.mqlQueryDomain.mqlQueryClause.mqlOperator.relationalOperator.valueOperator.equalTo;
 
 import com.kcb.mqlService.mqlQueryDomain.mqlData.MQLDataSource;
 import com.kcb.mqlService.mqlQueryDomain.mqlData.MQLTable;
