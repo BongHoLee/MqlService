@@ -23,7 +23,7 @@ public class NotEqualToJoin extends JoinOperator{
             ColumnOperand leftOperand,
             ColumnOperand rightOperand) {
 
-        List<Map<String, Object>> result = new ArrayList<>();
+        List<Map<String, Object>> joinedTable = new ArrayList<>();
 
 
         MQLOperandFactory factory = MQLOperandFactory.getInstance();
@@ -36,11 +36,11 @@ public class NotEqualToJoin extends JoinOperator{
                 Map<String, Object> mergedRow = new HashMap<>();
                 mergedRow.putAll(rightRow);
                 mergedRow.putAll(leftRow);
-                result.add(mergedRow);
+                joinedTable.add(mergedRow);
             }
         }));
 
-        return result;
+        return joinedTable;
     }
 
 }
