@@ -4,9 +4,7 @@ import com.kcb.mqlService.mqlQueryDomain.mqlData.MQLDataSource;
 import com.kcb.mqlService.mqlQueryDomain.mqlData.MQLTable;
 import com.kcb.mqlService.mqlQueryDomain.mqlOperator.MQLOperator;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class AndOperator implements MQLOperator {
     private MQLOperator leftOperator;
@@ -22,16 +20,50 @@ public class AndOperator implements MQLOperator {
         MQLTable leftTable = leftOperator.operateWith(mqlDataSource);
         MQLTable rightTable = rightOperator.operateWith(mqlDataSource);
 
-        List<String> matchedDataSourceId = leftTable.matchedDataSourceId(rightTable);
-        List<Map<String, Object>> joinedTable = new ArrayList<>();
-        if (matchedDataSourceId.size() > 0) {
-            List<Map<String, Object>> leftTableData = leftTable.getTableData();
-            
 
+        List<Map<String, Object>> mergedTableData = new ArrayList<>();
+        List<Map<String, Object>> leftTableData = leftTable.getTableData();
+        List<Map<String, Object>> rightTableData = rightTable.getTableData();
+
+        Set<String> matched = leftTable.matchedColumnSet(rightTable);
+
+        if(matched.size() > 0) {
+            leftTableData.forEach(leftRow -> {
+                rightTableData.forEach(rightRow -> {
+                    if (isValueMatched(leftRow, rightRow, matched)) {
+                        Map<String, Object> mergedRow = new HashMap<>();
+                        mergedRow.putAll(leftRow);
+                        mergedRow.putAll(rightRow);
+                        mergedTableData.add(mergedRow);
+                    }
+
+                });
+            });
         } else {
-
+            leftTableData.forEach(leftRow ->  {
+                rightTableData.forEach(rightRow -> {
+                    Map<String, Object> mergedRow = new HashMap<>();
+                    mergedRow.putAll(leftRow);
+                    mergedRow.putAll(rightRow);
+                    mergedTableData.add(mergedRow);
+                });
+            });
         }
 
-        return null;
+        Set<String> mergedJoinSet = new HashSet<>();
+        mergedJoinSet.addAll(leftTable.getJoinSet());
+        mergedJoinSet.addAll(rightTable.getJoinSet());
+
+
+
+        return  new MQLTable(mergedJoinSet, mergedTableData);
+    }
+
+    private boolean isValueMatched(Map<String, Object> leftRow, Map<String, Object> rightRow, Set<String> matchedColumnSet) {
+        for (String eachColumn : matchedColumnSet) {
+            if (!(leftRow.get(eachColumn).equals(rightRow.get(eachColumn))))
+                return false;
+        }
+        return true;
     }
 }

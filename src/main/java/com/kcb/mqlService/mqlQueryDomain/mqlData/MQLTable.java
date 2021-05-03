@@ -28,16 +28,12 @@ public class MQLTable {
         return joinSet.add(dataSourceId);
     }
 
-    public boolean alreadyJoined(String dataSourceId) {
-        return joinSet.contains(dataSourceId);
-    }
+    public Set<String> matchedColumnSet(MQLTable compareTable) {
+        Set<String> matched = new HashSet<>(tableData.get(0).keySet());
+        Set<String> compare = compareTable.getTableData().get(0).keySet();
+        matched.retainAll(compare);
 
-    public boolean alreadyJoined(Collection<String> dataSources) {
-        return joinSet.containsAll(dataSources);
-    }
-
-    public List<String> matchedDataSourceId(MQLTable compareTable) {
-        return joinSet.stream().filter(eachDataSourceId -> compareTable.getJoinSet().contains(eachDataSourceId)).collect(Collectors.toList());
+        return matched;
     }
 
     public List<Map<String, Object>> getTableData() {

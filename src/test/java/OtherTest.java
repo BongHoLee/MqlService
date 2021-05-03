@@ -2,8 +2,7 @@
 import org.junit.Test;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -41,5 +40,23 @@ public class OtherTest {
         BigDecimal ii = new BigDecimal("2");
 
         System.out.println(i.add(ii));
+    }
+
+    @Test
+    public void matchedColumnTest() {
+        Map<String, Object> map1 = new HashMap<>();
+        map1.put("A", "A");
+        map1.put("B", "C");
+
+        Map<String, Object> map2 = new HashMap<>();
+        map2.put("A", "A");
+        map2.put("C", "C");
+
+        Set<String> matchedColumnSet = new HashSet<>(map1.keySet());
+        matchedColumnSet.retainAll(map2.keySet());
+
+        assertThat(matchedColumnSet.size(), is(1));
+        assertThat(matchedColumnSet, equalTo(new HashSet<>(Arrays.asList("A"))));
+
     }
 }

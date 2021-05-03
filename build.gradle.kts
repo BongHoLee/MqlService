@@ -15,6 +15,7 @@ dependencies {
     compile("org.codehaus.groovy:groovy-all:2.3.11")
     implementation(kotlin("stdlib-jdk8"))
     testCompile("junit", "junit", "4.12")
+    testCompile( "org.hamcrest", "hamcrest-library","1.3")
     implementation ("com.github.jsqlparser:jsqlparser:4.0")
 }
 
