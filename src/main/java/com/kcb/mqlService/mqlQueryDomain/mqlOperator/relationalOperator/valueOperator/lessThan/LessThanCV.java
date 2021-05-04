@@ -26,8 +26,8 @@ public class LessThanCV extends ColumnValueOperator {
         List<Map<String, Object>> result = leftDataSource.stream()
                 .filter(
                         eachRow ->  {
-                            ValueOperand compareTarget = factory.create(eachRow.get(leftOperand.getExpressionToString()));
-                            return rightOperand.lessThan(compareTarget);
+                            ValueOperand columnValue = factory.create(eachRow.get(leftOperand.getExpressionToString()));
+                            return columnValue.lessThan(rightOperand);
                         }
                 )
                 .collect(Collectors.toList());

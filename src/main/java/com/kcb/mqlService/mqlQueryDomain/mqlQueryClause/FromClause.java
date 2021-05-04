@@ -12,8 +12,9 @@ public class FromClause {
 
     private MQLDataSource mqlDataSource = new MQLDataSource();
 
-    public boolean addDataSourceIds(String dataSourceId) {
-        return mqlDataSource.addDataSourceId(dataSourceId);
+    public void addDataSourceIds(String ... dataSourceIds) {
+        for (String eachId : dataSourceIds)
+            mqlDataSource.addDataSourceId(eachId);
     }
 
     public MQLDataSource makeMqlDataSources(Map<String, List<Map<String, Object>>> rawDataSources) {

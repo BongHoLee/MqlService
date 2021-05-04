@@ -1,6 +1,7 @@
 package com.kcb.mqlService.mqlQueryDomain.mqlQueryClause;
 
 import com.kcb.mqlService.mqlQueryDomain.mqlData.MQLDataSource;
+import com.kcb.mqlService.testData.TestDataFactory;
 import org.junit.Test;
 
 import java.util.*;
@@ -13,23 +14,18 @@ public class FromClauseTest {
     @Test
     public void makeMqlDataSourcesTest() {
 
+        Map<String, List<Map<String, Object>>> rawDataSource = new HashMap<>();
+        rawDataSource.put("A", TestDataFactory.tableOf("categories"));
+        rawDataSource.put("B", TestDataFactory.tableOf("employees"));
+        rawDataSource.put("C", TestDataFactory.tableOf("shippers"));
+
         FromClause fromClause = new FromClause();
-        fromClause.addDataSourceIds("dataSourceId1");
-        fromClause.addDataSourceIds("dataSourceId2");
-        fromClause.addDataSourceIds("dataSourceId3");
+        fromClause.addDataSourceIds("A", "B", "C");
 
-        Map<String, List<Map<String, Object>>> rawDataSources = new HashMap<>();
-        rawDataSources.put("dataSourceId1", makeRawDataSource("first"));
-        rawDataSources.put("dataSourceId2", makeRawDataSource("second"));
-        rawDataSources.put("dataSourceId3", makeRawDataSource("third"));
-
-        MQLDataSource mqlDataSource = fromClause.makeMqlDataSources(rawDataSources);
-
-        System.out.println(mqlDataSource.getDataSourcesId());
-        System.out.println(mqlDataSource.getMqlDataSources());
+        MQLDataSource mqlDataSource = fromClause.makeMqlDataSources(rawDataSource);
 
 
-        assertThat(true, equalTo(isConvertedWithoutLeak(rawDataSources, mqlDataSource.getMqlDataSources())));
+        assertThat(true, equalTo(isConvertedWithoutLeak(rawDataSource, mqlDataSource.getMqlDataSources())));
     }
 
     public boolean isConvertedWithoutLeak(Map<String, List<Map<String, Object>>> rawDataSources, Map<String, List<Map<String, Object>>> mqlDataSources ) {
@@ -61,51 +57,5 @@ public class FromClauseTest {
         }
         return false;
     }
-
-
-    public List<Map<String, Object>> makeRawDataSource(String key) {
-        List<Map<String, Object>> rawDataSource = new ArrayList<>();
-
-
-        for (int i=0; i<10; i++) {
-            Map<String, Object> eachRow = new HashMap<>();
-            for (int j = 0; j < 3; j++) {
-                eachRow.put(key + i, UUID.randomUUID().toString().substring(0, 3));
-            }
-            rawDataSource.add(eachRow);
-        }
-
-        return rawDataSource;
-    }
-
-    @Test
-    public void mapCopyAndRemoveTest() {
-        List<Map<String, Object>> storeList = new ArrayList<>();
-
-        Map<String, Object> map1 = new HashMap<>();
-        map1.put("a", 1);
-        map1.put("b", 1);
-        map1.put("c", 1);
-        map1.put("d", 1);
-        map1.put("e", 1);
-
-        Map<String, Object> map2 = new HashMap<>();
-        map2.put("AA", 1);
-        map2.put("BB", 1);
-
-        map1.putAll(map2);
-
-        Map<String, Object> map3 = new HashMap<>(map1);
-        storeList.add(map3);
-
-        map1.keySet().removeAll(map2.keySet());
-
-        System.out.println(map1);
-        System.out.println(map2);
-        System.out.println(map3);
-        System.out.println(storeList.get(0));
-
-        assertThat(map1, equalTo(storeList.get(0)));
-
-    }
+    
 }

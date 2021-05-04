@@ -26,8 +26,8 @@ public class LargerThanEqualToCV extends ColumnValueOperator {
         List<Map<String, Object>> result = leftDataSource.stream()
                 .filter(
                         eachRow ->  {
-                            ValueOperand compareTarget = factory.create(eachRow.get(leftOperand.getExpressionToString()));
-                            return rightOperand.largerThanOrEqualTo(compareTarget);
+                            ValueOperand columnValue = factory.create(eachRow.get(leftOperand.getExpressionToString()));
+                            return columnValue.largerThanOrEqualTo(rightOperand);
                         }
                 )
                 .collect(Collectors.toList());

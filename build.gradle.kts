@@ -16,6 +16,8 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
     testCompile("junit", "junit", "4.12")
     testCompile( "org.hamcrest", "hamcrest-library","1.3")
+    testCompile("com.fasterxml.jackson.core", "jackson-databind", "2.0.1")
+    testCompile("com.fasterxml.jackson.dataformat", "jackson-dataformat-csv", "2.12.1")
     implementation ("com.github.jsqlparser:jsqlparser:4.0")
 }
 
