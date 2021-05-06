@@ -3,8 +3,8 @@ package com.kcb.mqlService.mqlQueryDomain.mqlQueryClause.mqlOperator.relationalO
 import com.kcb.mqlService.mqlQueryDomain.mqlData.MQLDataSource;
 import com.kcb.mqlService.mqlQueryDomain.mqlData.MQLTable;
 import com.kcb.mqlService.mqlQueryDomain.mqlOperand.ColumnOperand;
-import com.kcb.mqlService.mqlQueryDomain.mqlOperator.MQLOperator;
-import com.kcb.mqlService.mqlQueryDomain.mqlOperator.relationalOperator.joinOperator.LargerThanJoin;
+import com.kcb.mqlService.mqlQueryDomain.mqlOperator.joinOperator.MQLJoinOperator;
+import com.kcb.mqlService.mqlQueryDomain.mqlOperator.joinOperator.LargerThanJoin;
 import com.kcb.mqlService.mqlQueryDomain.mqlQueryClause.FromClause;
 import com.kcb.mqlService.testData.TestDataFactory;
 import org.junit.Before;
@@ -17,10 +17,7 @@ import java.util.Map;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-import static org.hamcrest.Matchers.lessThan;
-import static org.hamcrest.Matchers.lessThanOrEqualTo;
 import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 
 
 public class LargerThanJoinTest {
@@ -45,7 +42,7 @@ public class LargerThanJoinTest {
         String leftExpression= "A.CategoryID";
         String rightExpression = "B.EmployeeID";
 
-        MQLOperator operator = new LargerThanJoin(
+        MQLJoinOperator operator = new LargerThanJoin(
                 new ColumnOperand(leftExpression),
                 new ColumnOperand(rightExpression)
         );

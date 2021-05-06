@@ -3,9 +3,10 @@ package com.kcb.mqlService.mqlQueryDomain.mqlQueryClause.mqlOperator.relationalO
 import com.kcb.mqlService.mqlQueryDomain.mqlData.MQLDataSource;
 import com.kcb.mqlService.mqlQueryDomain.mqlData.MQLTable;
 import com.kcb.mqlService.mqlQueryDomain.mqlOperand.ColumnOperand;
-import com.kcb.mqlService.mqlQueryDomain.mqlOperator.MQLOperator;
-import com.kcb.mqlService.mqlQueryDomain.mqlOperator.relationalOperator.joinOperator.EqualToJoin;
+import com.kcb.mqlService.mqlQueryDomain.mqlOperator.joinOperator.MQLJoinOperator;
+import com.kcb.mqlService.mqlQueryDomain.mqlOperator.joinOperator.EqualToJoin;
 import com.kcb.mqlService.mqlQueryDomain.mqlQueryClause.FromClause;
+import com.kcb.mqlService.testData.TestDataFactory;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -18,54 +19,31 @@ public class EqualToJoinTest {
 
     private MQLDataSource mqlDataSource = new MQLDataSource();
 
+
     @Before
     public void makeMqlDataSource() {
-        Map<String, List<Map<String, Object>>> rowDataSource = new HashMap<>();
+        Map<String, List<Map<String, Object>>> rawDataSource = new HashMap<>();
+        rawDataSource.put("A", TestDataFactory.tableOf("categories"));
+        rawDataSource.put("B", TestDataFactory.tableOf("employees"));
+        rawDataSource.put("C", TestDataFactory.tableOf("shippers"));
+
         FromClause from = new FromClause();
-        from.addDataSourceIds("A");
-        from.addDataSourceIds("B");
-
-        List<Map<String, Object>> list1 = new ArrayList<>();
-        List<Map<String, Object>> list2 = new ArrayList<>();
-
-        for (int i=0; i<10; i++) {
-            Map<String, Object> map1 = new HashMap<>();
-            Map<String, Object> map2 = new HashMap<>();
-
-            map1.put("KEY", i);
-            map2.put("KEY", i+5);
-
-
-            map1.put("COLUMN1", i+1);
-            map1.put("COLUMN2", i+2);
-            map1.put("COLUMN3", String.valueOf(i+3));
-
-            map2.put("COLUMN1", i+1);
-            map2.put("COLUMN2", i+2);
-            map2.put("COLUMN3", String.valueOf(i+3));
-
-            list1.add(map1);
-            list2.add(map2);
-        }
-
-        rowDataSource.put("A", list1);
-        rowDataSource.put("B", list2);
-
-        mqlDataSource = from.makeMqlDataSources(rowDataSource);
+        from.addDataSourceIds("A", "B", "C");
+        mqlDataSource = from.makeMqlDataSources(rawDataSource);
     }
 
     @Test
     public void StringEqualToStringTest() {
-        String leftColumn = "A.KEY";
-        String rightColumn = "B.KEY";
-        MQLOperator operator = new EqualToJoin(
+        String leftColumn = "A.CategoryID";
+        String rightColumn = "B.EmployeeID";
+        MQLJoinOperator operator = new EqualToJoin(
                 new ColumnOperand(leftColumn),
                 new ColumnOperand(rightColumn)
         );
 
         MQLTable table = operator.operateWith(mqlDataSource);
         assertThat(table.getJoinSet(), equalTo(new HashSet<>(Arrays.asList("A", "B"))));
-        table.getTableData().forEach(eachRow -> assertThat(eachRow.get("A.KEY"), equalTo(eachRow.get("B.KEY"))));
+        table.getTableData().forEach(eachRow -> assertThat(eachRow.get(leftColumn), equalTo(eachRow.get(rightColumn))));
 
     }
 }

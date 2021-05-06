@@ -4,8 +4,10 @@ import com.kcb.mqlService.mqlQueryDomain.mqlData.MQLDataSource;
 import com.kcb.mqlService.mqlQueryDomain.mqlData.MQLTable;
 import com.kcb.mqlService.mqlQueryDomain.mqlOperand.ColumnOperand;
 import com.kcb.mqlService.mqlQueryDomain.mqlOperand.NumberValueOperand;
-import com.kcb.mqlService.mqlQueryDomain.mqlOperator.MQLOperator;
-import com.kcb.mqlService.mqlQueryDomain.mqlOperator.relationalOperator.valueOperator.largerThan.LargerThanVC;
+import com.kcb.mqlService.mqlQueryDomain.mqlOperator.joinOperator.MQLJoinOperator;
+import com.kcb.mqlService.mqlQueryDomain.mqlOperator.joinOperator.NoneToJoinOperator;
+import com.kcb.mqlService.mqlQueryDomain.mqlOperator.whereOperator.MQLWhereOperator;
+import com.kcb.mqlService.mqlQueryDomain.mqlOperator.whereOperator.largerThan.LargerThanVC;
 import com.kcb.mqlService.mqlQueryDomain.mqlQueryClause.FromClause;
 import com.kcb.mqlService.testData.TestDataFactory;
 import org.junit.Before;
@@ -27,11 +29,10 @@ public class LargerThanVCTest {
     public void makeMqlDataSource() {
         Map<String, List<Map<String, Object>>> rawDataSource = new HashMap<>();
         rawDataSource.put("A", TestDataFactory.tableOf("categories"));
-        rawDataSource.put("B", TestDataFactory.tableOf("employees"));
-        rawDataSource.put("C", TestDataFactory.tableOf("shippers"));
+
 
         FromClause from = new FromClause();
-        from.addDataSourceIds("A", "B", "C");
+        from.addDataSourceIds("A");
         mqlDataSource = from.makeMqlDataSources(rawDataSource);
     }
 
@@ -41,15 +42,16 @@ public class LargerThanVCTest {
      */
     @Test
     public void valueLargerThanColumnTest() {
+        MQLJoinOperator noneJoin = new NoneToJoinOperator();
         String columnExpression = "A.CategoryID";
         int valueExpression = 2;
 
-        MQLOperator operator = new LargerThanVC(
+        MQLWhereOperator operator = new LargerThanVC(
                 new NumberValueOperand(valueExpression),
                 new ColumnOperand(columnExpression)
         );
 
-        MQLTable table = operator.operateWith(mqlDataSource);
+        MQLTable table = operator.operateWith(noneJoin.operateWith(mqlDataSource));
         List<Map<String, Object>> tableData = table.getTableData();
 
         tableData.forEach(eachRow -> {
