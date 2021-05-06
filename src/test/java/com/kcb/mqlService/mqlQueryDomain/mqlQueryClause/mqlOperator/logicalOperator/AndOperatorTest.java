@@ -3,13 +3,10 @@ package com.kcb.mqlService.mqlQueryDomain.mqlQueryClause.mqlOperator.logicalOper
 import com.kcb.mqlService.mqlQueryDomain.mqlData.MQLDataSource;
 import com.kcb.mqlService.mqlQueryDomain.mqlData.MQLTable;
 import com.kcb.mqlService.mqlQueryDomain.mqlOperand.ColumnOperand;
-import com.kcb.mqlService.mqlQueryDomain.mqlOperand.NumberValueOperand;
 import com.kcb.mqlService.mqlQueryDomain.mqlOperator.MQLOperator;
 import com.kcb.mqlService.mqlQueryDomain.mqlOperator.logicalOperator.AndOperator;
 import com.kcb.mqlService.mqlQueryDomain.mqlOperator.relationalOperator.joinOperator.EqualToJoin;
 import com.kcb.mqlService.mqlQueryDomain.mqlOperator.relationalOperator.joinOperator.NotEqualToJoin;
-import com.kcb.mqlService.mqlQueryDomain.mqlOperator.relationalOperator.valueOperator.eqaulTo.EqualToCV;
-import com.kcb.mqlService.mqlQueryDomain.mqlOperator.relationalOperator.valueOperator.notEqualTo.NotEqualToCV;
 import com.kcb.mqlService.mqlQueryDomain.mqlQueryClause.FromClause;
 import org.junit.Before;
 import org.junit.Test;

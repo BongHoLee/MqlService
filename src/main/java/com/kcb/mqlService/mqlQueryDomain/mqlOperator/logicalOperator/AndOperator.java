@@ -19,8 +19,6 @@ public class AndOperator implements MQLOperator {
     public MQLTable operateWith(MQLDataSource mqlDataSource) {
         MQLTable leftTable = leftOperator.operateWith(mqlDataSource);
         MQLTable rightTable = rightOperator.operateWith(mqlDataSource);
-
-
         List<Map<String, Object>> mergedTableData = new ArrayList<>();
         List<Map<String, Object>> leftTableData = leftTable.getTableData();
         List<Map<String, Object>> rightTableData = rightTable.getTableData();
@@ -53,7 +51,6 @@ public class AndOperator implements MQLOperator {
         Set<String> mergedJoinSet = new HashSet<>();
         mergedJoinSet.addAll(leftTable.getJoinSet());
         mergedJoinSet.addAll(rightTable.getJoinSet());
-
 
 
         return  new MQLTable(mergedJoinSet, mergedTableData);

@@ -1,11 +1,8 @@
 package com.kcb.mqlService.mqlQueryDomain.mqlOperator.relationalOperator.valueOperator.notEqualTo;
 
-import com.kcb.mqlService.mqlQueryDomain.mqlData.MQLDataSource;
-import com.kcb.mqlService.mqlQueryDomain.mqlData.MQLTable;
 import com.kcb.mqlService.mqlQueryDomain.mqlOperand.ColumnOperand;
 import com.kcb.mqlService.mqlQueryDomain.mqlOperand.ValueOperand;
 import com.kcb.mqlService.mqlQueryDomain.mqlOperator.relationalOperator.valueOperator.ColumnValueOperator;
-import com.kcb.mqlService.utils.MQLOperandFactory;
 
 import java.util.List;
 import java.util.Map;

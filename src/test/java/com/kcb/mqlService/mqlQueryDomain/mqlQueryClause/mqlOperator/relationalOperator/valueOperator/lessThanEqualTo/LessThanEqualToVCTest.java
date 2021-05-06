@@ -5,7 +5,6 @@ import com.kcb.mqlService.mqlQueryDomain.mqlData.MQLTable;
 import com.kcb.mqlService.mqlQueryDomain.mqlOperand.ColumnOperand;
 import com.kcb.mqlService.mqlQueryDomain.mqlOperand.NumberValueOperand;
 import com.kcb.mqlService.mqlQueryDomain.mqlOperator.MQLOperator;
-import com.kcb.mqlService.mqlQueryDomain.mqlOperator.relationalOperator.valueOperator.lessThanEqualTo.LessThanEqualToCV;
 import com.kcb.mqlService.mqlQueryDomain.mqlOperator.relationalOperator.valueOperator.lessThanEqualTo.LessThanEqualToVC;
 import com.kcb.mqlService.mqlQueryDomain.mqlQueryClause.FromClause;
 import com.kcb.mqlService.testData.TestDataFactory;

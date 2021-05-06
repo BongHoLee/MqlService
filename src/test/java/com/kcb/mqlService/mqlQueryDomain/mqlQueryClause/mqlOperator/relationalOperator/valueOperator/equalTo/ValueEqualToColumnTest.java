@@ -6,7 +6,6 @@ import com.kcb.mqlService.mqlQueryDomain.mqlOperand.ColumnOperand;
 import com.kcb.mqlService.mqlQueryDomain.mqlOperand.NumberValueOperand;
 import com.kcb.mqlService.mqlQueryDomain.mqlOperand.StringValueOperand;
 import com.kcb.mqlService.mqlQueryDomain.mqlOperator.MQLOperator;
-import com.kcb.mqlService.mqlQueryDomain.mqlOperator.relationalOperator.valueOperator.eqaulTo.EqualToCV;
 import com.kcb.mqlService.mqlQueryDomain.mqlOperator.relationalOperator.valueOperator.eqaulTo.EqualToVC;
 import com.kcb.mqlService.mqlQueryDomain.mqlQueryClause.FromClause;
 import org.junit.Before;

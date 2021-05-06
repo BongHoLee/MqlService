@@ -3,7 +3,6 @@ package com.kcb.mqlService.mqlQueryDomain.mqlQueryClause.mqlOperator.logicalOper
 import com.kcb.mqlService.mqlQueryDomain.mqlData.MQLDataSource;
 import com.kcb.mqlService.mqlQueryDomain.mqlData.MQLTable;
 import com.kcb.mqlService.mqlQueryDomain.mqlOperand.ColumnOperand;
-import com.kcb.mqlService.mqlQueryDomain.mqlOperand.NumberValueOperand;
 import com.kcb.mqlService.mqlQueryDomain.mqlOperand.StringValueOperand;
 import com.kcb.mqlService.mqlQueryDomain.mqlOperator.MQLOperator;
 import com.kcb.mqlService.mqlQueryDomain.mqlOperator.logicalOperator.OrOperator;
@@ -15,17 +14,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
-
-import static org.hamcrest.Matchers.lessThan;
-import static org.hamcrest.Matchers.lessThanOrEqualTo;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
-
-import org.hamcrest.core.*;
 
 public class OrOperatorTest {
 
