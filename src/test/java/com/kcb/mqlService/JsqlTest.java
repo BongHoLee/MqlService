@@ -106,4 +106,14 @@ public class JsqlTest {
         assertThat(Arrays.asList("Customers", "Categories", "Employees"), equalTo(tableNames));
     }
 
+    @Test
+    public void groupbyTest() throws JSQLParserException {
+        String sql = "SELECT CustomerID, Count(*), SUM(main)\n" +
+                "FROM Customers\n" +
+                "GROUP BY CustomerID, ProductID";
+        Select select = (Select) parserManager.parse(new StringReader(sql));
+        PlainSelect plainSelect = (PlainSelect) select.getSelectBody();
+        System.out.println(plainSelect);
+    }
+
 }
