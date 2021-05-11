@@ -54,7 +54,55 @@ public class GroupingTest {
             return  (Collector<T, ?, D>) Collectors.groupingBy(classifier, grouping(newClassifier, elements, idx + 1));
         }else {
             ToDoubleFunction<Map<String, Object>> function = eachRow -> ((Number)eachRow.get("A.Description")).doubleValue();
+
+            //return
             return (Collector<T, ?, D>) Collectors.groupingBy(classifier, Collectors.summarizingDouble(function));
+        }
+    }
+
+    @Test
+    public void orderingForGroupingTest() {
+        List<String> elements = Arrays.asList("A.CategoryName","A.Description");
+
+        List<Map<String, Object>> tableData = mqlDataSource.dataSourceOf("A");
+        System.out.println(tableData);
+
+        tableData.sort((row1, row2) -> compare(row1, row2, elements, 0));
+        System.out.println(tableData);
+
+
+    }
+
+    public int compare(Map<String, Object> row1, Map<String, Object> row2, List<String> elements, int idx) {
+        if (elements.size() > idx) {
+            String compareKey = elements.get(idx);
+
+            if (row1.get(compareKey) instanceof String && row2.get(compareKey) instanceof  String) {
+                int compareValue = ((String) row1.get(compareKey)).compareTo((String)row2.get(compareKey));
+
+                if (compareValue != 0) {
+                    return compareValue;
+                } else {
+                    return compare(row1, row2, elements, idx + 1);
+                }
+
+            } else if (row1.get(compareKey) instanceof Number && row2.get(compareKey) instanceof Number) {
+                double compareValue = (((Number)row1.get(compareKey)).doubleValue()) - (((Number)row2.get(compareKey)).doubleValue());
+
+                if (compareValue > 0) {
+                    return 1;
+                } else if (compareValue < 0) {
+                    return -1;
+                } else {
+                    return compare(row1, row2, elements, idx + 1);
+                }
+            } else {
+                throw new RuntimeException("Not Matched Type!");
+            }
+
+
+        } else {
+            return 0;
         }
     }
 
