@@ -13,22 +13,10 @@ public class NotEqualToVC extends ValueColumnOperator {
         super(leftOperand, rightOperand);
     }
 
+
     @Override
-    protected List<Map<String, Object>> operating(
-            List<Map<String, Object>> tableData,
-            ValueOperand leftOperand,
-            ColumnOperand rightOperand) {
-
-        List<Map<String, Object>> result = tableData.stream()
-                .filter(
-                        eachRow ->
-                                (leftOperand.notEqualTo(eachRow.get(rightOperand.getExpressionToString())))
-
-                )
-                .collect(Collectors.toList());
-
-        return result;
-
+    protected boolean operating(ValueOperand standard, ValueOperand compareTarget) {
+        return standard.notEqualTo(compareTarget);
     }
 
 }

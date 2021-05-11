@@ -1,6 +1,6 @@
 package com.kcb.mqlService.mqlQueryDomain.mqlOperand;
 
-public interface ValueOperand extends MQLOperand {
+public interface  ValueOperand extends MQLOperand {
     boolean equalTo(Object target);
     boolean notEqualTo(Object target);
     boolean lessThan(Object target);

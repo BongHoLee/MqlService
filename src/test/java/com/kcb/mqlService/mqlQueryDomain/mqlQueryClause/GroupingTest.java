@@ -50,7 +50,6 @@ public class GroupingTest {
     ) {
 
         if (elements.size() > idx ) {
-
             Function<Map<String, Object>, Object> newClassifier = eachRow -> eachRow.get(elements.get(idx));
             return  (Collector<T, ?, D>) Collectors.groupingBy(classifier, grouping(newClassifier, elements, idx + 1));
         }else {

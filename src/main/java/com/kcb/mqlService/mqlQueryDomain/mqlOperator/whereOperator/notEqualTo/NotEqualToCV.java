@@ -14,20 +14,8 @@ public class NotEqualToCV extends ColumnValueOperator {
     }
 
     @Override
-    protected List<Map<String, Object>> operating(
-            List<Map<String, Object>> tableData,
-            ColumnOperand leftOperand,
-            ValueOperand rightOperand) {
-
-        List<Map<String, Object>> result = tableData.stream()
-                .filter(
-                        eachRow ->
-                                (rightOperand.notEqualTo(eachRow.get(leftOperand.getExpressionToString())))
-
-                )
-                .collect(Collectors.toList());
-
-        return result;
+    protected boolean operating(ValueOperand standard, ValueOperand compareTarget) {
+        return standard.notEqualTo(compareTarget);
     }
 
 }

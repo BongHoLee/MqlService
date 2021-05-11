@@ -14,24 +14,10 @@ public class LargerThanEqualToCV extends ColumnValueOperator {
         super(leftOperand, rightOperand);
     }
 
+
     @Override
-    protected List<Map<String, Object>> operating(
-            List<Map<String, Object>> tableData,
-            ColumnOperand leftOperand,
-            ValueOperand rightOperand) {
-
-        MQLOperandFactory factory = MQLOperandFactory.getInstance();
-        List<Map<String, Object>> result = tableData.stream()
-                .filter(
-                        eachRow ->  {
-                            ValueOperand columnValue = factory.create(eachRow.get(leftOperand.getExpressionToString()));
-                            return columnValue.largerThanOrEqualTo(rightOperand);
-                        }
-                )
-                .collect(Collectors.toList());
-
-
-        return result;
+    protected boolean operating(ValueOperand standard, ValueOperand compareTarget) {
+        return standard.largerThanOrEqualTo(compareTarget);
     }
 
 }

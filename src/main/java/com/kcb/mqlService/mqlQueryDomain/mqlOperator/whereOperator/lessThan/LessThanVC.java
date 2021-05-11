@@ -14,24 +14,11 @@ public class LessThanVC extends ValueColumnOperator {
         super(leftOperand, rightOperand);
     }
 
+
+
     @Override
-    protected List<Map<String, Object>> operating(
-            List<Map<String, Object>> tableData,
-            ValueOperand leftOperand,
-            ColumnOperand rightOperand) {
-
-        MQLOperandFactory factory = MQLOperandFactory.getInstance();
-        List<Map<String, Object>> result = tableData.stream()
-                .filter(
-                        eachRow -> {
-                            ValueOperand compareTarget = factory.create(eachRow.get(rightOperand.getExpressionToString()));
-                            return leftOperand.lessThan(compareTarget);
-                        }
-                )
-                .collect(Collectors.toList());
-
-
-        return result;
+    protected boolean operating(ValueOperand standard, ValueOperand compareTarget) {
+        return standard.lessThan(compareTarget);
     }
 
 

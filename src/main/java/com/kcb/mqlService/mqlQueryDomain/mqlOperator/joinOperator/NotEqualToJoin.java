@@ -15,30 +15,9 @@ public class NotEqualToJoin extends JoinOperator {
     }
 
     @Override
-    protected List<Map<String, Object>> join(
-            List<Map<String, Object>> leftDataSource,
-            List<Map<String, Object>> rightDataSource,
-            ColumnOperand leftOperand,
-            ColumnOperand rightOperand) {
-
-        List<Map<String, Object>> joinedTable = new ArrayList<>();
-
-
-        MQLOperandFactory factory = MQLOperandFactory.getInstance();
-        leftDataSource.forEach(leftRow -> rightDataSource.forEach(rightRow -> {
-
-            ValueOperand leftValueOperand = factory.create(leftRow.get(leftOperand.getExpressionToString()));
-            ValueOperand rightValueOperand = factory.create(rightRow.get(rightOperand.getExpressionToString()));
-
-            if (leftValueOperand.notEqualTo(rightValueOperand)){
-                Map<String, Object> mergedRow = new HashMap<>();
-                mergedRow.putAll(rightRow);
-                mergedRow.putAll(leftRow);
-                joinedTable.add(mergedRow);
-            }
-        }));
-
-        return joinedTable;
+    protected boolean operating(ValueOperand leftValue, ValueOperand rightValue) {
+        return leftValue.notEqualTo(rightValue);
     }
+
 
 }
