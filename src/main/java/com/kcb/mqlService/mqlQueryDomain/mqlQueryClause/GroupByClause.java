@@ -6,27 +6,30 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
+
 
 /**
  *
  * Deal With Aggregate Function
  */
-public class GroupByClaus {
+public class GroupByClause {
     private List<String> groupingElements;
 
-    public GroupByClaus(String ... elements) {
-        groupingElements = new ArrayList<>(Arrays.asList(elements));
+    public GroupByClause(String ... elements) {
+        this.groupingElements = new ArrayList<>(Arrays.asList(elements));
+    }
+
+    public GroupByClause() {
+        this.groupingElements = new ArrayList<>();
     }
 
     public MQLTable groupingWith(MQLTable table) {
 
-        List<Map<String, Object>> tableData = table.getTableData();
+        List<Map<String, Object>> tableData = new ArrayList<>(table.getTableData());
+
         tableData.sort((row1, row2) -> compare(row1, row2, groupingElements, 0));
 
-        return null;
+        return new MQLTable(table.getJoinSet(), tableData);
     }
 
 

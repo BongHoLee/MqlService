@@ -55,8 +55,10 @@ public class JoinClausTest {
 
         JoinClaus joinClaus = new JoinClaus(join1, join2);
         MQLTable table = joinClaus.join(mqlDataSource);
-        System.out.println(table.getJoinSet());
-        System.out.println(table.getTableData());
+
+        table.getTableData().forEach(eachRow -> {
+            assertThat(eachRow.get("A.CategoryID"), allOf(is(equalTo(eachRow.get("B.EmployeeID"))), is(equalTo(eachRow.get("C.ShipperID")))));
+        });
     }
 
 }

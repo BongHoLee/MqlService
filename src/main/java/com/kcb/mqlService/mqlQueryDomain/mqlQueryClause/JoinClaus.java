@@ -20,6 +20,8 @@ public class JoinClaus {
         return allJoined.operateWith(mqlDataSource);
     }
 
+    // if it is a Multiple join, 'AND' Operation is operated on each join result
+    // recursive
     private MQLJoinOperator joinLink(MQLJoinOperator currentOperator, int idx) {
         if (joinOperators.size() > idx+1) {
             MQLJoinOperator nextOperator = new AndToJoinOperator(currentOperator, joinOperators.get(idx+1));
