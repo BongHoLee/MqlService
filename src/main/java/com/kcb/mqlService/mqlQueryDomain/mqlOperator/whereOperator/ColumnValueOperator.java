@@ -31,7 +31,9 @@ public abstract class ColumnValueOperator implements MQLWhereOperator {
             ColumnOperand leftOperand,
             ValueOperand rightOperand
     ) {
+
         MQLOperandFactory factory = MQLOperandFactory.getInstance();
+
         List<Map<String, Object>> result = tableData.stream()
                 .filter(
                         eachRow ->  {
@@ -46,6 +48,7 @@ public abstract class ColumnValueOperator implements MQLWhereOperator {
 
 
     protected abstract boolean operating(ValueOperand standard, ValueOperand compareTarget);
+
 
 
 

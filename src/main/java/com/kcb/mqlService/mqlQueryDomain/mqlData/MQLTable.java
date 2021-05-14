@@ -1,7 +1,6 @@
 package com.kcb.mqlService.mqlQueryDomain.mqlData;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class MQLTable {
     private Set<String> joinSet;
@@ -24,8 +23,8 @@ public class MQLTable {
         this(new HashSet<>(), new ArrayList<>());
     }
 
-    public boolean addJoinList(String dataSourceId) {
-        return joinSet.add(dataSourceId);
+    public void addJoinList(String ... dataSourceIds) {
+        joinSet.addAll(Arrays.asList(dataSourceIds));
     }
 
     public Set<String> matchedColumnSet(MQLTable compareTable) {

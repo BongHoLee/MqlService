@@ -20,4 +20,5 @@ public class EqualToCV extends ColumnValueOperator {
     protected boolean operating(ValueOperand standard, ValueOperand compareTarget) {
         return standard.equalTo(compareTarget);
     }
+
 }

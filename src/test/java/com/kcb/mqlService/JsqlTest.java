@@ -35,10 +35,8 @@ public class JsqlTest {
         String selectClause = "SELECT DS1.column, DS2.column FROM DS1, DS2 WHERE DS1.key = DS2.key";
         whereCondition = "(a.key=b.key)";
 
-
         select = (Select) CCJSqlParserUtil.parse(selectClause);
         plainSelect = (PlainSelect) select.getSelectBody();
-
     }
 
     @Test
@@ -73,6 +71,7 @@ public class JsqlTest {
                 " OR C.CITY != 'Seoul'" +
                 " OR C.NAME = 1" +
                 " OR C.ID = 1.0";
+
         Select select = (Select) parserManager.parse(new StringReader(sql));
         PlainSelect plainSelect = (PlainSelect) select.getSelectBody();
         assertThat(1, equalTo(plainSelect.getJoins().size()));
