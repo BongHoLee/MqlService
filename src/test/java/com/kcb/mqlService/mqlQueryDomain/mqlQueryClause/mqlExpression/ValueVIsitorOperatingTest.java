@@ -7,14 +7,17 @@ import com.kcb.mqlService.mqlQueryDomain.mqlData.MQLTable;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.ColumnOperandExpression;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.MQLOperandExpression;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.MQLOperatingExpression;
+import com.kcb.mqlService.mqlQueryDomain.mqlExpression.SingleRowFunctionOperandExpression;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.ColumnElement;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.ValueElement;
+import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.singleRowFunction.LENGTH;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.logicalOperator.ANDOperator;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.logicalOperator.OROperator;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.operatingVisitor.WithValueOperatingVisitor;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.relationalOperator.RelationalOperator;
 import com.kcb.mqlService.mqlQueryDomain.mqlQueryClause.FromClause;
 import com.kcb.mqlService.testData.TestDataFactory;
+import net.sf.jsqlparser.schema.Column;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -130,6 +133,24 @@ public class ValueVIsitorOperatingTest {
                     is(equalTo(eachRow.get("B.EmployeeID").equals(2)))
             ));
         });
+    }
+
+    /**
+     *
+     * LENGTH(A.CategoryName) > 10
+     */
+    @Test
+    public void singleRowFunctionWithValueTest() {
+        MQLOperandExpression expression = new SingleRowFunctionOperandExpression(
+                new LENGTH(new ColumnElement("A.CategoryName"), new ColumnElement("AAA")),
+                new WithValueOperatingVisitor(
+                        new ValueElement(7),
+                        RelationalOperator::largerThan
+                )
+        );
+
+        MQLDataStorage result = expression.operatingWith(mqlDataStorage);
+        print(result);
     }
 
     public void print(MQLDataStorage mqlDataStorage) {

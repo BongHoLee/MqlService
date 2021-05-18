@@ -4,9 +4,11 @@ import com.kcb.mqlService.mqlQueryDomain.mqlData.MQLDataSource;
 import com.kcb.mqlService.mqlQueryDomain.mqlData.MQLDataStorage;
 import com.kcb.mqlService.mqlQueryDomain.mqlData.MQLTable;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.ColumnOperandExpression;
-import com.kcb.mqlService.mqlQueryDomain.mqlExpression.FunctionOperandExpression;
+import com.kcb.mqlService.mqlQueryDomain.mqlExpression.GroupFunctionOperandExpression;
+import com.kcb.mqlService.mqlQueryDomain.mqlExpression.SingleRowFunctionOperandExpression;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.ValueOperandExpression;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.ColumnElement;
+import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.SingleRowFunctionElement;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.ValueElement;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.relationalOperator.RelationalOperation;
 
@@ -57,8 +59,9 @@ public class WithColumnOperatingVisitor implements WithOperatingVisitor {
         return new MQLDataStorage(mqlDataSource, table);
     }
 
+
     @Override
-    public MQLDataStorage visit(FunctionOperandExpression standardExpression, MQLDataStorage mqlDataStorage) {
+    public MQLDataStorage visit(SingleRowFunctionOperandExpression standardExpression, MQLDataStorage mqlDataStorage) {
         return null;
     }
 
@@ -81,5 +84,10 @@ public class WithColumnOperatingVisitor implements WithOperatingVisitor {
         MQLTable resultTable = new MQLTable(new HashSet<>(Collections.singletonList(compareDataSourceId)), filteredTable);
 
         return new MQLDataStorage(mqlDataSource, resultTable);
+    }
+
+    @Override
+    public MQLDataStorage visit(GroupFunctionOperandExpression standardExpression, MQLDataStorage mqlDataStorage) {
+        return null;
     }
 }

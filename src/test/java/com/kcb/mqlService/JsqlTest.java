@@ -107,7 +107,7 @@ public class JsqlTest {
 
     @Test
     public void groupbyTest() throws JSQLParserException {
-        String sql = "SELECT CustomerID, Count(*), SUM(main)\n" +
+        String sql = "SELECT CustomerID, LENGTH(CustomerID), SUM(main)\n" +
                 "FROM Customers\n" +
                 "GROUP BY CustomerID, ProductID";
         Select select = (Select) parserManager.parse(new StringReader(sql));

@@ -13,6 +13,7 @@ import com.kcb.mqlService.mqlQueryDomain.mqlExpression.operatingVisitor.WithColu
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.relationalOperator.RelationalOperator;
 import com.kcb.mqlService.mqlQueryDomain.mqlQueryClause.FromClause;
 import com.kcb.mqlService.testData.TestDataFactory;
+import org.hamcrest.MatcherAssert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -22,6 +23,9 @@ import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.lessThanOrEqualTo;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.lessThan;
 
 public class ColumnVIsitorOperatingTest {
     private MQLDataStorage mqlDataStorage;
@@ -66,6 +70,55 @@ public class ColumnVIsitorOperatingTest {
         resultMQLTable.getTableData().forEach(eachRow -> {
             assertThat(eachRow.get(standardColumn), is(equalTo(eachRow.get(compareColumn))));
         });
+    }
+
+    /**
+     *  A.CategoryID > B.EmployeeID
+     */
+
+    @Test
+    public void columnWithColumnLargerThanOperatingTest() {
+        String standardColumn = "A.CategoryID";
+        String compareColumn = "B.EmployeeID";
+
+        MQLOperandExpression expression = new ColumnOperandExpression(
+                new ColumnElement(standardColumn),
+                new WithColumnOperatingVisitor(
+                        new ColumnElement(compareColumn),
+                        RelationalOperator::largerThan
+                )
+        );
+
+        MQLDataStorage resultStorage = expression.operatingWith(mqlDataStorage);
+        resultStorage.getMqlTable().getTableData().forEach(
+                eachRow -> {
+                    assertThat((int)eachRow.get(standardColumn), is(greaterThan((int)eachRow.get(compareColumn))));
+                }
+        );
+    }
+
+    /**
+     *  A.CategoryID < B.EmployeeID
+     */
+    @Test
+    public void columnWithColumnLessThanOperatingTest() {
+        String standardColumn = "A.CategoryID";
+        String compareColumn = "B.EmployeeID";
+
+        MQLOperandExpression expression = new ColumnOperandExpression(
+                new ColumnElement(standardColumn),
+                new WithColumnOperatingVisitor(
+                        new ColumnElement(compareColumn),
+                        RelationalOperator::lessThan
+                )
+        );
+
+        MQLDataStorage resultStorage = expression.operatingWith(mqlDataStorage);
+        resultStorage.getMqlTable().getTableData().forEach(
+                eachRow -> {
+                    assertThat((int)eachRow.get(standardColumn), is(lessThan((int)eachRow.get(compareColumn))));
+                }
+        );
     }
 
     /**

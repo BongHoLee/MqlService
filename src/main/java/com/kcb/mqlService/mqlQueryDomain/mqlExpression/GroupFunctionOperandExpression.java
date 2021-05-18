@@ -3,23 +3,18 @@ package com.kcb.mqlService.mqlQueryDomain.mqlExpression;
 import com.kcb.mqlService.mqlQueryDomain.mqlData.MQLDataStorage;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.operatingVisitor.WithOperatingVisitor;
 
-public class FunctionOperandExpression implements MQLOperandExpression{
-
+public class GroupFunctionOperandExpression implements MQLOperandExpression{
     private WithOperatingVisitor visitor;
 
-    public FunctionOperandExpression(WithOperatingVisitor visitor) {
-        this.visitor = visitor;
-    }
 
 
     @Override
     public MQLDataStorage acceptForVisitor(MQLDataStorage mqlDataStorage) {
-        return visitor.visit(this, mqlDataStorage);
+        return null;
     }
-
 
     @Override
     public MQLDataStorage operatingWith(MQLDataStorage mqlDataStorage) {
-        return acceptForVisitor(mqlDataStorage);
+        return null;
     }
 }

@@ -1,6 +1,6 @@
 package com.kcb.mqlService.mqlQueryDomain.mqlExpression.element;
 
-public class ValueElement {
+public class ValueElement implements MQLElement{
     private Object value;
 
     public ValueElement(Object value) {
@@ -9,5 +9,10 @@ public class ValueElement {
 
     public Object getValue() {
         return value;
+    }
+
+    @Override
+    public String getElementExpression() {
+        return String.valueOf(value);
     }
 }

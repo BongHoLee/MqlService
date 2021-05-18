@@ -2,7 +2,7 @@ package com.kcb.mqlService.mqlQueryDomain.mqlExpression.element;
 
 import com.kcb.mqlService.mqlQueryDomain.mqlData.MQLDataStorage;
 
-public class ColumnElement{
+public class ColumnElement implements MQLElement{
     private String columnName;
     private String dataSourceId;
 
@@ -26,5 +26,10 @@ public class ColumnElement{
         } else {
             throw new RuntimeException("Column MUST HAVE DataSource ID ex : A.KEY");
         }
+    }
+
+    @Override
+    public String getElementExpression() {
+        return columnName;
     }
 }

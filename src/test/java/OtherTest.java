@@ -65,4 +65,16 @@ public class OtherTest {
 
     }
 
+    @Test
+    public void substrTest() {
+        int start = 2;
+        int end = 4;
+        String str = "Ana Trujillo Emparedados y helados";
+
+
+        int st =  start - 1;
+        int to = end + st;
+        System.out.println(str.substring(st, to));
+    }
+
 }
