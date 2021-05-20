@@ -3,29 +3,29 @@ package com.kcb.mqlService.mqlQueryDomain.mqlExpression;
 import com.kcb.mqlService.mqlQueryDomain.mqlData.MQLDataStorage;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.ColumnElement;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.operatingVisitor.WithTargetOperating;
+import com.kcb.mqlService.mqlQueryDomain.mqlExpression.relationalOperator.RelationalOperation;
 
 public class ColumnOperandExpression implements MQLOperandExpression{
 
-    private WithTargetOperating visitor;
+    private WithTargetOperating targetOperating;
     private ColumnElement columnElement;
+    private RelationalOperation rOperation;
 
-    public ColumnOperandExpression(ColumnElement columnElement, WithTargetOperating visitor) {
+    public ColumnOperandExpression(ColumnElement columnElement, RelationalOperation rOperation, WithTargetOperating targetOperating) {
         this.columnElement = columnElement;
-        this.visitor = visitor;
+        this.targetOperating = targetOperating;
+        this.rOperation = rOperation;
     }
 
     @Override
-    public MQLDataStorage acceptForVisitor(MQLDataStorage mqlDataStorage) {
-        return visitor.visit(this, mqlDataStorage);
+    public MQLDataStorage acceptOperator(MQLDataStorage mqlDataStorage) {
+        return targetOperating.operate(columnElement, rOperation, mqlDataStorage);
     }
 
 
     @Override
     public MQLDataStorage operatingWith(MQLDataStorage mqlDataStorage) {
-        return acceptForVisitor(mqlDataStorage);
+        return acceptOperator(mqlDataStorage);
     }
 
-    public ColumnElement getColumnElement() {
-        return columnElement;
-    }
 }

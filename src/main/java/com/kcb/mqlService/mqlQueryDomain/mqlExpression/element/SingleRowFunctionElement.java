@@ -27,12 +27,15 @@ public abstract class SingleRowFunctionElement implements MQLElement {
             } else if (each instanceof SingleRowFunctionElement) {
                 columnCount += 1;
                 dataSourceIdForRow = ((SingleRowFunctionElement) each).getDataSourceIdForRow();
-                functionType = FunctionType.VALUE;
+                if (dataSourceIdForRow != null && !dataSourceIdForRow.isEmpty())
+                    functionType = FunctionType.COLUMN;
             }
         }
 
         if (columnCount > 1)
             throw new RuntimeException("Function can't have more than one column");
+        else if (columnCount == 0)
+            functionType = FunctionType.VALUE;
     }
 
     public Object executeAbout(Map<String, Object> singleRow) {

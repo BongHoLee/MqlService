@@ -59,9 +59,9 @@ public class ValueVIsitorOperatingTest {
 
         MQLOperandExpression operandExpression = new ColumnOperandExpression(
                 new ColumnElement(column),
+                RelationalOperator::equalTo,
                 new WithValueTargetOperating(
-                        new ValueElement(value),
-                        RelationalOperator::equalTo
+                        new ValueElement(value)
                 )
         );
 
@@ -81,16 +81,18 @@ public class ValueVIsitorOperatingTest {
         MQLOperatingExpression andOperator = new ANDOperator(
                 new ColumnOperandExpression(
                         new ColumnElement("A.CategoryID"),
+                        RelationalOperator::equalTo,
                         new WithValueTargetOperating(
-                                new ValueElement(1),
-                                RelationalOperator::equalTo
+                                new ValueElement(1)
+
                         )
                 ),
                 new ColumnOperandExpression(
                         new ColumnElement("B.EmployeeID"),
+                        RelationalOperator::equalTo,
                         new WithValueTargetOperating(
-                                new ValueElement(2),
-                                RelationalOperator::equalTo
+                                new ValueElement(2)
+
                         )
                 )
         );
@@ -112,16 +114,18 @@ public class ValueVIsitorOperatingTest {
         MQLOperatingExpression orOperator = new OROperator(
                 new ColumnOperandExpression(
                         new ColumnElement("A.CategoryID"),
+                        RelationalOperator::equalTo,
                         new WithValueTargetOperating(
-                                new ValueElement(1),
-                                RelationalOperator::equalTo
+                                new ValueElement(1)
+
                         )
                 ),
                 new ColumnOperandExpression(
                         new ColumnElement("B.EmployeeID"),
+                        RelationalOperator::equalTo,
                         new WithValueTargetOperating(
-                                new ValueElement(2),
-                                RelationalOperator::equalTo
+                                new ValueElement(2)
+
                         )
                 )
         );
@@ -134,23 +138,6 @@ public class ValueVIsitorOperatingTest {
         });
     }
 
-    /**
-     *
-     * LENGTH(A.CategoryName) > 10
-     */
-    @Test
-    public void singleRowFunctionWithValueTest() {
-        MQLOperandExpression expression = new SingleRowFunctionOperandExpression(
-                new LENGTH(new ColumnElement("A.CategoryName"), new ColumnElement("AAA")),
-                new WithValueTargetOperating(
-                        new ValueElement(7),
-                        RelationalOperator::largerThan
-                )
-        );
-
-        MQLDataStorage result = expression.operatingWith(mqlDataStorage);
-        print(result);
-    }
 
     public void print(MQLDataStorage mqlDataStorage) {
         System.out.println(mqlDataStorage.getMqlTable().getJoinSet());

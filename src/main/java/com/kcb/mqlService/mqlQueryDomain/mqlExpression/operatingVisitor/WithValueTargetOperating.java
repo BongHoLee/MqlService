@@ -4,7 +4,6 @@ import com.kcb.mqlService.mqlQueryDomain.mqlData.MQLDataSource;
 import com.kcb.mqlService.mqlQueryDomain.mqlData.MQLDataStorage;
 import com.kcb.mqlService.mqlQueryDomain.mqlData.MQLTable;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.ColumnOperandExpression;
-import com.kcb.mqlService.mqlQueryDomain.mqlExpression.GroupFunctionOperandExpression;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.SingleRowFunctionOperandExpression;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.ValueOperandExpression;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.ColumnElement;
@@ -17,19 +16,15 @@ import java.util.stream.Collectors;
 
 public class WithValueTargetOperating implements WithTargetOperating {
     private ValueElement compareValue;
-    private RelationalOperation rOperation;
 
-    public WithValueTargetOperating(ValueElement compareValue, RelationalOperation rOperation) {
+    public WithValueTargetOperating(ValueElement compareValue) {
         this.compareValue = compareValue;
-        this.rOperation = rOperation;
     }
 
-
     @Override
-    public MQLDataStorage visit(ColumnOperandExpression standardExpression, MQLDataStorage mqlDataStorage) {
+    public MQLDataStorage operate(ColumnElement standardColumnElement, RelationalOperation rOperation, MQLDataStorage mqlDataStorage) {
         MQLDataSource mqlDataSource = mqlDataStorage.getMqlDataSource();
 
-        ColumnElement standardColumnElement = standardExpression.getColumnElement();
         String standardColumnKey = standardColumnElement.getColumnName();
         String standardDataSourceId = standardColumnElement.getDataSourceId();
 
@@ -44,39 +39,32 @@ public class WithValueTargetOperating implements WithTargetOperating {
     }
 
     @Override
-    public MQLDataStorage visit(SingleRowFunctionOperandExpression standardExpression, MQLDataStorage mqlDataStorage) {
-        SingleRowFunctionElement functionElement = standardExpression.getSingleRowFunctionElement();
+    public MQLDataStorage operate(SingleRowFunctionElement standardFunctionElement, RelationalOperation rOperation, MQLDataStorage mqlDataStorage) {
+
         MQLDataSource mqlDataSource = mqlDataStorage.getMqlDataSource();
 
 
-        if (functionElement.hasColumn()) {
-            String standardColumnKey = functionElement.getDataSourceIdForRow();
+        if (standardFunctionElement.hasColumn()) {
+            String standardColumnKey = standardFunctionElement.getDataSourceIdForRow();
             List<Map<String, Object>> tableData = mqlDataSource.dataSourceOf(standardColumnKey);
 
             List<Map<String, Object>> filteredTable = tableData.stream().filter(
-                    eachRow -> rOperation.operating(functionElement.executeAbout(eachRow), compareValue.getValue())
+                    eachRow -> rOperation.operating(standardFunctionElement.executeAbout(eachRow), compareValue.getValue())
             ).collect(Collectors.toList());
 
             MQLTable resultTable = new MQLTable(new HashSet<>(Collections.singletonList(standardColumnKey)), filteredTable);
             return new MQLDataStorage(mqlDataSource, resultTable);
         } else {
-            if (rOperation.operating(functionElement.executeAbout(new HashMap<>()), compareValue.getValue())) {
+            if (rOperation.operating(standardFunctionElement.executeAbout(new HashMap<>()), compareValue.getValue())) {
                 return mqlDataStorage;
             } else {
                 return new MQLDataStorage(new MQLDataSource(), new MQLTable());
             }
         }
-
     }
 
-    // WHERE 1=1
     @Override
-    public MQLDataStorage visit(ValueOperandExpression standardExpression,MQLDataStorage mqlDataStorage) {
+    public MQLDataStorage operate(ValueElement standardValueElement, RelationalOperation rOperation, MQLDataStorage mqlDataStorage) {
         return mqlDataStorage;
-    }
-
-    @Override
-    public MQLDataStorage visit(GroupFunctionOperandExpression standardExpression, MQLDataStorage mqlDataStorage) {
-        return null;
     }
 }

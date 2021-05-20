@@ -3,30 +3,29 @@ package com.kcb.mqlService.mqlQueryDomain.mqlExpression;
 import com.kcb.mqlService.mqlQueryDomain.mqlData.MQLDataStorage;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.SingleRowFunctionElement;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.operatingVisitor.WithTargetOperating;
+import com.kcb.mqlService.mqlQueryDomain.mqlExpression.relationalOperator.RelationalOperation;
 
 public class SingleRowFunctionOperandExpression implements MQLOperandExpression{
 
     private SingleRowFunctionElement singleRowFunctionElement;
-    private WithTargetOperating visitor;
+    private RelationalOperation rOperation;
+    private WithTargetOperating targetOperating;
 
 
-    public SingleRowFunctionOperandExpression(SingleRowFunctionElement singleRowFunctionElement, WithTargetOperating visitor) {
+    public SingleRowFunctionOperandExpression(SingleRowFunctionElement singleRowFunctionElement, RelationalOperation rOperation, WithTargetOperating targetOperating) {
         this.singleRowFunctionElement = singleRowFunctionElement;
-        this.visitor = visitor;
-    }
-
-
-    @Override
-    public MQLDataStorage acceptForVisitor(MQLDataStorage mqlDataStorage) {
-        return visitor.visit(this, mqlDataStorage);
+        this.rOperation = rOperation;
+        this.targetOperating = targetOperating;
     }
 
     @Override
     public MQLDataStorage operatingWith(MQLDataStorage mqlDataStorage) {
-        return acceptForVisitor(mqlDataStorage);
+        return acceptOperator(mqlDataStorage);
     }
 
-    public SingleRowFunctionElement getSingleRowFunctionElement() {
-        return singleRowFunctionElement;
+
+    @Override
+    public MQLDataStorage acceptOperator(MQLDataStorage mqlDataStorage) {
+        return targetOperating.operate(singleRowFunctionElement, rOperation, mqlDataStorage);
     }
 }
