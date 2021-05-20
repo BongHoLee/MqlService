@@ -273,6 +273,7 @@ public class ColumnVIsitorOperatingTest {
     }
 
 
+
     public void print(MQLDataStorage mqlDataStorage) {
         System.out.println(mqlDataStorage.getMqlTable().getJoinSet());
         System.out.println(mqlDataStorage.getMqlTable().getTableData());

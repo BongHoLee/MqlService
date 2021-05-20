@@ -11,6 +11,7 @@ import com.kcb.mqlService.mqlQueryDomain.mqlExpression.SingleRowFunctionOperandE
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.ColumnElement;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.ValueElement;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.singleRowFunction.LENGTH;
+import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.singleRowFunction.SUBSTR;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.logicalOperator.ANDOperator;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.logicalOperator.OROperator;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.operatingVisitor.WithValueTargetOperating;
@@ -136,6 +137,24 @@ public class ValueVIsitorOperatingTest {
                     is(equalTo(eachRow.get("B.EmployeeID").equals(2)))
             ));
         });
+    }
+
+    /**
+     * LENGTH(SUBSTR(B.FirstName, 1, 3)) > 1
+     *
+     */
+    @Test
+    public void substrTest() {
+        MQLOperandExpression expression = new SingleRowFunctionOperandExpression(
+                new LENGTH(new SUBSTR(new ColumnElement("B.FirstName"), new ValueElement(1), new ValueElement(3))),
+                RelationalOperator::largerThan,
+                new WithValueTargetOperating(
+                        new ValueElement(1)
+                )
+        );
+
+        MQLDataStorage result = expression.operatingWith(mqlDataStorage);
+        print(result);
     }
 
 
