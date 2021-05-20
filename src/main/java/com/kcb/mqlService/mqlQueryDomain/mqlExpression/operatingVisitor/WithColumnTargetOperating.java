@@ -8,18 +8,17 @@ import com.kcb.mqlService.mqlQueryDomain.mqlExpression.GroupFunctionOperandExpre
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.SingleRowFunctionOperandExpression;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.ValueOperandExpression;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.ColumnElement;
-import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.SingleRowFunctionElement;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.ValueElement;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.relationalOperator.RelationalOperation;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class WithColumnOperatingVisitor implements WithOperatingVisitor {
+public class WithColumnTargetOperating implements WithTargetOperating {
     private ColumnElement compareTargetColumn;
     private RelationalOperation rOperation;
 
-    public WithColumnOperatingVisitor(ColumnElement compareTargetColumn, RelationalOperation rOperation) {
+    public WithColumnTargetOperating(ColumnElement compareTargetColumn, RelationalOperation rOperation) {
         this.compareTargetColumn = compareTargetColumn;
         this.rOperation = rOperation;
     }

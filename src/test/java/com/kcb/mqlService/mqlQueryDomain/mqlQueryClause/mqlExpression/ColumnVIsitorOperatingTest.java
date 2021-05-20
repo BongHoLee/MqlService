@@ -9,11 +9,10 @@ import com.kcb.mqlService.mqlQueryDomain.mqlExpression.ValueOperandExpression;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.ColumnElement;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.ValueElement;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.logicalOperator.OROperator;
-import com.kcb.mqlService.mqlQueryDomain.mqlExpression.operatingVisitor.WithColumnOperatingVisitor;
+import com.kcb.mqlService.mqlQueryDomain.mqlExpression.operatingVisitor.WithColumnTargetOperating;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.relationalOperator.RelationalOperator;
 import com.kcb.mqlService.mqlQueryDomain.mqlQueryClause.FromClause;
 import com.kcb.mqlService.testData.TestDataFactory;
-import org.hamcrest.MatcherAssert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -23,7 +22,6 @@ import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.lessThanOrEqualTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.lessThan;
 
@@ -58,7 +56,7 @@ public class ColumnVIsitorOperatingTest {
 
         MQLOperandExpression expression = new ColumnOperandExpression(
                 new ColumnElement(standardColumn),
-                new WithColumnOperatingVisitor(
+                new WithColumnTargetOperating(
                         new ColumnElement(compareColumn),
                         RelationalOperator::equalTo
                 )
@@ -83,7 +81,7 @@ public class ColumnVIsitorOperatingTest {
 
         MQLOperandExpression expression = new ColumnOperandExpression(
                 new ColumnElement(standardColumn),
-                new WithColumnOperatingVisitor(
+                new WithColumnTargetOperating(
                         new ColumnElement(compareColumn),
                         RelationalOperator::largerThan
                 )
@@ -107,7 +105,7 @@ public class ColumnVIsitorOperatingTest {
 
         MQLOperandExpression expression = new ColumnOperandExpression(
                 new ColumnElement(standardColumn),
-                new WithColumnOperatingVisitor(
+                new WithColumnTargetOperating(
                         new ColumnElement(compareColumn),
                         RelationalOperator::lessThan
                 )
@@ -131,7 +129,7 @@ public class ColumnVIsitorOperatingTest {
 
         MQLOperandExpression expression = new ValueOperandExpression(
                 new ValueElement(standardValue),
-                new WithColumnOperatingVisitor(
+                new WithColumnTargetOperating(
                         new ColumnElement(compareColumnName),
                         RelationalOperator::equalTo
                 )
@@ -151,14 +149,14 @@ public class ColumnVIsitorOperatingTest {
         MQLOperatingExpression orOperator = new OROperator(
                 new ColumnOperandExpression(
                         new ColumnElement("A.CategoryID"),
-                        new WithColumnOperatingVisitor(
+                        new WithColumnTargetOperating(
                                 new ColumnElement("C.ShipperID"),
                                 RelationalOperator::equalTo
                         )
                 ),
                 new ValueOperandExpression(
                         new ValueElement("Speedy Express"),
-                        new WithColumnOperatingVisitor(
+                        new WithColumnTargetOperating(
                                 new ColumnElement("C.ShipperName"),
                                 RelationalOperator::equalTo
                         )
@@ -184,14 +182,14 @@ public class ColumnVIsitorOperatingTest {
         MQLOperatingExpression orOperator = new OROperator(
                 new ValueOperandExpression(
                         new ValueElement(1),
-                        new WithColumnOperatingVisitor(
+                        new WithColumnTargetOperating(
                                 new ColumnElement("A.CategoryID"),
                                 RelationalOperator::equalTo
                         )
                 ),
                 new ValueOperandExpression(
                         new ValueElement("Grains/Cereals"),
-                        new WithColumnOperatingVisitor(
+                        new WithColumnTargetOperating(
                                 new ColumnElement("A.CategoryName"),
                                 RelationalOperator::equalTo
                         )

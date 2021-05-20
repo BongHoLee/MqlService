@@ -15,11 +15,11 @@ import com.kcb.mqlService.mqlQueryDomain.mqlExpression.relationalOperator.Relati
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class WithValueOperatingVisitor implements WithOperatingVisitor {
+public class WithValueTargetOperating implements WithTargetOperating {
     private ValueElement compareValue;
     private RelationalOperation rOperation;
 
-    public WithValueOperatingVisitor(ValueElement compareValue, RelationalOperation rOperation) {
+    public WithValueTargetOperating(ValueElement compareValue, RelationalOperation rOperation) {
         this.compareValue = compareValue;
         this.rOperation = rOperation;
     }
@@ -46,11 +46,11 @@ public class WithValueOperatingVisitor implements WithOperatingVisitor {
     @Override
     public MQLDataStorage visit(SingleRowFunctionOperandExpression standardExpression, MQLDataStorage mqlDataStorage) {
         SingleRowFunctionElement functionElement = standardExpression.getSingleRowFunctionElement();
-
         MQLDataSource mqlDataSource = mqlDataStorage.getMqlDataSource();
-        String standardColumnKey = functionElement.getDataSourceIdForRow();
 
-        if (standardColumnKey != null && !standardColumnKey.isEmpty()) {
+
+        if (functionElement.hasColumn()) {
+            String standardColumnKey = functionElement.getDataSourceIdForRow();
             List<Map<String, Object>> tableData = mqlDataSource.dataSourceOf(standardColumnKey);
 
             List<Map<String, Object>> filteredTable = tableData.stream().filter(

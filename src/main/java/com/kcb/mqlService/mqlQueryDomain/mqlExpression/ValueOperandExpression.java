@@ -2,13 +2,13 @@ package com.kcb.mqlService.mqlQueryDomain.mqlExpression;
 
 import com.kcb.mqlService.mqlQueryDomain.mqlData.MQLDataStorage;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.ValueElement;
-import com.kcb.mqlService.mqlQueryDomain.mqlExpression.operatingVisitor.WithOperatingVisitor;
+import com.kcb.mqlService.mqlQueryDomain.mqlExpression.operatingVisitor.WithTargetOperating;
 
 public class ValueOperandExpression implements MQLOperandExpression{
-    private WithOperatingVisitor visitor;
+    private WithTargetOperating visitor;
     private ValueElement valueElement;
 
-    public ValueOperandExpression(ValueElement valueElement, WithOperatingVisitor visitor) {
+    public ValueOperandExpression(ValueElement valueElement, WithTargetOperating visitor) {
         this.visitor = visitor;
         this.valueElement = valueElement;
     }

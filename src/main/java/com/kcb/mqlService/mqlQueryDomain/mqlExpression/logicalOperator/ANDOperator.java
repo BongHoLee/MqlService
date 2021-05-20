@@ -25,10 +25,8 @@ public  class ANDOperator implements MQLOperatingExpression {
         MQLDataStorage rightDataStorage = rightExpression.operatingWith(mqlDataStorage);
         MQLDataSource mqlDataSource = leftDataStorage.getMqlDataSource();
 
-
         MQLTable leftTable = leftDataStorage.getMqlTable();
         MQLTable rightTable = rightDataStorage.getMqlTable();
-
 
         List<Map<String, Object>> mergedTableData = new ArrayList<>();
         Set<String> matched = leftTable.matchedColumnSet(rightTable);
@@ -77,12 +75,10 @@ public  class ANDOperator implements MQLOperatingExpression {
                     mergedRow.putAll(rightRow);
                     mergedTableData.add(mergedRow);
                 }
-
             });
         });
 
         return mergedTableData;
-
     }
 
    private List<Map<String, Object>>
@@ -101,7 +97,6 @@ public  class ANDOperator implements MQLOperatingExpression {
        });
 
        return mergedTableData;
-
    }
 
     private boolean isValueMatched(Map<String, Object> leftRow, Map<String, Object> rightRow, Set<String> matchedColumnSet) {

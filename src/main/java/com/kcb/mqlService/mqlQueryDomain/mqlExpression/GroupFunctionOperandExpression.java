@@ -1,10 +1,10 @@
 package com.kcb.mqlService.mqlQueryDomain.mqlExpression;
 
 import com.kcb.mqlService.mqlQueryDomain.mqlData.MQLDataStorage;
-import com.kcb.mqlService.mqlQueryDomain.mqlExpression.operatingVisitor.WithOperatingVisitor;
+import com.kcb.mqlService.mqlQueryDomain.mqlExpression.operatingVisitor.WithTargetOperating;
 
 public class GroupFunctionOperandExpression implements MQLOperandExpression{
-    private WithOperatingVisitor visitor;
+    private WithTargetOperating visitor;
 
 
 

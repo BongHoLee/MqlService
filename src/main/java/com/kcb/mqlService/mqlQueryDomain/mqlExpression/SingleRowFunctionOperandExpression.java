@@ -1,17 +1,16 @@
 package com.kcb.mqlService.mqlQueryDomain.mqlExpression;
 
 import com.kcb.mqlService.mqlQueryDomain.mqlData.MQLDataStorage;
-import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.MQLElement;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.SingleRowFunctionElement;
-import com.kcb.mqlService.mqlQueryDomain.mqlExpression.operatingVisitor.WithOperatingVisitor;
+import com.kcb.mqlService.mqlQueryDomain.mqlExpression.operatingVisitor.WithTargetOperating;
 
 public class SingleRowFunctionOperandExpression implements MQLOperandExpression{
 
     private SingleRowFunctionElement singleRowFunctionElement;
-    private WithOperatingVisitor visitor;
+    private WithTargetOperating visitor;
 
 
-    public SingleRowFunctionOperandExpression(SingleRowFunctionElement singleRowFunctionElement,WithOperatingVisitor visitor) {
+    public SingleRowFunctionOperandExpression(SingleRowFunctionElement singleRowFunctionElement, WithTargetOperating visitor) {
         this.singleRowFunctionElement = singleRowFunctionElement;
         this.visitor = visitor;
     }

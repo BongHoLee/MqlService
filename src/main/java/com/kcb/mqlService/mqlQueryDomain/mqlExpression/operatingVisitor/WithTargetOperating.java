@@ -6,7 +6,7 @@ import com.kcb.mqlService.mqlQueryDomain.mqlExpression.GroupFunctionOperandExpre
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.SingleRowFunctionOperandExpression;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.ValueOperandExpression;
 
-public interface WithOperatingVisitor {
+public interface WithTargetOperating {
     MQLDataStorage visit(ColumnOperandExpression standardExpression, MQLDataStorage mqlDataStorage);
     MQLDataStorage visit(SingleRowFunctionOperandExpression standardExpression, MQLDataStorage mqlDataStorage);
     MQLDataStorage visit(ValueOperandExpression standardExpression, MQLDataStorage mqlDataStorage);

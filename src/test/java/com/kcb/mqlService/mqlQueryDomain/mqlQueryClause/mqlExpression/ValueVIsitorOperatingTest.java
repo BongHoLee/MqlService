@@ -13,11 +13,10 @@ import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.ValueElement;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.singleRowFunction.LENGTH;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.logicalOperator.ANDOperator;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.logicalOperator.OROperator;
-import com.kcb.mqlService.mqlQueryDomain.mqlExpression.operatingVisitor.WithValueOperatingVisitor;
+import com.kcb.mqlService.mqlQueryDomain.mqlExpression.operatingVisitor.WithValueTargetOperating;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.relationalOperator.RelationalOperator;
 import com.kcb.mqlService.mqlQueryDomain.mqlQueryClause.FromClause;
 import com.kcb.mqlService.testData.TestDataFactory;
-import net.sf.jsqlparser.schema.Column;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -60,7 +59,7 @@ public class ValueVIsitorOperatingTest {
 
         MQLOperandExpression operandExpression = new ColumnOperandExpression(
                 new ColumnElement(column),
-                new WithValueOperatingVisitor(
+                new WithValueTargetOperating(
                         new ValueElement(value),
                         RelationalOperator::equalTo
                 )
@@ -82,14 +81,14 @@ public class ValueVIsitorOperatingTest {
         MQLOperatingExpression andOperator = new ANDOperator(
                 new ColumnOperandExpression(
                         new ColumnElement("A.CategoryID"),
-                        new WithValueOperatingVisitor(
+                        new WithValueTargetOperating(
                                 new ValueElement(1),
                                 RelationalOperator::equalTo
                         )
                 ),
                 new ColumnOperandExpression(
                         new ColumnElement("B.EmployeeID"),
-                        new WithValueOperatingVisitor(
+                        new WithValueTargetOperating(
                                 new ValueElement(2),
                                 RelationalOperator::equalTo
                         )
@@ -113,14 +112,14 @@ public class ValueVIsitorOperatingTest {
         MQLOperatingExpression orOperator = new OROperator(
                 new ColumnOperandExpression(
                         new ColumnElement("A.CategoryID"),
-                        new WithValueOperatingVisitor(
+                        new WithValueTargetOperating(
                                 new ValueElement(1),
                                 RelationalOperator::equalTo
                         )
                 ),
                 new ColumnOperandExpression(
                         new ColumnElement("B.EmployeeID"),
-                        new WithValueOperatingVisitor(
+                        new WithValueTargetOperating(
                                 new ValueElement(2),
                                 RelationalOperator::equalTo
                         )
@@ -143,7 +142,7 @@ public class ValueVIsitorOperatingTest {
     public void singleRowFunctionWithValueTest() {
         MQLOperandExpression expression = new SingleRowFunctionOperandExpression(
                 new LENGTH(new ColumnElement("A.CategoryName"), new ColumnElement("AAA")),
-                new WithValueOperatingVisitor(
+                new WithValueTargetOperating(
                         new ValueElement(7),
                         RelationalOperator::largerThan
                 )
