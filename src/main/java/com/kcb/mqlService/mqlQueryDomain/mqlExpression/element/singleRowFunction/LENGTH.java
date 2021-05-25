@@ -1,9 +1,6 @@
 package com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.singleRowFunction;
 
-import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.ColumnElement;
-import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.MQLElement;
-import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.SingleRowFunctionElement;
-import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.ValueElement;
+import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,13 +8,32 @@ import java.util.List;
 import java.util.Map;
 
 public class LENGTH extends SingleRowFunctionElement {
+    private String expression = "";
+
     public LENGTH(MQLElement ... parameters) {
         super(parameters);
+        expression = "LENGTH(";
+
+        for (int i=0; i<parameters.length; i++) {
+            MQLElement each = parameters[i];
+
+            if (each instanceof ValueElement && ((ValueElement) each).getValueType() == ValueType.STRING) {
+                expression += "'" + each.getElementExpression() + "'";
+            } else {
+                expression += each.getElementExpression();
+            }
+
+            if (i < parameters.length-1) {
+                expression += ",";
+            }
+        }
+
+        expression += ")";
     }
 
     @Override
     public String getElementExpression() {
-        return "LENGTH";
+        return expression;
     }
 
     @Override

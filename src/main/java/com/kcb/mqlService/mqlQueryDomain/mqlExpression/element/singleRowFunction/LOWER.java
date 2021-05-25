@@ -1,24 +1,38 @@
 package com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.singleRowFunction;
 
-import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.ColumnElement;
-import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.MQLElement;
-import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.SingleRowFunctionElement;
-import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.ValueElement;
+import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.*;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 public class LOWER extends SingleRowFunctionElement {
-
+    private String expression = "";
 
     public LOWER(MQLElement ... parameters) {
         super(parameters);
+        expression = "LOWER(";
+
+        for (int i=0; i<parameters.length; i++) {
+            MQLElement each = parameters[i];
+
+            if (each instanceof ValueElement && ((ValueElement) each).getValueType() == ValueType.STRING) {
+                expression += "'" + each.getElementExpression() + "'";
+            } else {
+                expression += each.getElementExpression();
+            }
+
+            if (i < parameters.length-1) {
+                expression += ",";
+            }
+        }
+
+        expression += ")";
     }
 
     @Override
     public String getElementExpression() {
-        return "LOWER";
+        return expression;
     }
 
     @Override
