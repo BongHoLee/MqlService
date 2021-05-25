@@ -1,7 +1,5 @@
 package com.kcb.mqlService.mqlQueryDomain.mqlExpression.element;
 
-import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.MQLElement;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -10,7 +8,7 @@ public abstract class SingleRowFunctionElement implements MQLElement {
 
     private List<MQLElement> parameters;
     private String dataSourceIdForRow;
-    private FunctionType functionType;
+    private FunctionParameterType functionParameterType;
 
     public SingleRowFunctionElement(MQLElement ... parameters) {
         this.parameters = Arrays.asList(parameters);
@@ -23,19 +21,19 @@ public abstract class SingleRowFunctionElement implements MQLElement {
             if (each instanceof ColumnElement) {
                 columnCount += 1;
                 dataSourceIdForRow = ((ColumnElement) each).getDataSourceId();
-                functionType = FunctionType.COLUMN;
+                functionParameterType = FunctionParameterType.COLUMN;
             } else if (each instanceof SingleRowFunctionElement) {
                 columnCount += 1;
                 dataSourceIdForRow = ((SingleRowFunctionElement) each).getDataSourceIdForRow();
                 if (dataSourceIdForRow != null && !dataSourceIdForRow.isEmpty())
-                    functionType = FunctionType.COLUMN;
+                    functionParameterType = FunctionParameterType.COLUMN;
             }
         }
 
         if (columnCount > 1)
             throw new RuntimeException("Function can't have more than one column");
         else if (columnCount == 0)
-            functionType = FunctionType.VALUE;
+            functionParameterType = FunctionParameterType.VALUE;
     }
 
     public Object executeAbout(Map<String, Object> singleRow) {
@@ -49,6 +47,6 @@ public abstract class SingleRowFunctionElement implements MQLElement {
     }
 
     public boolean hasColumn() {
-        return functionType.isColumn();
+        return functionParameterType.isColumn();
     }
 }
