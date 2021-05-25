@@ -27,6 +27,8 @@ import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 
 
 public class ValueVIsitorOperatingTest {
@@ -140,21 +142,45 @@ public class ValueVIsitorOperatingTest {
     }
 
     /**
-     * LENGTH(SUBSTR(B.FirstName, 1, 3)) > 1
+     * SUBSTR(B.FirstName, 1, 3) = 'Nan'
      *
      */
     @Test
     public void substrTest() {
         MQLOperandExpression expression = new SingleRowFunctionOperandExpression(
-                new LENGTH(new SUBSTR(new ColumnElement("B.FirstName"), new ValueElement(1), new ValueElement(3))),
-                RelationalOperator::largerThan,
+               new SUBSTR(new ColumnElement("B.FirstName"), new ValueElement(1), new ValueElement(3)),
+                RelationalOperator::equalTo,
                 new WithValueTargetOperating(
-                        new ValueElement(1)
+                        new ValueElement("Nan")
                 )
         );
 
         MQLDataStorage result = expression.operatingWith(mqlDataStorage);
         print(result);
+        result.getMqlTable().getTableData().forEach(eachRow -> {
+            assertThat(((String)eachRow.get("B.FirstName")).substring(0, 3), is("Nan"));
+        });
+    }
+
+    /**
+     * LENGTH(SUBSTR(B.FirstName, 1, 5)) >= 5
+     *
+     */
+    @Test
+    public void multipleFunctionTest() {
+        MQLOperandExpression expression = new SingleRowFunctionOperandExpression(
+                new LENGTH(new SUBSTR(new ColumnElement("B.FirstName"), new ValueElement(1), new ValueElement(5))),
+                RelationalOperator::largerThanEqualTo,
+                new WithValueTargetOperating(
+                        new ValueElement(5)
+                )
+        );
+
+        MQLDataStorage result = expression.operatingWith(mqlDataStorage);
+        print(result);
+        result.getMqlTable().getTableData().forEach(eachRow -> {
+            assertThat(((String)eachRow.get("B.FirstName")).substring(0, 5).length(), is(greaterThanOrEqualTo(5)));
+        });
     }
 
 

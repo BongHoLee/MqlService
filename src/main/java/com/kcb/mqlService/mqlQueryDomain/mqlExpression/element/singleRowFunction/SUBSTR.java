@@ -57,10 +57,13 @@ public class SUBSTR extends SingleRowFunctionElement {
         int to = end + st;
 
         if (p1 instanceof String) {
+            to = Math.min(((String) p1).length(), to);
             return ((String) p1).substring(st, to);
         }  else if (p1 instanceof ValueElement && ((ValueElement) p1).getValue() instanceof String) {
+            to = Math.min(((String) ((ValueElement) p1).getValue()).length(), to);
             return ((String) ((ValueElement) p1).getValue()).substring(st, to);
         } else if (p1 instanceof ColumnElement && singleRow.get(((ColumnElement) p1).getColumnName()) instanceof String) {
+            to = Math.min(((String) singleRow.get(((ColumnElement) p1).getColumnName())).length(), to);
             return ((String) singleRow.get(((ColumnElement) p1).getColumnName())).substring(st, to);
         } else if (p1 instanceof SingleRowFunctionElement){
             return execute(((SingleRowFunctionElement) p1).executeAbout(singleRow), start, end, singleRow);
