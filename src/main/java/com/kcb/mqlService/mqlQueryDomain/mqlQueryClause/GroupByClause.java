@@ -1,6 +1,9 @@
 package com.kcb.mqlService.mqlQueryDomain.mqlQueryClause;
 
 import com.kcb.mqlService.mqlQueryDomain.mqlData.MQLTable;
+import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.ColumnElement;
+import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.MQLElement;
+import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.SingleRowFunctionElement;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,13 +13,12 @@ import java.util.Map;
 
 /**
  *
- * Deal With Aggregate Function
  */
 public class GroupByClause {
-    private List<String> groupingElements;
+    private List<MQLElement> groupingElements;
 
-    public GroupByClause(String ... elements) {
-        this.groupingElements = new ArrayList<>(Arrays.asList(elements));
+    public GroupByClause(MQLElement... groupingElements) {
+        this.groupingElements = new ArrayList<>(Arrays.asList(groupingElements));
     }
 
     public GroupByClause() {
@@ -33,12 +35,14 @@ public class GroupByClause {
     }
 
 
-    private int compare(Map<String, Object> row1, Map<String, Object> row2, List<String> elements, int idx) {
-        if (elements.size() > idx) {
-            String compareKey = elements.get(idx);
+    private int compare(Map<String, Object> row1, Map<String, Object> row2, List<MQLElement> elements, int idx) {
 
-            if (row1.get(compareKey) instanceof String && row2.get(compareKey) instanceof  String) {
-                int compareValue = ((String) row1.get(compareKey)).compareTo((String)row2.get(compareKey));
+        if (elements.size() > idx) {
+            MQLElement element = elements.get(idx);
+            String compareColumn = element.getElementExpression();
+
+            if (row1.get(compareColumn) instanceof String && row2.get(compareColumn) instanceof String) {
+                int compareValue = ((String) row1.get(compareColumn)).compareTo((String) row2.get(compareColumn));
 
                 if (compareValue != 0) {
                     return compareValue;
@@ -46,8 +50,8 @@ public class GroupByClause {
                     return compare(row1, row2, elements, idx + 1);
                 }
 
-            } else if (row1.get(compareKey) instanceof Number && row2.get(compareKey) instanceof Number) {
-                double compareValue = (((Number)row1.get(compareKey)).doubleValue()) - (((Number)row2.get(compareKey)).doubleValue());
+            } else if (row1.get(compareColumn) instanceof Number && row2.get(compareColumn) instanceof Number) {
+                double compareValue = (((Number) row1.get(compareColumn)).doubleValue()) - (((Number) row2.get(compareColumn)).doubleValue());
 
                 if (compareValue > 0) {
                     return 1;

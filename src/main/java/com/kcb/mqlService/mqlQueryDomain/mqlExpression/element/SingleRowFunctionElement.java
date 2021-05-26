@@ -9,6 +9,7 @@ public abstract class SingleRowFunctionElement implements MQLElement {
     private List<MQLElement> parameters;
     private String dataSourceIdForRow;
     private FunctionParameterType functionParameterType;
+    private String columnParameterName;
 
     public SingleRowFunctionElement(MQLElement ... parameters) {
         this.parameters = Arrays.asList(parameters);
@@ -22,11 +23,14 @@ public abstract class SingleRowFunctionElement implements MQLElement {
                 columnCount += 1;
                 dataSourceIdForRow = ((ColumnElement) each).getDataSourceId();
                 functionParameterType = FunctionParameterType.COLUMN;
+                columnParameterName = ((ColumnElement) each).getColumnName();
             } else if (each instanceof SingleRowFunctionElement) {
                 columnCount += 1;
                 dataSourceIdForRow = ((SingleRowFunctionElement) each).getDataSourceIdForRow();
-                if (dataSourceIdForRow != null && !dataSourceIdForRow.isEmpty())
+                columnParameterName = ((SingleRowFunctionElement) each).getColumnParameterName();
+                if (dataSourceIdForRow != null && !dataSourceIdForRow.isEmpty()) {
                     functionParameterType = FunctionParameterType.COLUMN;
+                }
             }
         }
 
@@ -48,5 +52,9 @@ public abstract class SingleRowFunctionElement implements MQLElement {
 
     public boolean hasColumn() {
         return functionParameterType.isColumn();
+    }
+
+    public String getColumnParameterName() {
+        return columnParameterName;
     }
 }
