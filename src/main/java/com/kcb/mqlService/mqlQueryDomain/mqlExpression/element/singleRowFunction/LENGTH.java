@@ -46,8 +46,10 @@ public class LENGTH extends SingleRowFunctionElement {
             return ((String) param).length();
         }else if (param instanceof ValueElement && ((ValueElement) param).getValue() instanceof String) {
             return ((String) ((ValueElement) param).getValue()).length();
-        } else if (param instanceof ColumnElement && singleRow.get(((ColumnElement) param).getColumnName()) instanceof String) {
-            return ((String) singleRow.get(((ColumnElement) param).getColumnName())).length();
+        } else if(param instanceof ValueElement && ((ValueElement) param).getValue() instanceof Number) {
+            return (String.valueOf(((ValueElement) param).getValue())).length();
+        }  else if(param instanceof ColumnElement ){
+            return String.valueOf((singleRow.get(((ColumnElement) param).getColumnName()))).length();
         } else if (param instanceof SingleRowFunctionElement){
             return execute(((SingleRowFunctionElement) param).executeAbout(singleRow), singleRow);
         } else {

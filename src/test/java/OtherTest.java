@@ -2,6 +2,11 @@
 import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
+import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.MQLElement;
+import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.SingleRowFunctionElement;
+import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.ValueElement;
+import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.singleRowFunction.LENGTH;
+import com.kcb.mqlService.mqlQueryDomain.mqlExpression.relationalOperator.RelationalOperation;
 import com.kcb.mqlService.testData.TestDataFactory;
 import org.junit.Test;
 
@@ -63,6 +68,14 @@ public class OtherTest {
         assertThat(matchedColumnSet.size(), is(1));
         assertThat(matchedColumnSet, equalTo(new HashSet<>(Arrays.asList("A"))));
 
+    }
+
+    @Test
+    public void lengthTest() {
+        SingleRowFunctionElement length = new LENGTH(
+                new ValueElement(1000.0)
+        );
+        System.out.println(length.executeAbout(new HashMap<>()));
     }
 
     @Test

@@ -1,5 +1,6 @@
 package com.kcb.mqlService.mqlQueryDomain.mqlQueryClause;
 
+import com.kcb.mqlService.mqlQueryDomain.mqlData.MQLDataStorage;
 import com.kcb.mqlService.mqlQueryDomain.mqlData.MQLTable;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.ColumnElement;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.MQLElement;
@@ -15,23 +16,71 @@ import java.util.Map;
  *
  */
 public class GroupByClause {
-    private List<MQLElement> groupingElements;
+    private List<MQLElement> groupingElements = new ArrayList<>();
 
     public GroupByClause(MQLElement... groupingElements) {
         this.groupingElements = new ArrayList<>(Arrays.asList(groupingElements));
+    }
+
+    public GroupByClause(List<MQLElement> groupingElements) {
+        this.groupingElements = groupingElements;
     }
 
     public GroupByClause() {
         this.groupingElements = new ArrayList<>();
     }
 
-    public MQLTable groupingWith(MQLTable table) {
+    public MQLDataStorage groupingWith(MQLDataStorage mqlDataStorage) {
+        MQLTable table = updateTable(mqlDataStorage.getMqlTable());
+        return new MQLDataStorage(mqlDataStorage.getMqlDataSource(), table);
+    }
 
-        List<Map<String, Object>> tableData = new ArrayList<>(table.getTableData());
+    private MQLTable updateTable(MQLTable table) {
+        MQLTable updatedTable = new MQLTable(table);
+        if (!groupingElements.isEmpty()) {
+            updatedTable.setGrouped(true);
+            updatedTable.setTableData(updateTableData(table.getTableData()));
+            updatedTable.getTableData().sort((row1, row2) -> compare(row1, row2, groupingElements, 0));
+            updatedTable.setGroupingElements(updateGroupingElements());
 
-        tableData.sort((row1, row2) -> compare(row1, row2, groupingElements, 0));
+        } else {
+            updatedTable.setGrouped(false);
+        }
 
-        return new MQLTable(table.getJoinSet(), tableData);
+        return updatedTable;
+    }
+
+
+    // if Grouping Elements contains singleRowFunction(ex: LENGTH(A.ID)), add to tableData's column
+    private List<Map<String, Object>> updateTableData(List<Map<String, Object>> origin) {
+        List<Map<String, Object>> updatedTableData = new ArrayList<>(origin);
+
+        groupingElements.forEach(element -> {
+            if (element instanceof SingleRowFunctionElement) {
+                updatedTableData.forEach(eachRow -> {
+                    eachRow.put(element.getElementExpression(), ((SingleRowFunctionElement) element).executeAbout(eachRow));
+                });
+            }
+        });
+
+        return updatedTableData;
+    }
+
+    // update MQLTable's grouping elements to contains only column element type
+    private List<MQLElement> updateGroupingElements() {
+        List<MQLElement> updatedElements = new ArrayList<>();
+
+        groupingElements.forEach(element -> {
+            if (element instanceof SingleRowFunctionElement) {
+                String columnNameOfSingleRowFunctionParameter = ((SingleRowFunctionElement) element).getColumnParameterName();
+                ColumnElement columnElement = new ColumnElement(columnNameOfSingleRowFunctionParameter);
+                updatedElements.add(columnElement);
+            } else if (element instanceof ColumnElement) {
+                updatedElements.add(element);
+            }
+        });
+
+        return updatedElements;
     }
 
 
