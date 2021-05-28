@@ -8,9 +8,9 @@ public class MQLTable {
     private Set<String> joinSet;
     private List<Map<String, Object>> tableData;
     private boolean isGrouped = false;
-    private List<MQLElement> groupingElements;
+    private List<String> groupingElements;
 
-    public MQLTable(Set<String> joinSet, List<Map<String, Object>> tableData, boolean isGrouped, List<MQLElement> groupingElements) {
+    public MQLTable(Set<String> joinSet, List<Map<String, Object>> tableData, boolean isGrouped, List<String> groupingElements) {
         this.joinSet = new HashSet<>(joinSet);
         this.tableData = new ArrayList<>(tableData);
         this.isGrouped = isGrouped;
@@ -73,11 +73,11 @@ public class MQLTable {
         this.isGrouped = isGrouped;
     }
 
-    public void setGroupingElements(List<MQLElement> groupingElements) {
+    public void setGroupingElements(List<String> groupingElements) {
         this.groupingElements = groupingElements;
     }
 
-    public List<MQLElement> getGroupingElements() {
+    public List<String> getGroupingElements() {
         return groupingElements;
     }
 }

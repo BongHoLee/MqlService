@@ -1,10 +1,11 @@
-package com.kcb.mqlService.mqlQueryDomain.mqlQueryClause;
+package com.kcb.mqlService.mqlQueryDomain.mqlQueryClause.optionalClause;
 
 import com.kcb.mqlService.mqlQueryDomain.mqlData.MQLDataStorage;
 import com.kcb.mqlService.mqlQueryDomain.mqlData.MQLTable;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.ColumnElement;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.MQLElement;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.SingleRowFunctionElement;
+import com.kcb.mqlService.mqlQueryDomain.mqlQueryClause.OptionalClause;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,7 +16,7 @@ import java.util.Map;
 /**
  *
  */
-public class GroupByClause {
+public class GroupByClause implements OptionalClause {
     private List<MQLElement> groupingElements = new ArrayList<>();
 
     public GroupByClause(MQLElement... groupingElements) {
@@ -30,7 +31,12 @@ public class GroupByClause {
         this.groupingElements = new ArrayList<>();
     }
 
-    public MQLDataStorage groupingWith(MQLDataStorage mqlDataStorage) {
+    @Override
+    public MQLDataStorage executeClause(MQLDataStorage mqlDataStorage) {
+        return groupingWith(mqlDataStorage);
+    }
+
+    private MQLDataStorage groupingWith(MQLDataStorage mqlDataStorage) {
         MQLTable table = updateTable(mqlDataStorage.getMqlTable());
         return new MQLDataStorage(mqlDataStorage.getMqlDataSource(), table);
     }
@@ -67,16 +73,15 @@ public class GroupByClause {
     }
 
     // update MQLTable's grouping elements to contains only column element type
-    private List<MQLElement> updateGroupingElements() {
-        List<MQLElement> updatedElements = new ArrayList<>();
+    private List<String> updateGroupingElements() {
+        List<String> updatedElements = new ArrayList<>();
 
         groupingElements.forEach(element -> {
             if (element instanceof SingleRowFunctionElement) {
                 String columnNameOfSingleRowFunctionParameter = ((SingleRowFunctionElement) element).getColumnParameterName();
-                ColumnElement columnElement = new ColumnElement(columnNameOfSingleRowFunctionParameter);
-                updatedElements.add(columnElement);
+                updatedElements.add(columnNameOfSingleRowFunctionParameter);
             } else if (element instanceof ColumnElement) {
-                updatedElements.add(element);
+                updatedElements.add(((ColumnElement) element).getColumnName());
             }
         });
 
@@ -118,5 +123,6 @@ public class GroupByClause {
             return 0;
         }
     }
+
 
 }

@@ -41,12 +41,8 @@ public class ColumnVIsitorOperatingTest {
         rawDataSource.put("C", TestDataFactory.tableOf("shippers"));
         rawDataSource.put("D", TestDataFactory.tableOf("test"));
 
-
         FromClause from = new FromClause();
-        from.addDataSourceIds("A", "B", "C", "D");
-        mqlDataSource = from.makeMqlDataSources(rawDataSource);
-
-        mqlDataStorage = new MQLDataStorage(mqlDataSource, new MQLTable());
+        mqlDataStorage = from.makeMqlDataSources(rawDataSource);
     }
 
     /**
@@ -271,8 +267,6 @@ public class ColumnVIsitorOperatingTest {
 
         print(result);
     }
-
-
 
     public void print(MQLDataStorage mqlDataStorage) {
         System.out.println(mqlDataStorage.getMqlTable().getJoinSet());

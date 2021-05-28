@@ -39,10 +39,7 @@ public class SingleRowFunctionVisitorTest {
 
 
         FromClause from = new FromClause();
-        from.addDataSourceIds("A", "B", "C", "D");
-        mqlDataSource = from.makeMqlDataSources(rawDataSource);
-
-        mqlDataStorage = new MQLDataStorage(mqlDataSource, new MQLTable());
+        mqlDataStorage = from.makeMqlDataSources(rawDataSource);
     }
 
     /**

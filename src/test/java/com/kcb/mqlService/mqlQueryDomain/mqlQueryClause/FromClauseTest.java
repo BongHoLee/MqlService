@@ -20,9 +20,8 @@ public class FromClauseTest {
         rawDataSource.put("C", TestDataFactory.tableOf("shippers"));
 
         FromClause fromClause = new FromClause();
-        fromClause.addDataSourceIds("A", "B", "C");
 
-        MQLDataSource mqlDataSource = fromClause.makeMqlDataSources(rawDataSource);
+        MQLDataSource mqlDataSource = fromClause.makeMqlDataSources(rawDataSource).getMqlDataSource();
 
 
         assertThat(true, equalTo(isConvertedWithoutLeak(rawDataSource, mqlDataSource.getMqlDataSources())));

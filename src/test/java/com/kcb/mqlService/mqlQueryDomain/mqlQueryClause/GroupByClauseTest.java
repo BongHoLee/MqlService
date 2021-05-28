@@ -6,19 +6,14 @@ import com.kcb.mqlService.mqlQueryDomain.mqlData.MQLTable;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.ColumnElement;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.MQLElement;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.singleRowFunction.LENGTH;
+import com.kcb.mqlService.mqlQueryDomain.mqlQueryClause.optionalClause.GroupByClause;
 import com.kcb.mqlService.testData.TestDataFactory;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.*;
 
-import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
-import static org.hamcrest.Matchers.lessThan;
-import static org.hamcrest.Matchers.lessThanOrEqualTo;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.greaterThan;
 
 public class GroupByClauseTest {
     private MQLDataStorage mqlDataStorage;
@@ -36,10 +31,7 @@ public class GroupByClauseTest {
 
 
         FromClause from = new FromClause();
-        from.addDataSourceIds("A", "B", "C", "D", "E");
-        mqlDataSource = from.makeMqlDataSources(rawDataSource);
-
-        mqlDataStorage = new MQLDataStorage(mqlDataSource, new MQLTable());
+        mqlDataStorage = from.makeMqlDataSources(rawDataSource);
     }
 
     /**
@@ -64,7 +56,7 @@ public class GroupByClauseTest {
 
         GroupByClause groupBy = new GroupByClause(groupingElements);
 
-        MQLDataStorage result = groupBy.groupingWith(mqlDataStorage);
+        MQLDataStorage result = groupBy.executeClause(mqlDataStorage);
         print(result);
 
     }
@@ -90,13 +82,15 @@ public class GroupByClauseTest {
 
         GroupByClause groupBy = new GroupByClause(groupingElements);
 
-        MQLDataStorage result = groupBy.groupingWith(mqlDataStorage);
+        MQLDataStorage result = groupBy.executeClause(mqlDataStorage);
+
         result.getMqlTable().getTableData().forEach(eachRow ->{
             eachRow.remove("E.CategoryID");
             eachRow.remove("E.Unit");
             eachRow.remove("E.ProductID");
             eachRow.remove("E.ProductName");
         });
+
         print(result);
     }
 

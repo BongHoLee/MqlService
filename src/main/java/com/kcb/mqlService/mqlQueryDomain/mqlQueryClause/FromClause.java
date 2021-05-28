@@ -3,6 +3,8 @@ package com.kcb.mqlService.mqlQueryDomain.mqlQueryClause;
 
 
 import com.kcb.mqlService.mqlQueryDomain.mqlData.MQLDataSource;
+import com.kcb.mqlService.mqlQueryDomain.mqlData.MQLDataStorage;
+import com.kcb.mqlService.mqlQueryDomain.mqlData.MQLTable;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -12,14 +14,14 @@ public class FromClause {
 
     private MQLDataSource mqlDataSource = new MQLDataSource();
 
-    public void addDataSourceIds(String ... dataSourceIds) {
-        for (String eachId : dataSourceIds)
-            mqlDataSource.addDataSourceId(eachId);
-    }
-
-    public MQLDataSource makeMqlDataSources(Map<String, List<Map<String, Object>>> rawDataSources) {
+    public MQLDataStorage makeMqlDataSources(Map<String, List<Map<String, Object>>> rawDataSources) {
         mqlDataSource.makeFromRawDataSources(rawDataSources);
-        return mqlDataSource;
+        MQLDataStorage mqlDataStorage = new MQLDataStorage(
+                mqlDataSource,
+                new MQLTable()
+        );
+
+        return mqlDataStorage;
     }
 
 
