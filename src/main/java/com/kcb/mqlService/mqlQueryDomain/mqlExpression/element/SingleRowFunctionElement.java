@@ -8,7 +8,7 @@ public abstract class SingleRowFunctionElement implements MQLElement {
 
     private List<MQLElement> parameters;
     private String dataSourceIdForRow;
-    private FunctionParameterType functionParameterType;
+    private SingleRowFunctionParameterType singleRowFunctionParameterType;
     private String columnParameterName;
 
     public SingleRowFunctionElement(MQLElement ... parameters) {
@@ -22,14 +22,14 @@ public abstract class SingleRowFunctionElement implements MQLElement {
             if (each instanceof ColumnElement) {
                 columnCount += 1;
                 dataSourceIdForRow = ((ColumnElement) each).getDataSourceId();
-                functionParameterType = FunctionParameterType.COLUMN;
+                singleRowFunctionParameterType = SingleRowFunctionParameterType.COLUMN;
                 columnParameterName = ((ColumnElement) each).getColumnName();
             } else if (each instanceof SingleRowFunctionElement) {
                 columnCount += 1;
                 dataSourceIdForRow = ((SingleRowFunctionElement) each).getDataSourceIdForRow();
                 columnParameterName = ((SingleRowFunctionElement) each).getColumnParameterName();
                 if (dataSourceIdForRow != null && !dataSourceIdForRow.isEmpty()) {
-                    functionParameterType = FunctionParameterType.COLUMN;
+                    singleRowFunctionParameterType = SingleRowFunctionParameterType.COLUMN;
                 }
             }
         }
@@ -37,7 +37,7 @@ public abstract class SingleRowFunctionElement implements MQLElement {
         if (columnCount > 1)
             throw new RuntimeException("Function can't have more than one column");
         else if (columnCount == 0)
-            functionParameterType = FunctionParameterType.VALUE;
+            singleRowFunctionParameterType = SingleRowFunctionParameterType.VALUE;
     }
 
     public Object executeAbout(Map<String, Object> singleRow) {
@@ -51,7 +51,7 @@ public abstract class SingleRowFunctionElement implements MQLElement {
     }
 
     public boolean hasColumn() {
-        return functionParameterType.isColumn();
+        return singleRowFunctionParameterType.isColumn();
     }
 
     public String getColumnParameterName() {

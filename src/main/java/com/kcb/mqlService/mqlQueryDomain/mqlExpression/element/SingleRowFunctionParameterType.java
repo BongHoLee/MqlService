@@ -1,12 +1,12 @@
 package com.kcb.mqlService.mqlQueryDomain.mqlExpression.element;
 
-public enum FunctionParameterType {
+public enum SingleRowFunctionParameterType {
     COLUMN(true),
     VALUE(false);
 
     private boolean isColumn;
 
-     FunctionParameterType(boolean isColumn) {
+     SingleRowFunctionParameterType(boolean isColumn) {
         this.isColumn = isColumn;
     }
 
