@@ -48,7 +48,7 @@ public abstract class SingleRowFunctionElement implements MQLElement {
 
     public  String getDataSourceIdForRow() {
         return dataSourceIdForRow;
-    } 
+    }
 
     public boolean hasColumn() {
         return singleRowFunctionParameterType.isColumn();
