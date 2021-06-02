@@ -67,7 +67,7 @@ public class WithColumnTargetOperating implements WithTargetOperating {
             resultTable.addJoinList(standardFunctionElement.getDataSourceIdForRow());
             List<Map<String, Object>> standardTableData = mqlDataSource.dataSourceOf(standardFunctionElement.getDataSourceIdForRow());
 
-            // function column, compare column are same : ex)  LENGTH(A.City) > A.CategoryID
+            // function column's table, compare column's table are same : ex)  LENGTH(A.City) > A.CategoryID
             if (compareTargetColumn.getColumnName().equals(standardFunctionElement.getDataSourceIdForRow())) {
                 List<Map<String, Object>> mergedSameTableData =
                         standardTableData.stream()
@@ -76,7 +76,7 @@ public class WithColumnTargetOperating implements WithTargetOperating {
 
                 mergedTableData.addAll(mergedSameTableData);
 
-                // function column, compare column are not same : ex )  LENGTH(B.CategoryName) > A.CustomerID
+                // function column's table, compare column's table are not same : ex )  LENGTH(B.CategoryName) > A.CustomerID
             } else {
                 standardTableData.forEach(standardRow -> {
                     compareTableData.forEach(compareRow -> {

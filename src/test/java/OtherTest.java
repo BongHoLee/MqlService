@@ -90,4 +90,21 @@ public class OtherTest {
         System.out.println(str.substring(st, to));
     }
 
+    @Test
+    public void bigdecimalTest() {
+        Map<String, Object> map = new HashMap<>();
+        BigDecimal inte = new BigDecimal(11);
+
+        map.put("int", 1L);
+        map.put("double", 1.0);
+        map.put("long", inte.longValue());
+
+        System.out.println(map.get("long") instanceof Integer);
+        System.out.println(map.get("long") instanceof Long);
+        System.out.println(map.get("int") instanceof Integer);
+        System.out.println(map.get("int") instanceof Double);
+        System.out.println(map.get("double") instanceof Integer);
+        System.out.println(map.get("double") instanceof Double);
+    }
+
 }

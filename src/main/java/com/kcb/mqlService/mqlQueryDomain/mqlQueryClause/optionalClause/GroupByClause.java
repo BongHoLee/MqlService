@@ -72,22 +72,16 @@ public class GroupByClause implements OptionalClause {
         return updatedTableData;
     }
 
-    // update MQLTable's grouping elements to contains only column element type
+    // update MQLTable's grouping elements to contains only column
     private List<String> updateGroupingElements() {
         List<String> updatedElements = new ArrayList<>();
 
         groupingElements.forEach(element -> {
-            if (element instanceof SingleRowFunctionElement) {
-                String columnNameOfSingleRowFunctionParameter = ((SingleRowFunctionElement) element).getColumnParameterName();
-                updatedElements.add(columnNameOfSingleRowFunctionParameter);
-            } else if (element instanceof ColumnElement) {
-                updatedElements.add(((ColumnElement) element).getColumnName());
-            }
+            updatedElements.add(element.getElementExpression());
         });
 
         return updatedElements;
     }
-
 
     private int compare(Map<String, Object> row1, Map<String, Object> row2, List<MQLElement> elements, int idx) {
 

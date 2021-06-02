@@ -31,8 +31,8 @@ public class TestDataFactory {
             Map<String, Object> copied = new HashMap<>();
             for (String eachKey : eachRow.keySet()) {
                 try {
-                    Integer.parseInt(eachRow.get(eachKey));
-                    copied.put(eachKey, Integer.parseInt(eachRow.get(eachKey)));
+                    Double.parseDouble(eachRow.get(eachKey));
+                    copied.put(eachKey, Double.parseDouble(eachRow.get(eachKey)));
                 } catch (Exception e) {
                     copied.put(eachKey, eachRow.get(eachKey));
                 }

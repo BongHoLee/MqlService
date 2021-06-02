@@ -9,12 +9,14 @@ public class MQLTable {
     private List<Map<String, Object>> tableData;
     private boolean isGrouped = false;
     private List<String> groupingElements;
+    private List<Integer> groupingIdx;
 
-    public MQLTable(Set<String> joinSet, List<Map<String, Object>> tableData, boolean isGrouped, List<String> groupingElements) {
+    public MQLTable(Set<String> joinSet, List<Map<String, Object>> tableData, boolean isGrouped, List<String> groupingElements, List<Integer> groupingIdx) {
         this.joinSet = new HashSet<>(joinSet);
         this.tableData = new ArrayList<>(tableData);
         this.isGrouped = isGrouped;
         this.groupingElements = new ArrayList<>(groupingElements);
+        this.groupingIdx = new ArrayList<>(groupingIdx);
     }
 
     public MQLTable(MQLTable mqlTable) {
@@ -22,23 +24,24 @@ public class MQLTable {
         this.tableData = new ArrayList<>(mqlTable.getTableData());
         this.isGrouped = mqlTable.isGrouped();
         this.groupingElements = new ArrayList<>(mqlTable.getGroupingElements());
+        this.groupingIdx = new ArrayList<>(mqlTable.getGroupingIdx());
     }
 
     public MQLTable(Set<String> joinSet, List<Map<String, Object>> tableData) {
-        this(joinSet, tableData, false, new ArrayList<>());
+        this(joinSet, tableData, false, new ArrayList<>(), new ArrayList<>());
 
     }
 
     public MQLTable(Set<String> joinSet) {
-        this(joinSet, new ArrayList<>(), false, new ArrayList<>());
+        this(joinSet, new ArrayList<>(), false, new ArrayList<>(), new ArrayList<>());
     }
 
     public MQLTable(List<Map<String, Object>> tableData) {
-        this(new HashSet<>(), tableData, false, new ArrayList<>());
+        this(new HashSet<>(), tableData, false, new ArrayList<>(), new ArrayList<>());
     }
 
     public MQLTable() {
-        this(new HashSet<>(), new ArrayList<>(), false, new ArrayList<>());
+        this(new HashSet<>(), new ArrayList<>(), false, new ArrayList<>(), new ArrayList<>());
     }
 
     public void addJoinList(String ... dataSourceIds) {
@@ -75,9 +78,46 @@ public class MQLTable {
 
     public void setGroupingElements(List<String> groupingElements) {
         this.groupingElements = groupingElements;
+        setGroupingIdx();
     }
+
+    // set grouping idx
+    private void setGroupingIdx() {
+
+        List<Integer> groupingIndex = new ArrayList<>();
+        Map<String, Object> last = new HashMap<>();
+
+        for (int i=0; i<tableData.size(); i++) {
+            if (i == 0) {
+                last = tableData.get(i);
+                continue;
+            }
+
+            Map<String, Object> cur = tableData.get(i);
+
+            for (String groupElement : groupingElements) {
+                if (!(cur.get(groupElement).equals(last.get(groupElement)))) {
+                    groupingIndex.add(i-1);
+                    break;
+                }
+            }
+
+            if (i == tableData.size() - 1) {
+                groupingIndex.add(i);
+            }
+            last = cur;
+        }
+
+        this.groupingIdx = groupingIndex;
+
+    }
+
 
     public List<String> getGroupingElements() {
         return groupingElements;
+    }
+
+    public List<Integer> getGroupingIdx() {
+        return groupingIdx;
     }
 }
