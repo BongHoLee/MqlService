@@ -98,7 +98,7 @@ public class GroupByClauseTest {
         System.out.println(mqlDataStorage.getMqlTable().getJoinSet());
         System.out.println(mqlDataStorage.getMqlTable().getTableData());
         System.out.println(mqlDataStorage.getMqlTable().getTableData().size());
-        System.out.println(mqlDataStorage.getMqlTable().getGroupingIdx());
-        System.out.println(mqlDataStorage.getMqlTable().getGroupingIdx().size());
+        System.out.println(mqlDataStorage.getMqlTable().getGroupingIdxs());
+        System.out.println(mqlDataStorage.getMqlTable().getGroupingIdxs().size());
     }
 }

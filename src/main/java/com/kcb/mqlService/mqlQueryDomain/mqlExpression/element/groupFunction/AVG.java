@@ -3,6 +3,11 @@ package com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.groupFunction;
 import com.kcb.mqlService.mqlQueryDomain.mqlData.MQLDataStorage;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.*;
 
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.IntStream;
+
 public class AVG extends GroupFunctionElement {
     private String expression = "";
     public AVG(MQLElement parameter) {
@@ -13,19 +18,35 @@ public class AVG extends GroupFunctionElement {
 
     @Override
     protected Object executeWithColumnParameter(int start, int end, ColumnElement parameter, MQLDataStorage mqlDataStorage) {
-
-        return 0;
+        String columnName = parameter.getColumnName();
+        return IntStream.range(start, end+1).filter(idx -> {
+            Map<String, Object> row = mqlDataStorage.getMqlTable().getTableData().get(idx);
+            return row.containsKey(columnName) && row.get(columnName) != null && row.get(columnName) instanceof Number;
+        }).mapToDouble(idx -> {
+            Map<String, Object> row = mqlDataStorage.getMqlTable().getTableData().get(idx);
+            return new BigDecimal(String.valueOf(row.get(columnName))).doubleValue();
+        }).average().orElse(Double.NaN);
     }
 
     @Override
     protected Object executeWithValueParameter(int start, int end, ValueElement parameter, MQLDataStorage mqlDataStorage) {
-        return 0;
+        return parameter.getValueType() == ValueType.STRING ? 0 : parameter.getValue();
     }
 
     @Override
     protected Object executeWithSingleRowFunctionParameter(int start, int end, SingleRowFunctionElement parameter, MQLDataStorage mqlDataStorage) {
+        if (parameter.hasColumn()) {
+            return IntStream.range(start, end+1).mapToObj(idx -> {
+                Map<String, Object> row = mqlDataStorage.getMqlTable().getTableData().get(idx);
+                return parameter.executeAbout(row);
+            }).filter(executeResult -> executeResult instanceof Number)
+                    .mapToDouble(numberResult -> new BigDecimal(String.valueOf(numberResult)).doubleValue())
+                    .average().orElse(Double.NaN);
+        } else {
+            Object result = parameter.executeAbout(new HashMap<>());
+            return result instanceof Number ? new BigDecimal(String.valueOf(result)).doubleValue() : 0;
+        }
 
-        return 0;
     }
 
     @Override

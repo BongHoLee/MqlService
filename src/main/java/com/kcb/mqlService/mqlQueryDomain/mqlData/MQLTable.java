@@ -1,7 +1,5 @@
 package com.kcb.mqlService.mqlQueryDomain.mqlData;
 
-import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.MQLElement;
-
 import java.util.*;
 
 public class MQLTable {
@@ -24,7 +22,7 @@ public class MQLTable {
         this.tableData = new ArrayList<>(mqlTable.getTableData());
         this.isGrouped = mqlTable.isGrouped();
         this.groupingElements = new ArrayList<>(mqlTable.getGroupingElements());
-        this.groupingIdx = new ArrayList<>(mqlTable.getGroupingIdx());
+        this.groupingIdx = new ArrayList<>(mqlTable.getGroupingIdxs());
     }
 
     public MQLTable(Set<String> joinSet, List<Map<String, Object>> tableData) {
@@ -117,7 +115,7 @@ public class MQLTable {
         return groupingElements;
     }
 
-    public List<Integer> getGroupingIdx() {
+    public List<Integer> getGroupingIdxs() {
         return groupingIdx;
     }
 }

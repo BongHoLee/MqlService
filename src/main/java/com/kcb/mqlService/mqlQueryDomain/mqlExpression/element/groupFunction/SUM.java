@@ -42,7 +42,6 @@ public class SUM extends GroupFunctionElement {
     @Override
     protected Object executeWithSingleRowFunctionParameter(int start, int end, SingleRowFunctionElement parameter, MQLDataStorage mqlDataStorage) {
 
-
         return IntStream.range(start, end+1).mapToDouble(idx -> {
             Map<String, Object> row = mqlDataStorage.getMqlTable().getTableData().get(idx);
             Object functionExecuteResult = parameter.executeAbout(row);
