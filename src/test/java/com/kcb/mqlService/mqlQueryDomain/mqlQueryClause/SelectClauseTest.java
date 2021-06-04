@@ -238,7 +238,7 @@ public class SelectClauseTest {
                                         new WithColumnTargetOperating(new ColumnElement("E.CategoryID"))
                                 )
                         )
-                        ,
+                        ,  
                         new WhereClause(
                                 new ColumnOperandExpression(
                                         new ColumnElement("E.Price"),
