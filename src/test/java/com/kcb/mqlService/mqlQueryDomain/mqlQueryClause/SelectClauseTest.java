@@ -26,6 +26,8 @@ import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.lessThan;
+import static org.hamcrest.Matchers.lessThanOrEqualTo;
 
 
 
@@ -238,7 +240,7 @@ public class SelectClauseTest {
                                         new WithColumnTargetOperating(new ColumnElement("E.CategoryID"))
                                 )
                         )
-                        ,  
+                        ,
                         new WhereClause(
                                 new ColumnOperandExpression(
                                         new ColumnElement("E.Price"),
@@ -266,7 +268,7 @@ public class SelectClauseTest {
             assertThat(eachRow.get("A.CategoryID"), is(equalTo(eachRow.get("E.CategoryID"))));
         });
 
-        print(result);
+
     }
 
     /**
@@ -292,8 +294,62 @@ public class SelectClauseTest {
         assertThat(dataSource.get("E"), hasSize((int)result.get(0).get("COUNT('*')")));
     }
 
+    /**
+     * SELECT A.CategoryID, A.CategoryName, E.SupplierID, SUM(E.Price)
+     * From Categories A
+     * JOIN Products E ON A.CategoryID=E.CategoryID
+     * WHERE E.SupplierID < 5
+     * GROUP BY A.CategoryID, A.CategoryName, E.SupplierID
+     */
+    @Test
+    public void selectGroupingDataWithJoinAndWhereAndGroupBy() {
+        MQLElement element1 = new ColumnElement("A.CategoryID");
+        MQLElement element2 = new ColumnElement("A.CategoryName");
+        MQLElement element3 = new ColumnElement("E.SupplierID");
+        MQLElement element4 = new SUM(new ColumnElement("E.Price"));
+        List<MQLElement> selectItems = Arrays.asList(element1, element2, element3, element4);
+
+        SelectClause select = new SelectClause(
+                selectItems,
+                new FromClause(),
+                new GeneralConditionClause(
+                        new JoinClause(
+                                new ColumnOperandExpression(
+                                        new ColumnElement("A.CategoryID"),
+                                        RelationalOperator::equalTo,
+                                        new WithColumnTargetOperating(new ColumnElement("E.CategoryID"))
+                                )
+                        ),
+                        new WhereClause(
+                                new ColumnOperandExpression(
+                                        new ColumnElement("E.SupplierID"),
+                                        RelationalOperator::lessThan,
+                                        new WithValueTargetOperating(new ValueElement(5))
+                                )
+                        )
+                ),
+                new GroupByClause(
+                        new ColumnElement("A.CategoryID"),
+                        new ColumnElement("A.CategoryName"),
+                        new ColumnElement("E.SupplierID")
+                )
+        );
+
+        List<Map<String, Object>> result = select.executeQueryWith(rawDataSource);
+
+        result.forEach(eachRow -> {
+            assertThat(eachRow.keySet(), hasItems("E.SupplierID", "A.CategoryID", "A.CategoryName", "SUM(E.Price)"));
+            assertThat(eachRow.keySet(), hasSize(4));
+            assertThat((Double)eachRow.get("E.SupplierID"), lessThan(7.0));
+        });
+
+
+    }
+
     public void print(List<Map<String, Object>> result) {
         System.out.println(result);
         System.out.println(result.size());
     }
+
+
 }
