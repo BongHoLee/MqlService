@@ -7,6 +7,7 @@ import com.kcb.mqlService.mqlQueryDomain.mqlExpression.ColumnOperandExpression;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.SingleRowFunctionOperandExpression;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.ValueOperandExpression;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.ColumnElement;
+import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.GroupFunctionElement;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.SingleRowFunctionElement;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.ValueElement;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.relationalOperator.RelationalOperation;
@@ -86,6 +87,11 @@ public class WithSingleRowFunctionTargetOperating implements WithTargetOperating
 
     @Override
     public MQLDataStorage operate(ValueElement standardValueElement, RelationalOperation rOperation, MQLDataStorage mqlDataStorage) {
+        return null;
+    }
+
+    @Override
+    public MQLDataStorage operate(GroupFunctionElement standardGroupFunctionElement, RelationalOperation rOperation, MQLDataStorage mqlDataStorage) {
         return null;
     }
 }

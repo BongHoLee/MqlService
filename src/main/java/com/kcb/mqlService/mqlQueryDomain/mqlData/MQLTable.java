@@ -115,6 +115,10 @@ public class MQLTable {
         return groupingElements;
     }
 
+    public void setGroupingIdx(List<Integer> groupingIdx) {
+        this.groupingIdx = groupingIdx;
+    }
+
     public List<Integer> getGroupingIdxs() {
         return groupingIdx;
     }

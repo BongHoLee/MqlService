@@ -7,6 +7,7 @@ import com.kcb.mqlService.mqlQueryDomain.mqlExpression.ColumnOperandExpression;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.SingleRowFunctionOperandExpression;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.ValueOperandExpression;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.ColumnElement;
+import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.GroupFunctionElement;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.SingleRowFunctionElement;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.ValueElement;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.relationalOperator.RelationalOperation;
@@ -120,5 +121,38 @@ public class WithColumnTargetOperating implements WithTargetOperating {
         MQLTable resultTable = new MQLTable(new HashSet<>(Collections.singletonList(compareDataSourceId)), filteredTable);
 
         return new MQLDataStorage(mqlDataSource, resultTable);
+    }
+
+    @Override
+    public MQLDataStorage operate(GroupFunctionElement standardGroupFunctionElement, RelationalOperation rOperation, MQLDataStorage mqlDataStorage) {
+        MQLTable table = new MQLTable(mqlDataStorage.getMqlTable());
+        MQLDataSource mqlDataSource = mqlDataStorage.getMqlDataSource();
+
+        if (table.isGrouped() && table.getGroupingElements().contains(compareTargetColumn.getColumnName())) {
+
+            List<Map<String, Object>> operatedTableData = new ArrayList<>();
+            List<Integer> updatedGroupingIdx = new ArrayList<>();
+
+            int start = 0;
+            int skipCount = 0;
+            for (int end : table.getGroupingIdxs()) {
+                Object columnValue = table.getTableData().get(end).get(compareTargetColumn.getColumnName());
+                Object functionResult = standardGroupFunctionElement.executeAbout(start, end, mqlDataStorage);
+                if (rOperation.operating(functionResult, columnValue)) {
+                    operatedTableData.addAll(table.getTableData().subList(start, end+1));
+                    updatedGroupingIdx.add(end - skipCount);
+                } else {
+                    skipCount  = skipCount + (end - start + 1);
+                }
+
+                start = end + 1;
+            }
+
+            table.setTableData(operatedTableData);
+            table.setGroupingIdx(updatedGroupingIdx);
+            return new MQLDataStorage(mqlDataSource, table);
+        } else {
+            throw new RuntimeException("Can't Group function Operating!");
+        }
     }
 }

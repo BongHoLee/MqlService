@@ -4,6 +4,7 @@ import com.kcb.mqlService.mqlQueryDomain.mqlData.MQLDataSource;
 import com.kcb.mqlService.mqlQueryDomain.mqlData.MQLDataStorage;
 import com.kcb.mqlService.mqlQueryDomain.mqlData.MQLTable;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.ColumnOperandExpression;
+import com.kcb.mqlService.mqlQueryDomain.mqlExpression.GroupFunctionOperandExpression;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.ColumnElement;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.MQLElement;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.ValueElement;
@@ -11,6 +12,7 @@ import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.groupFunction.COU
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.groupFunction.SUM;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.singleRowFunction.LENGTH;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.operatingVisitor.WithColumnTargetOperating;
+import com.kcb.mqlService.mqlQueryDomain.mqlExpression.operatingVisitor.WithGroupFunctionTargetOperating;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.operatingVisitor.WithValueTargetOperating;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.relationalOperator.RelationalOperator;
 import com.kcb.mqlService.mqlQueryDomain.mqlQueryClause.optionalClause.*;
@@ -391,6 +393,50 @@ public class SelectClauseTest {
             assertThat(eachRow.keySet(), hasSize(4));
             assertThat((Double)eachRow.get("SupplierID"), lessThan(7.0));
         });
+
+
+    }
+
+    /**
+     * SELECT E.SupplierID, SUM(LENGTH(E.ProductName)) SumLength
+     * FROM Products E
+     * GROUP BY E.SupplierID
+     * HAVING SUM(LENGTH(E.ProductName)) > E.SupplierID
+     */
+    @Test
+    public void selectGroupingDataWithHavingAndAlias() {
+        Map<String, List<Map<String, Object>>> dataSource = new HashMap<>();
+        dataSource.put("E", rawDataSource.get("E"));
+
+        MQLElement element1 = new ColumnElement("SUPPLIERID", "E.SupplierID");
+        MQLElement element2 = new SUM("SumLength", new LENGTH(new ColumnElement("E.ProductName")));
+
+        List<MQLElement> selectItems = Arrays.asList(element1, element2);
+        SelectClause select = new SelectClause(
+                selectItems,
+                new FromClause(),
+                new NoneClause(),
+                new GroupByClause(
+                        new ColumnElement("E.SupplierID")
+                )
+                ,
+                new HavingClause(
+                        new GroupFunctionOperandExpression(
+                                new SUM(new LENGTH(new ColumnElement("E.ProductName"))),
+                                RelationalOperator::largerThan,
+                                new WithColumnTargetOperating(new ColumnElement("E.SupplierID"))
+                        )
+                )
+        );
+
+        List<Map<String, Object>> result = select.executeQueryWith(dataSource);
+        print(result);
+
+//        result.forEach(eachRow -> {
+//            assertThat(eachRow.keySet(), hasItems("CategoryID", "CategoryName", "SupplierID", "PriceSum"));
+//            assertThat(eachRow.keySet(), hasSize(4));
+//            assertThat((Double)eachRow.get("SupplierID"), lessThan(7.0));
+//        });
 
 
     }

@@ -107,4 +107,11 @@ public class OtherTest {
         System.out.println(map.get("double") instanceof Double);
     }
 
+    @Test
+    public void subListCopyTest() {
+        List<Integer> origin = Arrays.asList(1, 2, 3, 4, 5);
+        List<Integer> tmp = new ArrayList<>(origin.subList(0, 3));
+        System.out.println(tmp);
+    }
+
 }
