@@ -10,9 +10,32 @@ import java.util.stream.IntStream;
 
 public class SUM extends GroupFunctionElement {
     private String expression = "";
-    public SUM(MQLElement parameter) {
+    private String alias = "";
+    private boolean hasAlias;
+
+    public SUM(String alias, MQLElement parameter) {
         super(parameter);
+        this.alias = alias;
         expression = "SUM(" + getParameterExpression() + ")";
+        setHasAlias();
+    }
+
+    public SUM(MQLElement parameter) {
+        this("", parameter);
+    }
+
+    private void setHasAlias() {
+        hasAlias =  !alias.isEmpty();
+    }
+
+    @Override
+    public boolean hasAlias() {
+        return hasAlias;
+    }
+
+    @Override
+    public String getAlias() {
+        return alias;
     }
 
 

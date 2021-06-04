@@ -8,9 +8,22 @@ import java.util.Map;
 
 public class LOWER extends SingleRowFunctionElement {
     private String expression = "";
+    private boolean hasAlias;
+    private String alias = "";
+
+    public LOWER(String alias, MQLElement ... parameters) {
+        super(parameters);
+        this.alias = alias;
+        makeExpression(parameters);
+        setHasAlias();
+
+    }
 
     public LOWER(MQLElement ... parameters) {
-        super(parameters);
+        this("", parameters);
+    }
+
+    private void makeExpression(MQLElement ... parameters) {
         expression = "LOWER(";
 
         for (int i=0; i<parameters.length; i++) {
@@ -30,9 +43,23 @@ public class LOWER extends SingleRowFunctionElement {
         expression += ")";
     }
 
+    private void setHasAlias() {
+        hasAlias = !alias.isEmpty();
+    }
+
     @Override
     public String getElementExpression() {
         return expression;
+    }
+
+    @Override
+    public boolean hasAlias() {
+        return hasAlias;
+    }
+
+    @Override
+    public String getAlias() {
+        return alias;
     }
 
     @Override

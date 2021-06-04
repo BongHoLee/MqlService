@@ -8,9 +8,32 @@ import java.util.stream.IntStream;
 
 public class COUNT extends GroupFunctionElement {
     private String expression = "";
-    public COUNT(MQLElement parameter) {
+    private String alias = "";
+    private boolean hasAlias;
+
+    public COUNT(String alias, MQLElement parameter) {
         super(parameter);
+        this.alias = alias;
         expression = "COUNT(" + getParameterExpression() + ")";
+        setHasAlias();
+    }
+
+    public COUNT(MQLElement parameter) {
+        this("", parameter);
+    }
+
+    private void setHasAlias() {
+        hasAlias =  !alias.isEmpty();
+    }
+
+    @Override
+    public boolean hasAlias() {
+        return hasAlias;
+    }
+
+    @Override
+    public String getAlias() {
+        return alias;
     }
 
 

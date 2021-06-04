@@ -8,9 +8,22 @@ import java.util.Map;
 
 public class SUBSTR extends SingleRowFunctionElement {
     private String expression = "";
+    private String alias = "";
+    private boolean hasAlias;
+
+    public SUBSTR(String alias, MQLElement ... parameters) {
+        super(parameters);
+        this.alias = alias;
+        makeExpression(parameters);
+        setHasAlias();
+    }
 
     public SUBSTR(MQLElement ... parameters) {
-        super(parameters);
+        this("",parameters);
+
+    }
+
+    private void makeExpression(MQLElement ... parameters) {
         expression = "SUBSTR(";
 
         for (int i=0; i<parameters.length; i++) {
@@ -30,9 +43,23 @@ public class SUBSTR extends SingleRowFunctionElement {
         expression += ")";
     }
 
+    private void setHasAlias() {
+        hasAlias = !alias.isEmpty();
+    }
+
     @Override
     public String getElementExpression() {
         return expression;
+    }
+
+    @Override
+    public boolean hasAlias() {
+        return hasAlias;
+    }
+
+    @Override
+    public String getAlias() {
+        return alias;
     }
 
     @Override

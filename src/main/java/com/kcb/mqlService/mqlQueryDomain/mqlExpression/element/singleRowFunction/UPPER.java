@@ -9,8 +9,21 @@ import java.util.Map;
 public class UPPER extends SingleRowFunctionElement {
 
     private String expression = "";
-    public UPPER(MQLElement ... parameters) {
+    private String alias = "";
+    private boolean hasAlias;
+
+    public UPPER(String alias, MQLElement ... parameters) {
         super(parameters);
+        this.alias = alias;
+        makeExpression(parameters);
+        setHasAlias();
+    }
+
+    public UPPER(MQLElement ... parameters) {
+        this("", parameters);
+    }
+
+    private void makeExpression(MQLElement ... parameters) {
         expression = "UPPER(";
 
         for (int i=0; i<parameters.length; i++) {
@@ -30,9 +43,23 @@ public class UPPER extends SingleRowFunctionElement {
         expression += ")";
     }
 
+    private void setHasAlias() {
+        hasAlias = !alias.isEmpty();
+    }
+
     @Override
     public String getElementExpression() {
         return expression;
+    }
+
+    @Override
+    public boolean hasAlias() {
+        return hasAlias;
+    }
+
+    @Override
+    public String getAlias() {
+        return alias;
     }
 
     @Override

@@ -57,8 +57,6 @@ public class SelectClause{
     }
 
     private List<Map<String, Object>> extractFrom(MQLDataStorage dataStorage) {
-
-
         if (dataStorage.getMqlTable().isGrouped()) {
             return extractFromGroup(dataStorage);
         } else {
@@ -113,14 +111,14 @@ public class SelectClause{
 
     private void extractColumn(int idx, MQLDataStorage dataStorage, Map<String, Object> map) {
         for (ColumnElement element : columnElements) {
-            map.put(element.getColumnName(), dataStorage.getMqlTable().getTableData().get(idx).get(element.getColumnName()));
+            map.put(getAliasOrName(element), dataStorage.getMqlTable().getTableData().get(idx).get(element.getElementExpression()));
         }
 
     }
 
     private void extractValue(Map<String, Object> map) {
         for (ValueElement element : valueElements) {
-            map.put(element.getElementExpression(), element.getValue());
+            map.put(getAliasOrName(element), element.getValue());
         }
     }
 
@@ -128,20 +126,20 @@ public class SelectClause{
         for (SingleRowFunctionElement element : singleRowFunctionElements) {
             Map<String, Object> row = dataStorage.getMqlTable().getTableData().get(idx);
             if (row.containsKey(element.getElementExpression())) {
-                map.put(element.getElementExpression(), row.get(element.getElementExpression()));
+                map.put(getAliasOrName(element), row.get(element.getElementExpression()));
             } else {
-                map.put(element.getElementExpression(), element.executeAbout(row));
+                map.put(getAliasOrName(element), element.executeAbout(row));
             }
         }
     }
 
     private void extractGroupFunction(int start, int end, MQLDataStorage dataStorage, Map<String, Object> map) {
         for (GroupFunctionElement element : groupFunctionElements) {
-            map.put(element.getElementExpression(), element.executeAbout(start, end, dataStorage));
+            map.put(getAliasOrName(element), element.executeAbout(start, end, dataStorage));
         }
     }
 
-
-
-
+    private String getAliasOrName(MQLElement element) {
+        return element.hasAlias() ? element.getAlias() : element.getElementExpression();
+    }
 }

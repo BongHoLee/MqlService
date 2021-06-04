@@ -10,9 +10,32 @@ import java.util.stream.IntStream;
 
 public class MAX extends GroupFunctionElement {
     private String expression = "";
-    public MAX(MQLElement parameter) {
+    private String alias = "";
+    private boolean hasAlias;
+
+    public MAX(String alias, MQLElement parameter) {
         super(parameter);
+        this.alias = alias;
         expression = "MAX(" + getParameterExpression() + ")";
+        setHasAlias();
+    }
+
+    public MAX(MQLElement parameter) {
+        this("", parameter);
+    }
+
+    private void setHasAlias() {
+        hasAlias =  !alias.isEmpty();
+    }
+
+    @Override
+    public boolean hasAlias() {
+        return hasAlias;
+    }
+
+    @Override
+    public String getAlias() {
+        return alias;
     }
 
 

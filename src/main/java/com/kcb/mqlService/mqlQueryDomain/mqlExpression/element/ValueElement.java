@@ -24,4 +24,14 @@ public class ValueElement implements MQLElement{
     public String getElementExpression() {
         return String.valueOf(value);
     }
+
+    @Override
+    public boolean hasAlias() {
+        return false;
+    }
+
+    @Override
+    public String getAlias() {
+        return "";
+    }
 }

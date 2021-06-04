@@ -10,10 +10,35 @@ import java.util.stream.IntStream;
 
 public class AVG extends GroupFunctionElement {
     private String expression = "";
-    public AVG(MQLElement parameter) {
+    private String alias = "";
+    private boolean hasAlias;
+
+    public AVG(String alias, MQLElement parameter) {
         super(parameter);
+        this.alias = alias;
         expression = "AVG(" + getParameterExpression() + ")";
+
     }
+
+    public AVG(MQLElement parameter) {
+        this("", parameter);
+
+    }
+
+    private void setHasAlias() {
+        hasAlias =  !alias.isEmpty();
+    }
+
+    @Override
+    public boolean hasAlias() {
+        return hasAlias;
+    }
+
+    @Override
+    public String getAlias() {
+        return alias;
+    }
+
 
 
     @Override
@@ -53,4 +78,5 @@ public class AVG extends GroupFunctionElement {
     public String getElementExpression() {
         return expression;
     }
+
 }

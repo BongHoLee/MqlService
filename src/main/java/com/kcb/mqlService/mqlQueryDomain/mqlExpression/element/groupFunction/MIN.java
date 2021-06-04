@@ -10,9 +10,32 @@ import java.util.stream.IntStream;
 
 public class MIN extends GroupFunctionElement {
     private String expression = "";
-    public MIN(MQLElement parameter) {
+    private String alias = "";
+    private boolean hasAlias;
+
+    public MIN(String alias, MQLElement parameter) {
         super(parameter);
+        this.alias = alias;
         expression = "MIN(" + getParameterExpression() + ")";
+        setHasAlias();
+    }
+
+    public MIN(MQLElement parameter) {
+        this("", parameter);
+    }
+
+    private void setHasAlias() {
+        hasAlias =  !alias.isEmpty();
+    }
+
+    @Override
+    public boolean hasAlias() {
+        return hasAlias;
+    }
+
+    @Override
+    public String getAlias() {
+        return alias;
     }
 
     @Override
