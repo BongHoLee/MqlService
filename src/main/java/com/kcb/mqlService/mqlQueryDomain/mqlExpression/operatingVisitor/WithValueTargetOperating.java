@@ -71,6 +71,28 @@ public class WithValueTargetOperating implements WithTargetOperating {
 
     @Override
     public MQLDataStorage operate(GroupFunctionElement standardGroupFunctionElement, RelationalOperation rOperation, MQLDataStorage mqlDataStorage) {
-        return null;
+        MQLTable table = new MQLTable(mqlDataStorage.getMqlTable());
+        MQLDataSource mqlDataSource = mqlDataStorage.getMqlDataSource();
+        List<Map<String, Object>> operatedTableData = new ArrayList<>();
+        List<Integer> updatedGroupingIdx = new ArrayList<>();
+
+        int start = 0;
+        int skipCount = 0;
+        for (int end : table.getGroupingIdxs()) {
+            Object value = compareValue.getValue();
+            Object functionResult = standardGroupFunctionElement.executeAbout(start, end, mqlDataStorage);
+            if (rOperation.operating(functionResult, value)) {
+                operatedTableData.addAll(table.getTableData().subList(start, end + 1));
+                updatedGroupingIdx.add(end - skipCount);
+            } else {
+                skipCount = skipCount + (end - start + 1);
+            }
+
+            start = end + 1;
+        }
+
+        table.setTableData(operatedTableData);
+        table.setGroupingIdx(updatedGroupingIdx);
+        return new MQLDataStorage(mqlDataSource, table);
     }
 }

@@ -82,16 +82,127 @@ public class WithSingleRowFunctionTargetOperating implements WithTargetOperating
 
     @Override
     public MQLDataStorage operate(SingleRowFunctionElement standardFunctionElement, RelationalOperation rOperation, MQLDataStorage mqlDataStorage) {
-        return null;
+        MQLTable resultTable = new MQLTable();
+        MQLDataSource mqlDataSource = mqlDataStorage.getMqlDataSource();
+        List<Map<String, Object>> mergedTableData = new ArrayList<>();
+
+        // LENGTH(COLUMN) == LENGTH(COLUMN)
+        if (standardFunctionElement.hasColumn() && functionElement.hasColumn()) {
+            List<Map<String, Object>> standardTableData = mqlDataSource.dataSourceOf(standardFunctionElement.getDataSourceIdForRow());
+            List<Map<String, Object>> compareTableData = mqlDataSource.dataSourceOf(functionElement.getDataSourceIdForRow());
+            resultTable.addJoinList(standardFunctionElement.getDataSourceIdForRow(), functionElement.getDataSourceIdForRow());
+
+            if (standardFunctionElement.getDataSourceIdForRow().equals(functionElement.getDataSourceIdForRow())) {
+                List<Map<String, Object>> mergedSameTableData =
+                        standardTableData.stream()
+                                .filter(eachRow -> rOperation.operating(standardFunctionElement.executeAbout(eachRow), functionElement.executeAbout(eachRow)))
+                                .collect(Collectors.toList());
+
+                mergedTableData.addAll(mergedSameTableData);
+
+                // function column, standard column are not same : ex ) LENGTH(A.CustomerID) > LENGTH(B.CategoryName)
+            } else {
+                standardTableData.forEach(standardRow -> {
+                    compareTableData.forEach(compareRow -> {
+                        if (rOperation.operating(standardFunctionElement.executeAbout(standardRow), functionElement.executeAbout(compareRow))) {
+                            Map<String, Object> mergedRow = new HashMap<>();
+                            mergedRow.putAll(standardRow);
+                            mergedRow.putAll(compareRow);
+                            mergedTableData.add(mergedRow);
+                        }
+                    });
+                });
+            }
+            // LENGTH(COLUMN) == LENGTH(VALUE)
+        } else if (!standardFunctionElement.hasColumn() && functionElement.hasColumn()) {
+            List<Map<String, Object>> compareTableData = mqlDataSource.dataSourceOf(functionElement.getDataSourceIdForRow());
+            List<Map<String, Object>> tempMergedTable = compareTableData.stream()
+                    .filter(eachRow -> rOperation.operating(standardFunctionElement.executeAbout(new HashMap<>()), functionElement.executeAbout(eachRow)))
+                    .collect(Collectors.toList());
+
+            mergedTableData.addAll(tempMergedTable);
+        } else if (standardFunctionElement.hasColumn() && !functionElement.hasColumn()) {
+            List<Map<String, Object>> standardTableData = mqlDataSource.dataSourceOf(standardFunctionElement.getDataSourceIdForRow());
+            List<Map<String, Object>> tempMergedTable = standardTableData.stream()
+                    .filter(eachRow -> rOperation.operating(standardFunctionElement.executeAbout(eachRow), functionElement.executeAbout(new HashMap<>())))
+                    .collect(Collectors.toList());
+
+            mergedTableData.addAll(tempMergedTable);
+
+        } else {
+            // NOT TO DO
+        }
+
+
+        resultTable.setTableData(mergedTableData);
+        return new MQLDataStorage(mqlDataSource, resultTable);
+
     }
 
     @Override
     public MQLDataStorage operate(ValueElement standardValueElement, RelationalOperation rOperation, MQLDataStorage mqlDataStorage) {
-        return null;
+        MQLDataSource mqlDataSource = mqlDataStorage.getMqlDataSource();
+
+        if (functionElement.hasColumn()) {
+            String standardColumnKey = functionElement.getDataSourceIdForRow();
+            List<Map<String, Object>> tableData = mqlDataSource.dataSourceOf(standardColumnKey);
+
+            List<Map<String, Object>> filteredTable = tableData.stream().filter(
+                    eachRow -> rOperation.operating( standardValueElement.getValue(), functionElement.executeAbout(eachRow))
+            ).collect(Collectors.toList());
+
+            MQLTable resultTable = new MQLTable(new HashSet<>(Collections.singletonList(standardColumnKey)), filteredTable);
+            return new MQLDataStorage(mqlDataSource, resultTable);
+        } else {
+            if (rOperation.operating(standardValueElement.getValue(), functionElement.executeAbout(new HashMap<>()))) {
+                return mqlDataStorage;
+            } else {
+                return new MQLDataStorage(new MQLDataSource(), new MQLTable());
+            }
+        }
     }
 
     @Override
     public MQLDataStorage operate(GroupFunctionElement standardGroupFunctionElement, RelationalOperation rOperation, MQLDataStorage mqlDataStorage) {
-        return null;
+
+        if (mqlDataStorage.getMqlTable().isGrouped()) {
+            MQLTable table = new MQLTable(mqlDataStorage.getMqlTable());
+            MQLDataSource mqlDataSource = mqlDataStorage.getMqlDataSource();
+            List<Map<String, Object>> operatedTableData = new ArrayList<>();
+            List<Integer> updatedGroupingIdx = new ArrayList<>();
+
+            int start = 0;
+            int skipCount = 0;
+            for (int end : table.getGroupingIdxs()) {
+                Object value = executeForGroupingData(mqlDataStorage, start, end, functionElement);
+                Object functionResult = standardGroupFunctionElement.executeAbout(start, end, mqlDataStorage);
+                if (rOperation.operating( functionResult, value)) {
+                    operatedTableData.addAll(table.getTableData().subList(start, end + 1));
+                    updatedGroupingIdx.add(end - skipCount);
+                } else {
+                    skipCount = skipCount + (end - start + 1);
+                }
+                start = end + 1;
+            }
+
+            table.setTableData(operatedTableData);
+            table.setGroupingIdx(updatedGroupingIdx);
+            return new MQLDataStorage(mqlDataSource, table);
+        } else {
+            throw new RuntimeException("Can't Group function Operating!");
+        }
+    }
+
+    private Object executeForGroupingData(MQLDataStorage mqlDataStorage, int start, int end, SingleRowFunctionElement element) {
+        Map<String, Object> row = mqlDataStorage.getMqlTable().getTableData().get(end);
+        if ( element.hasColumn()) {
+            if (mqlDataStorage.getMqlTable().getGroupingElements().contains( element.getColumnParameterName())) {
+                return ( element.executeAbout(row));
+            } else {
+                throw new RuntimeException(element.getElementExpression() + " should included in Group By Clause!");
+            }
+        } else {
+            return ( element.executeAbout(new HashMap<>()));
+        }
     }
 }
