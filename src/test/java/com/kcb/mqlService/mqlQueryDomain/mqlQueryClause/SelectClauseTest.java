@@ -5,6 +5,8 @@ import com.kcb.mqlService.mqlQueryDomain.mqlData.MQLDataStorage;
 import com.kcb.mqlService.mqlQueryDomain.mqlData.MQLTable;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.ColumnOperandExpression;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.GroupFunctionOperandExpression;
+import com.kcb.mqlService.mqlQueryDomain.mqlExpression.SingleRowFunctionOperandExpression;
+import com.kcb.mqlService.mqlQueryDomain.mqlExpression.ValueOperandExpression;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.ColumnElement;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.MQLElement;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.ValueElement;
@@ -430,15 +432,140 @@ public class SelectClauseTest {
         );
 
         List<Map<String, Object>> result = select.executeQueryWith(dataSource);
+
+        result.forEach(eachRow -> {
+            assertThat(eachRow.keySet(), hasItems("SUPPLIERID", "SumLength"));
+            assertThat(eachRow.keySet(), hasSize(2));
+            assertThat((Double)eachRow.get("SumLength"), greaterThan((Double)eachRow.get("SUPPLIERID")));
+        });
+    }
+
+    /**
+     * SELECT E.SupplierID, SUM(LENGTH(E.ProductName)) SumLength
+     * FROM Products E
+     * GROUP BY E.SupplierID
+     * HAVING  40 < SUM(LENGTH(E.ProductName))
+     */
+    @Test
+    public void selectGroupingDataWithHavingWithValueAndAlias() {
+        Map<String, List<Map<String, Object>>> dataSource = new HashMap<>();
+        dataSource.put("E", rawDataSource.get("E"));
+
+        MQLElement element1 = new ColumnElement("SupplierID", "E.SupplierID");
+        MQLElement element2 = new SUM("SumLength", new LENGTH(new ColumnElement("E.ProductName")));
+
+        List<MQLElement> selectItems = Arrays.asList(element1, element2);
+        SelectClause select = new SelectClause(
+                selectItems,
+                new FromClause(),
+                new NoneClause(),
+                new GroupByClause(
+                        new ColumnElement("E.SupplierID")
+                )
+                ,
+                new HavingClause(
+                        new ValueOperandExpression(
+                                new ValueElement(40),
+                                RelationalOperator::lessThan,
+                                new WithGroupFunctionTargetOperating(
+                                        new SUM(new LENGTH(new ColumnElement("E.ProductName")))
+                                )
+                        )
+                )
+        );
+
+        List<Map<String, Object>> result = select.executeQueryWith(dataSource);
         print(result);
 
-//        result.forEach(eachRow -> {
-//            assertThat(eachRow.keySet(), hasItems("CategoryID", "CategoryName", "SupplierID", "PriceSum"));
-//            assertThat(eachRow.keySet(), hasSize(4));
-//            assertThat((Double)eachRow.get("SupplierID"), lessThan(7.0));
-//        });
+        result.forEach(eachRow -> {
+            assertThat(eachRow.keySet(), hasItems("SupplierID", "SumLength"));
+            assertThat(eachRow.keySet(), hasSize(2));
+            assertThat(40.0, is(lessThan( (Double)eachRow.get("SumLength"))));
+        });
+    }
 
+    /**
+     * SELECT E.SupplierID SupplierID, SUM(LENGTH(E.ProductName)) SumLength, SUM(Price) SumPrice
+     * FROM Products E
+     * GROUP BY E.SupplierID
+     * HAVING  SUM(E.Price) < SUM(LENGTH(E.ProductName))
+     */
+    @Test
+    public void selectGroupingDataWithHavingWithGroupFunctionAndAlias() {
+        Map<String, List<Map<String, Object>>> dataSource = new HashMap<>();
+        dataSource.put("E", rawDataSource.get("E"));
 
+        MQLElement element1 = new ColumnElement("SupplierID", "E.SupplierID");
+        MQLElement element2 = new SUM("SumLength", new LENGTH(new ColumnElement("E.ProductName")));
+        MQLElement element3 = new SUM("SumPrice", new ColumnElement("E.Price"));
+
+        List<MQLElement> selectItems = Arrays.asList(element1, element2, element3);
+        SelectClause select = new SelectClause(
+                selectItems,
+                new FromClause(),
+                new NoneClause(),
+                new GroupByClause(
+                        new ColumnElement("E.SupplierID")
+                )
+                ,
+                new HavingClause(
+                        new GroupFunctionOperandExpression(
+                                new SUM(new ColumnElement("E.Price")),
+                                RelationalOperator::lessThan,
+                                new WithGroupFunctionTargetOperating(new SUM(new LENGTH(new ColumnElement("E.ProductName"))))
+                        )
+
+                )
+        );
+
+        List<Map<String, Object>> result = select.executeQueryWith(dataSource);
+
+        result.forEach(eachRow -> {
+            assertThat(eachRow.keySet(), hasItems("SupplierID", "SumLength", "SumPrice"));
+            assertThat(eachRow.keySet(), hasSize(3));
+            assertThat((Double) eachRow.get("SumPrice"), is(lessThan((Double)eachRow.get("SumLength"))));
+        });
+    }
+
+    /**
+     SELECT E.SupplierID SupplierID, SUM(LENGTH(E.CategoryID)) SumLengthCategoryID, LENGTH(E.SupplierID) LengthSupplierID
+     FROM Products E
+     GROUP BY E.SupplierID
+     HAVING LENGTH(E.SupplierID) > SUM(LENGTH(E.CategoryID))
+     */
+    @Test
+    public void selectGroupingDataWithHavingWithSingleRowFunctionAndAlias() {
+        Map<String, List<Map<String, Object>>> dataSource = new HashMap<>();
+        dataSource.put("E", rawDataSource.get("E"));
+
+        MQLElement element1 = new ColumnElement("SupplierID", "E.SupplierID");
+        MQLElement element2 = new SUM("LengthCategoryID", new LENGTH(new ColumnElement("E.CategoryID")));
+        MQLElement element3 = new LENGTH("SumLengthSupplierID", new ColumnElement("E.SupplierID"));
+
+        List<MQLElement> selectItems = Arrays.asList(element1, element2, element3);
+        SelectClause select = new SelectClause(
+                selectItems,
+                new FromClause(),
+                new NoneClause(),
+                new GroupByClause(
+                        new ColumnElement("E.SupplierID")
+                ),
+                new HavingClause(
+                        new SingleRowFunctionOperandExpression(
+                                new LENGTH(new ColumnElement("E.SupplierID")),
+                                RelationalOperator::largerThan,
+                                new WithGroupFunctionTargetOperating(new SUM(new LENGTH(new ColumnElement("E.CategoryID"))))
+                        )
+                )
+        );
+
+        List<Map<String, Object>> result = select.executeQueryWith(dataSource);
+
+        result.forEach(eachRow -> {
+            assertThat(eachRow.keySet(), hasItems("SupplierID", "LengthCategoryID", "SumLengthSupplierID"));
+            assertThat(eachRow.keySet(), hasSize(3));
+            assertThat(String.valueOf(eachRow.get("LengthCategoryID")).length(), is(greaterThan(String.valueOf(eachRow.get("SumLengthSupplierID")).length())));
+        });
     }
 
     public void print(List<Map<String, Object>> result) {

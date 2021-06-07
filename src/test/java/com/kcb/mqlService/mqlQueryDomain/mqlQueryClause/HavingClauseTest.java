@@ -3,8 +3,10 @@ import com.kcb.mqlService.mqlQueryDomain.mqlData.MQLDataSource;
 import com.kcb.mqlService.mqlQueryDomain.mqlData.MQLDataStorage;
 import com.kcb.mqlService.mqlQueryDomain.mqlData.MQLTable;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.ColumnOperandExpression;
+import com.kcb.mqlService.mqlQueryDomain.mqlExpression.ValueOperandExpression;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.ColumnElement;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.MQLElement;
+import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.ValueElement;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.groupFunction.SUM;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.singleRowFunction.LENGTH;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.operatingVisitor.WithGroupFunctionTargetOperating;
@@ -54,7 +56,7 @@ public class HavingClauseTest {
      *
      */
     @Test
-    public void havingTest() {
+    public void havingWithSumAndColumnTest() {
         mqlDataStorage.setMqlTable(
                 new MQLTable(
                         new HashSet<>(Collections.singletonList("E")),
@@ -79,6 +81,44 @@ public class HavingClauseTest {
         MQLDataStorage result = having.executeClause(groupBy.executeClause(mqlDataStorage));
         print(result);
     }
+
+    /**
+     * SELECT E.SupplierID, SUM(LENGTH(E.ProductName))
+     * FROM Products E
+     * GROUP BY E.SupplierID
+     * HAVING 40 < SUM(LENGTH(E.ProductName))
+     *
+     */
+    @Test
+    public void havingWithSumAndValueTest() {
+        mqlDataStorage.setMqlTable(
+                new MQLTable(
+                        new HashSet<>(Collections.singletonList("E")),
+                        mqlDataStorage.getMqlDataSource().dataSourceOf("E")
+                )
+        );
+
+        String column1 = "E.SupplierID";
+
+        List<MQLElement> groupingElements = new ArrayList<>();
+        groupingElements.add(new ColumnElement(column1));
+        GroupByClause groupBy = new GroupByClause(groupingElements);
+
+        HavingClause having = new HavingClause(
+                new ValueOperandExpression(
+                        new ValueElement(40),
+                        RelationalOperator::lessThan,
+                        new WithGroupFunctionTargetOperating(
+                                new SUM(new LENGTH(new ColumnElement("E.ProductName")))
+                        )
+                )
+        );
+
+        MQLDataStorage result = having.executeClause(groupBy.executeClause(mqlDataStorage));
+        print(result);
+    }
+
+
 
     public void print(MQLDataStorage mqlDataStorage) {
         System.out.println(mqlDataStorage.getMqlTable().getJoinSet());

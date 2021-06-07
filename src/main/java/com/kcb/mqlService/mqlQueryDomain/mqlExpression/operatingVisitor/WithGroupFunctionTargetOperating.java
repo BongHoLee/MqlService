@@ -31,11 +31,7 @@ public class WithGroupFunctionTargetOperating implements WithTargetOperating {
     @Override
     public MQLDataStorage operate(SingleRowFunctionElement standardFunctionElement, RelationalOperation rOperation, MQLDataStorage mqlDataStorage) {
         if (isGrouped(mqlDataStorage)) {
-            if (standardFunctionElement.hasColumn() && mqlDataStorage.getMqlTable().getGroupingElements().contains(standardFunctionElement.getElementExpression())) {
-                return operating(mqlDataStorage, rOperation, standardFunctionElement);
-            } else {
-                throw new RuntimeException("Can't Group function Operating!");
-            }
+            return operating(mqlDataStorage, rOperation, standardFunctionElement);
         } else {
             throw new RuntimeException("Can't Group function Operating!");
         }
@@ -93,22 +89,41 @@ public class WithGroupFunctionTargetOperating implements WithTargetOperating {
 
     private Object compareValue(MQLDataStorage mqlDataStorage, int start, int end, MQLElement element) {
         if (element instanceof ColumnElement) {
+
             return mqlDataStorage.getMqlTable().getTableData().get(end).get(((ColumnElement) element).getColumnName());
+
         } else if (element instanceof ValueElement) {
+
             return ((ValueElement) element).getValue();
+
         } else if (element instanceof SingleRowFunctionElement) {
+
             Map<String, Object> row = mqlDataStorage.getMqlTable().getTableData().get(end);
             if (((SingleRowFunctionElement) element).hasColumn()) {
-                return row.containsKey(element.getElementExpression())
-                        ? row.get(element.getElementExpression())
-                        : ((SingleRowFunctionElement) element).executeAbout(row);
+
+                if (mqlDataStorage.getMqlTable().getGroupingElements().contains(((SingleRowFunctionElement) element).getColumnParameterName())) {
+
+                    return ((SingleRowFunctionElement) element).executeAbout(row);
+
+                } else {
+
+                    throw new RuntimeException(element.getElementExpression() + " should included in Group By Clause!");
+
+                }
+
             } else {
+
                 return ((SingleRowFunctionElement) element).executeAbout(new HashMap<>());
+
             }
         } else if (element instanceof GroupFunctionElement) {
+
             return ((GroupFunctionElement) element).executeAbout(start, end, mqlDataStorage);
+
         } else {
+
             throw new RuntimeException("Not Valid Group Function Operating Element!");
+
         }
 
 
