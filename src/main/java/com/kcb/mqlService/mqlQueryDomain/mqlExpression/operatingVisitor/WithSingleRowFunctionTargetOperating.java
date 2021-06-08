@@ -174,7 +174,7 @@ public class WithSingleRowFunctionTargetOperating implements WithTargetOperating
             int start = 0;
             int skipCount = 0;
             for (int end : table.getGroupingIdxs()) {
-                Object value = executeForGroupingData(mqlDataStorage, start, end, functionElement);
+                Object value = executeForGroupingData(mqlDataStorage, end, functionElement);
                 Object functionResult = standardGroupFunctionElement.executeAbout(start, end, mqlDataStorage);
                 if (rOperation.operating( functionResult, value)) {
                     operatedTableData.addAll(table.getTableData().subList(start, end + 1));
@@ -193,8 +193,8 @@ public class WithSingleRowFunctionTargetOperating implements WithTargetOperating
         }
     }
 
-    private Object executeForGroupingData(MQLDataStorage mqlDataStorage, int start, int end, SingleRowFunctionElement element) {
-        Map<String, Object> row = mqlDataStorage.getMqlTable().getTableData().get(end);
+    private Object executeForGroupingData(MQLDataStorage mqlDataStorage, int idx, SingleRowFunctionElement element) {
+        Map<String, Object> row = mqlDataStorage.getMqlTable().getTableData().get(idx);
         if ( element.hasColumn()) {
             if (mqlDataStorage.getMqlTable().getGroupingElements().contains( element.getColumnParameterName())) {
                 return ( element.executeAbout(row));
