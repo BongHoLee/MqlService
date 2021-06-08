@@ -7,15 +7,15 @@
 
 
 ### MQLOperatingExpression (연산 표현 트리) 타입 계층 구조
-![clause](./img/expression.PNG)
+![expression](./img/expression.PNG)
 
 
 ### MQLElement (기준 피연산 요소) 타입 계층 구조
-![clause](./img/expression.PNG)
+![element](./img/element.PNG)
 
 
 ### WithTargetOperating (대상 피연산 요소, visitor) 타입 계층 구조
-![clause](./img/targetOperating.PNG)
+![targetOperating](./img/targetOperating.PNG)
 
 
 
