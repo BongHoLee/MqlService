@@ -1,0 +1,29 @@
+<mqlQueryGroup>
+    <mql id="Query1">
+        <script>
+            <![CDATA[  SELECT A.Column AS Acolumn, B.Column AS Bcolumn
+                FROM DataSource1 A, DataSource2 B
+                WHERE A.KEY = B.KEY
+            ]]>
+        </script>
+    </mql>
+    <mql id="Query2">
+        <script>
+        <![CDATA[
+            SELECT A.Column AS Acolumn, B.Column AS Bcolumn
+            FROM DataSource1 A, DataSource2 B
+            WHERE A.KEY = B.KEY
+            GROUP BY A.Column, B.Column
+        ]]>
+        </script>
+    </mql>
+    <mql id="Query3">
+    <script>
+        <![CDATA[
+            SELECT A.Column AS Acolumn, B.Column AS Bcolumn
+            FROM DataSource1 A, DataSource2 B
+            WHERE A.KEY = B.KEY AND A.NAME = B.NAME
+       ]]>
+    </script>
+    </mql>
+</mqlQueryGroup>
