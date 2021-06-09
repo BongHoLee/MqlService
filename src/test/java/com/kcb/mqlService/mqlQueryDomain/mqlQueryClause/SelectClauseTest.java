@@ -627,6 +627,7 @@ public class SelectClauseTest {
         MQLElement element3 = new LENGTH("SumLengthSupplierID", new ColumnElement("E.SupplierID"));
 
         List<MQLElement> selectItems = Arrays.asList(element1, element2, element3);
+
         SelectClause select = new SelectClause(
                 selectItems,
                 new FromClause(),
@@ -644,6 +645,7 @@ public class SelectClauseTest {
         );
 
         List<Map<String, Object>> result = select.executeQueryWith(dataSource);
+        print(result);
 
         result.forEach(eachRow -> {
             assertThat(eachRow.keySet(), hasItems("SupplierID", "LengthCategoryID", "SumLengthSupplierID"));
