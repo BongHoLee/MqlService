@@ -114,4 +114,9 @@ public class OtherTest {
         System.out.println(tmp);
     }
 
+    @Test
+    public void getResourcePath() {
+
+    }
+
 }

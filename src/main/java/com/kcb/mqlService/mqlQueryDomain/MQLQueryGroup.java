@@ -7,16 +7,12 @@ import java.util.*;
 public class MQLQueryGroup  {
     private Map<String, MQLQueryContext> queryGroup = new HashMap<>();
 
-    public MQLQueryContext put(String queryId, MQLQueryContext dataSource) {
-        return queryGroup.put(queryId, dataSource);
+    public void put(String queryId, MQLQueryContext mqlQueryContext) {
+        queryGroup.put(queryId, mqlQueryContext);
     }
 
     public MQLQueryContext get(String queryId) {
         return queryGroup.get(queryId);
-    }
-
-    public MQLQueryContext remove(String queryId) {
-        return queryGroup.remove(queryId);
     }
 
     public List<Map<String, Object>> executeQuery(String queryId, Map<String, List<Map<String, Object>>> rawDataSources) {

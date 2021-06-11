@@ -7,19 +7,12 @@ import java.util.List;
 import java.util.Map;
 
 public class MQLQueryContext {
-
-    private String queryId;
     private SelectClause selectClause;
 
-    public MQLQueryContext(String queryId, SelectClause selectClause) {
-        this.queryId = queryId;
+    public MQLQueryContext(SelectClause selectClause) {
         this.selectClause = selectClause;
     }
-
     public List<Map<String, Object>> executeQuery(Map<String, List<Map<String, Object>>> rawDataSources) {
-        //List<Map<String, Object>> dataDictionary = fromClause.makeMqlDataSources(rawDataSources);
-
-        return  null;
+        return selectClause.executeQueryWith(rawDataSources);
     }
-
 }

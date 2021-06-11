@@ -93,13 +93,17 @@ public class JsqlTest {
 
     @Test
     public void getTableListTest() throws JSQLParserException {
-        String sql = "SELECT A.CustomerID, B.CategoryID\n" +
-                "FROM Customers A\n" +
+        String sql = "SELECT A.CustomerID AS CustomerID, B.CategoryID, SUM(LENGTH(A.ID)), LENGTH(A.ID), LENGTH('hi')\n" +
+                "FROM Customers A \n" +
                 "INNER JOIN Categories B ON A.CustomerID = B.CategoryID\n" +
-                "INNER JOIN Employees C ON A.CustomerID = C.EmployeeID";
+                "INNER JOIN Employees C ON A.CustomerID = C.EmployeeID\n" +
+                "WHERE A.ID=B.ID AND C.ID=D.ID\n" +
+                "GROUP BY A.ID, B.ID\n" +
+                "HAVING SUM(LENGTH(A.NAME)) > B.ID";
 
         Select select = (Select) parserManager.parse(new StringReader(sql));
         TablesNamesFinder tblFinder = new TablesNamesFinder();
+        PlainSelect plainSelect = (PlainSelect) select.getSelectBody();
         List<String> tableNames = tblFinder.getTableList(select);
 
         assertThat(Arrays.asList("Customers", "Categories", "Employees"), equalTo(tableNames));
