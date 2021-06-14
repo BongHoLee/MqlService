@@ -1,5 +1,6 @@
 package com.kcb.mqlService.mqlFactory;
 
+import com.kcb.mqlService.mqlQueryDomain.MQLQueryContext;
 import com.kcb.mqlService.mqlQueryDomain.MQLQueryGroup;
 
 import java.util.HashMap;
@@ -25,13 +26,13 @@ public class MQLQueryGroupFactory {
             Map<String, String> scriptDocumentMap = MQLScriptDocumentFactory.getInstance().create();
 
             for (String queryId : scriptDocumentMap.keySet()) {
-                //queryGroup.put(queryId, );
+                MQLQueryContext context = MQLQueryContextFactory.getInstance().create(scriptDocumentMap.get(queryId));
+                queryGroup.put(queryId, context);
             }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
-
 
         return queryGroup;
     }

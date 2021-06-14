@@ -3,11 +3,6 @@ package com.kcb.mqlService.mqlFactory;
 import com.kcb.mqlService.mqlQueryDomain.MQLQueryContext;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.parser.CCJSqlParserManager;
-import net.sf.jsqlparser.statement.select.PlainSelect;
-import net.sf.jsqlparser.statement.select.Select;
-import net.sf.jsqlparser.util.TablesNamesFinder;
-
-import java.io.StringReader;
 
 public class MQLQueryContextFactory {
     private static MQLQueryContextFactory factory;
@@ -24,7 +19,7 @@ public class MQLQueryContextFactory {
     }
 
     public MQLQueryContext create(String script) throws JSQLParserException {
-        JsqlContextStorage jsqlContextStorage = new JsqlContextStorage(script);
+        SqlContextStorage sqlContextStorage = new SqlContextStorage(script);
 
         return null;
     }
