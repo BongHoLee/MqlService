@@ -1,20 +1,13 @@
 package com.kcb.mqlService;
 
-import com.kcb.mqlService.mqlFactory.contextFindTest.JsqlTableNamesFindTest;
+import com.kcb.mqlService.mqlQueryDomain.mqlFactory.contextFindTest.JsqlTableNamesFindTest;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.expression.*;
-import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
-import net.sf.jsqlparser.expression.operators.conditional.OrExpression;
-import net.sf.jsqlparser.expression.operators.relational.*;
 import net.sf.jsqlparser.parser.*;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
-import net.sf.jsqlparser.statement.Statement;
 import net.sf.jsqlparser.statement.select.*;
 import net.sf.jsqlparser.util.TablesNamesFinder;
-import net.sf.jsqlparser.util.validation.*;
-import net.sf.jsqlparser.util.validation.feature.DatabaseType;
-import net.sf.jsqlparser.util.validation.validator.StatementValidator;
 import org.junit.Before;
 import org.junit.Test;
 

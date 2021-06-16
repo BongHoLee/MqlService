@@ -12,13 +12,18 @@ repositories {
 }
 
 dependencies {
-    compile("org.codehaus.groovy:groovy-all:2.3.11")
-    implementation(kotlin("stdlib-jdk8"))
+    implementation("org.testng:testng:7.1.0")
     testCompile("junit", "junit", "4.12")
     testCompile( "org.hamcrest", "hamcrest-library","1.3")
     testCompile("com.fasterxml.jackson.core", "jackson-databind", "2.0.1")
     testCompile("com.fasterxml.jackson.dataformat", "jackson-dataformat-csv", "2.12.1")
+
+    compile("org.codehaus.groovy:groovy-all:2.3.11")
+    implementation(kotlin("stdlib-jdk8"))
     implementation ("com.github.jsqlparser:jsqlparser:4.0")
+
+    implementation ("org.apache.logging.log4j:log4j-api:2.0")
+    implementation("org.apache.logging.log4j:log4j-core:2.0")
 }
 
 configure<JavaPluginConvention> {

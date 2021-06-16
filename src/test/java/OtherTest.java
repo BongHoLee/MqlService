@@ -8,6 +8,8 @@ import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.ValueElement;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.singleRowFunction.LENGTH;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.relationalOperator.RelationalOperation;
 import com.kcb.mqlService.testData.TestDataFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 
 import java.io.File;
@@ -115,8 +117,9 @@ public class OtherTest {
     }
 
     @Test
-    public void getResourcePath() {
-
+    public void loggerTest() {
+        Logger logger = LogManager.getLogger(this.getClass());
+        logger.error("error!");
     }
 
 }
