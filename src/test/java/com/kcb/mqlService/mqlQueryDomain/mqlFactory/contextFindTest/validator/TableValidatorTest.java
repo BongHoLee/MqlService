@@ -2,8 +2,7 @@ package com.kcb.mqlService.mqlQueryDomain.mqlFactory.contextFindTest.validator;
 
 import com.kcb.mqlService.mqlFactory.SqlContextStorage;
 import com.kcb.mqlService.mqlFactory.exception.MQLQueryNotValidException;
-import com.kcb.mqlService.mqlFactory.validator.FromValidator;
-import org.junit.Before;
+import com.kcb.mqlService.mqlFactory.validator.TableValidator;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -11,7 +10,7 @@ import org.junit.rules.ExpectedException;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class FromValidatorTest {
+public class TableValidatorTest {
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -27,8 +26,8 @@ public class FromValidatorTest {
 
         SqlContextStorage sqlContextStorage = new SqlContextStorage(sql);
 
-        FromValidator fromValidator = new FromValidator();
-        fromValidator.isValid(sqlContextStorage);
+        TableValidator tableValidator = new TableValidator();
+        tableValidator.isValid(sqlContextStorage);
     }
 
     @Test
@@ -43,9 +42,9 @@ public class FromValidatorTest {
 
 
         SqlContextStorage sqlContextStorage = new SqlContextStorage(sql);
-        FromValidator fromValidator = new FromValidator();
+        TableValidator tableValidator = new TableValidator();
 
-        fromValidator.isValid(sqlContextStorage);
+        tableValidator.isValid(sqlContextStorage);
     }
 
     @Test
@@ -57,9 +56,9 @@ public class FromValidatorTest {
 
 
         SqlContextStorage sqlContextStorage = new SqlContextStorage(sql);
-        FromValidator fromValidator = new FromValidator();
+        TableValidator tableValidator = new TableValidator();
 
-        assertThat(fromValidator.isValid(sqlContextStorage), is(true));
+        assertThat(tableValidator.isValid(sqlContextStorage), is(true));
 
     }
 
@@ -75,9 +74,9 @@ public class FromValidatorTest {
 
 
         SqlContextStorage sqlContextStorage = new SqlContextStorage(sql);
-        FromValidator fromValidator = new FromValidator();
+        TableValidator tableValidator = new TableValidator();
 
-        fromValidator.isValid(sqlContextStorage);
+        tableValidator.isValid(sqlContextStorage);
 
     }
 
@@ -88,8 +87,8 @@ public class FromValidatorTest {
 
 
         SqlContextStorage sqlContextStorage = new SqlContextStorage(sql);
-        FromValidator fromValidator = new FromValidator();
-        assertThat(fromValidator.isValid(sqlContextStorage), is(true));
+        TableValidator tableValidator = new TableValidator();
+        assertThat(tableValidator.isValid(sqlContextStorage), is(true));
     }
 
     @Test
@@ -102,8 +101,8 @@ public class FromValidatorTest {
 
 
         SqlContextStorage sqlContextStorage = new SqlContextStorage(sql);
-        FromValidator fromValidator = new FromValidator();
-        assertThat(fromValidator.isValid(sqlContextStorage), is(true));
+        TableValidator tableValidator = new TableValidator();
+        assertThat(tableValidator.isValid(sqlContextStorage), is(true));
     }
 
 
@@ -119,9 +118,26 @@ public class FromValidatorTest {
 
 
         SqlContextStorage sqlContextStorage = new SqlContextStorage(sql);
-        FromValidator fromValidator = new FromValidator();
-        fromValidator.isValid(sqlContextStorage);
+        TableValidator tableValidator = new TableValidator();
+        tableValidator.isValid(sqlContextStorage);
     }
 
+    @Test
+    public void fromTable_moreThanTwo_WithJoin_And_WithGroupBy() {
+        thrown.expect(MQLQueryNotValidException.class);
+        thrown.expectMessage("Used Table : [A, B] | Joined Table : [A, B, C]");
+
+        String sql = "SELECT A.CustomerID AS CustomerID, B.CategoryID, C.EmployeeID, LENGTH(A.ID), SUM(A.ID)\n" +
+                "FROM Customers A\n" +
+                "JOIN Categories B ON A.ID=B.ID\n" +
+                "WHERE C.ID=B.ID\n" +
+                "GROUP BY A.ID, B.ID, LENGTH(C.ID)"
+                ;
+
+
+        SqlContextStorage sqlContextStorage = new SqlContextStorage(sql);
+        TableValidator tableValidator = new TableValidator();
+        tableValidator.isValid(sqlContextStorage);
+    }
 
 }
