@@ -16,6 +16,12 @@ import org.apache.logging.log4j.Logger;
 import java.util.List;
 import java.util.Map;
 
+/**
+ *
+ * Columns and Functions validate for 'Select Items', 'Having'
+ *
+ */
+
 public class ItemsOfRelatedGroupByClauseValidator implements MQLValidator{
     private static final Logger logger = LogManager.getLogger(ItemsOfRelatedGroupByClauseValidator.class);
 

@@ -13,6 +13,12 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.Map;
 
+/**
+ *
+ * Columns And Function Validate For 'Join', 'Where', 'Group By'
+ *
+ */
+
 public class ItemsOfGeneralClauseValidator implements MQLValidator{
     private static final Logger logger = LogManager.getLogger(ItemsOfGeneralClauseValidator.class);
 
