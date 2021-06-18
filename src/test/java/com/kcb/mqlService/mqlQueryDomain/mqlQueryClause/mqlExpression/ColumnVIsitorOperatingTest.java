@@ -90,7 +90,7 @@ public class ColumnVIsitorOperatingTest {
         MQLDataStorage resultStorage = expression.operatingWith(mqlDataStorage);
         resultStorage.getMqlTable().getTableData().forEach(
                 eachRow -> {
-                    assertThat((int)eachRow.get(standardColumn), is(greaterThan((int)eachRow.get(compareColumn))));
+                    assertThat((Double)eachRow.get(standardColumn), is(greaterThan((Double)eachRow.get(compareColumn))));
                 }
         );
     }
@@ -115,7 +115,7 @@ public class ColumnVIsitorOperatingTest {
         MQLDataStorage resultStorage = expression.operatingWith(mqlDataStorage);
         resultStorage.getMqlTable().getTableData().forEach(
                 eachRow -> {
-                    assertThat((int)eachRow.get(standardColumn), is(lessThan((int)eachRow.get(compareColumn))));
+                    assertThat((Double)eachRow.get(standardColumn), is(lessThan((Double)eachRow.get(compareColumn))));
                 }
         );
     }
@@ -203,9 +203,10 @@ public class ColumnVIsitorOperatingTest {
         );
 
         MQLDataStorage result = orOperator.operatingWith(mqlDataStorage);
+        print(result);
         result.getMqlTable().getTableData().forEach(eachRow -> {
             assertThat(true, anyOf(
-                    is(eachRow.get("A.CategoryID").equals(1)),
+                    is(eachRow.get("A.CategoryID").equals(1.0)),
                     is(eachRow.get("A.CategoryName").equals("Grains/Cereals"))
             ));
         });
@@ -232,7 +233,7 @@ public class ColumnVIsitorOperatingTest {
         for (Map<String, Object> eachRow : result.getMqlTable().getTableData()) {
             assertThat(
                     (((String)eachRow.get(leftColumn)).length()),
-                    is(lessThan((int)eachRow.get(rightColumn))));
+                    is(lessThan(((Double)eachRow.get(rightColumn)).intValue())));
         }
 
         print(result);
@@ -262,7 +263,7 @@ public class ColumnVIsitorOperatingTest {
         for (Map<String, Object> eachRow : result.getMqlTable().getTableData()) {
             assertThat(
                     (value.length()),
-                    is(lessThanOrEqualTo(((int)eachRow.get(column)))));
+                    is(lessThanOrEqualTo((((Double)eachRow.get(column)).intValue()))));
         }
 
         print(result);

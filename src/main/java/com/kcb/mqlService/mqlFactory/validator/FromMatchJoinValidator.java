@@ -17,8 +17,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class TableValidator implements MQLValidator {
-    private static final Logger logger = LogManager.getLogger(TableValidator.class);
+public class FromMatchJoinValidator implements MQLValidator {
+    private static final Logger logger = LogManager.getLogger(FromMatchJoinValidator.class);
 
     @Override
     public boolean isValid(SqlContextStorage sqlContextStorage) {

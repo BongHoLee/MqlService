@@ -1,8 +1,7 @@
 package com.kcb.mqlService.mqlFactory;
 
 import com.kcb.mqlService.mqlFactory.exception.MQLQueryNotValidException;
-import com.kcb.mqlService.mqlFactory.validator.MQLValidator;
-import com.kcb.mqlService.mqlFactory.validator.TableValidator;
+import com.kcb.mqlService.mqlFactory.validator.*;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.schema.Table;
@@ -21,7 +20,10 @@ public class SqlContextStorage {
     private List<String> groupByElementsNames = new ArrayList<>();
 
     private List<MQLValidator> MQLValidators = Arrays.asList(
-            new TableValidator()
+            new SyntaxValidator(),
+            new FromMatchJoinValidator(),
+            new ItemsOfGeneralClauseValidator(),
+            new ItemsOfRelatedGroupByClauseValidator()
     );
 
     public SqlContextStorage(String script) {

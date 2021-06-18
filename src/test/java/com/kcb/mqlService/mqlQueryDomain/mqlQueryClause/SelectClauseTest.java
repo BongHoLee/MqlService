@@ -154,7 +154,6 @@ public class SelectClauseTest {
         );
 
         List<Map<String, Object>> result = select.executeQueryWith(dataSource);
-
         result.forEach(eachRow -> {
             assertThat(eachRow.keySet(), hasItems("E.ProductID", "E.SupplierID", "E.Price", "E.Unit"));
             assertThat(eachRow.keySet(), hasSize(4));

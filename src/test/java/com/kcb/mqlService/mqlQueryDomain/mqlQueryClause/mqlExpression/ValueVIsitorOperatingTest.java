@@ -67,7 +67,7 @@ public class ValueVIsitorOperatingTest {
         MQLDataStorage result = operandExpression.operatingWith(mqlDataStorage);
 
         result.getMqlTable().getTableData().forEach(eachRow -> {
-            assertThat(value, is(equalTo(eachRow.get(column))));
+            assertThat(value, is(equalTo(((Double)eachRow.get(column)).intValue())));
         });
     }
 
@@ -98,8 +98,8 @@ public class ValueVIsitorOperatingTest {
         MQLDataStorage result = andOperator.operatingWith(mqlDataStorage);
         result.getMqlTable().getTableData().forEach(eachRow -> {
             assertThat(true, allOf(
-                    is(equalTo(eachRow.get("A.CategoryID").equals(1))),
-                    is(equalTo(eachRow.get("B.EmployeeID").equals(2)))
+                    is(equalTo(eachRow.get("A.CategoryID").equals(1.0))),
+                    is(equalTo(eachRow.get("B.EmployeeID").equals(2.0)))
             ));
         });
     }
@@ -131,8 +131,8 @@ public class ValueVIsitorOperatingTest {
         MQLDataStorage result = orOperator.operatingWith(mqlDataStorage);
         result.getMqlTable().getTableData().forEach(eachRow -> {
             assertThat(true, anyOf(
-                    is(equalTo(eachRow.get("A.CategoryID").equals(1))),
-                    is(equalTo(eachRow.get("B.EmployeeID").equals(2)))
+                    is(equalTo(eachRow.get("A.CategoryID").equals(1.0))),
+                    is(equalTo(eachRow.get("B.EmployeeID").equals(2.0)))
             ));
         });
     }

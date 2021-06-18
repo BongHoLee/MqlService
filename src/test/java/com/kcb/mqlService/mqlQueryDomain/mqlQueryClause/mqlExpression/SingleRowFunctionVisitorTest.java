@@ -63,7 +63,7 @@ public class SingleRowFunctionVisitorTest {
 
         for (Map<String, Object> eachRow : result.getMqlTable().getTableData()) {
             assertThat(
-                    ((int) eachRow.get(leftColumn)),
+                    (((Double)eachRow.get(leftColumn)).intValue()),
                     is(greaterThanOrEqualTo(((String) eachRow.get(rightColumn)).length())));
         }
 
@@ -90,7 +90,7 @@ public class SingleRowFunctionVisitorTest {
 
         for (Map<String, Object> eachRow : result.getMqlTable().getTableData()) {
             assertThat(
-                    ((int) eachRow.get(column)),
+                    (((Double) eachRow.get(column)).intValue()),
                     is(greaterThanOrEqualTo(value.length())));
         }
     }

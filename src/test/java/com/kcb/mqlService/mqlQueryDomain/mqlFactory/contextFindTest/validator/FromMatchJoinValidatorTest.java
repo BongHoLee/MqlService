@@ -2,7 +2,7 @@ package com.kcb.mqlService.mqlQueryDomain.mqlFactory.contextFindTest.validator;
 
 import com.kcb.mqlService.mqlFactory.SqlContextStorage;
 import com.kcb.mqlService.mqlFactory.exception.MQLQueryNotValidException;
-import com.kcb.mqlService.mqlFactory.validator.TableValidator;
+import com.kcb.mqlService.mqlFactory.validator.FromMatchJoinValidator;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -10,7 +10,7 @@ import org.junit.rules.ExpectedException;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class TableValidatorTest {
+public class FromMatchJoinValidatorTest {
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -26,8 +26,8 @@ public class TableValidatorTest {
 
         SqlContextStorage sqlContextStorage = new SqlContextStorage(sql);
 
-        TableValidator tableValidator = new TableValidator();
-        tableValidator.isValid(sqlContextStorage);
+        FromMatchJoinValidator fromMatchJoinValidator = new FromMatchJoinValidator();
+        fromMatchJoinValidator.isValid(sqlContextStorage);
     }
 
     @Test
@@ -42,9 +42,9 @@ public class TableValidatorTest {
 
 
         SqlContextStorage sqlContextStorage = new SqlContextStorage(sql);
-        TableValidator tableValidator = new TableValidator();
+        FromMatchJoinValidator fromMatchJoinValidator = new FromMatchJoinValidator();
 
-        tableValidator.isValid(sqlContextStorage);
+        fromMatchJoinValidator.isValid(sqlContextStorage);
     }
 
     @Test
@@ -56,9 +56,9 @@ public class TableValidatorTest {
 
 
         SqlContextStorage sqlContextStorage = new SqlContextStorage(sql);
-        TableValidator tableValidator = new TableValidator();
+        FromMatchJoinValidator fromMatchJoinValidator = new FromMatchJoinValidator();
 
-        assertThat(tableValidator.isValid(sqlContextStorage), is(true));
+        assertThat(fromMatchJoinValidator.isValid(sqlContextStorage), is(true));
 
     }
 
@@ -74,9 +74,9 @@ public class TableValidatorTest {
 
 
         SqlContextStorage sqlContextStorage = new SqlContextStorage(sql);
-        TableValidator tableValidator = new TableValidator();
+        FromMatchJoinValidator fromMatchJoinValidator = new FromMatchJoinValidator();
 
-        tableValidator.isValid(sqlContextStorage);
+        fromMatchJoinValidator.isValid(sqlContextStorage);
 
     }
 
@@ -87,8 +87,8 @@ public class TableValidatorTest {
 
 
         SqlContextStorage sqlContextStorage = new SqlContextStorage(sql);
-        TableValidator tableValidator = new TableValidator();
-        assertThat(tableValidator.isValid(sqlContextStorage), is(true));
+        FromMatchJoinValidator fromMatchJoinValidator = new FromMatchJoinValidator();
+        assertThat(fromMatchJoinValidator.isValid(sqlContextStorage), is(true));
     }
 
     @Test
@@ -101,8 +101,8 @@ public class TableValidatorTest {
 
 
         SqlContextStorage sqlContextStorage = new SqlContextStorage(sql);
-        TableValidator tableValidator = new TableValidator();
-        assertThat(tableValidator.isValid(sqlContextStorage), is(true));
+        FromMatchJoinValidator fromMatchJoinValidator = new FromMatchJoinValidator();
+        assertThat(fromMatchJoinValidator.isValid(sqlContextStorage), is(true));
     }
 
 
@@ -118,8 +118,8 @@ public class TableValidatorTest {
 
 
         SqlContextStorage sqlContextStorage = new SqlContextStorage(sql);
-        TableValidator tableValidator = new TableValidator();
-        tableValidator.isValid(sqlContextStorage);
+        FromMatchJoinValidator fromMatchJoinValidator = new FromMatchJoinValidator();
+        fromMatchJoinValidator.isValid(sqlContextStorage);
     }
 
     @Test
@@ -136,8 +136,8 @@ public class TableValidatorTest {
 
 
         SqlContextStorage sqlContextStorage = new SqlContextStorage(sql);
-        TableValidator tableValidator = new TableValidator();
-        tableValidator.isValid(sqlContextStorage);
+        FromMatchJoinValidator fromMatchJoinValidator = new FromMatchJoinValidator();
+        fromMatchJoinValidator.isValid(sqlContextStorage);
     }
 
 }
