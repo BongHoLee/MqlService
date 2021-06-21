@@ -14,7 +14,7 @@ public class LOWER extends SingleRowFunctionElement {
     public LOWER(String alias, MQLElement ... parameters) {
         super(parameters);
         this.alias = alias;
-        makeExpression(parameters);
+        makeExpression(Arrays.asList(parameters));
         setHasAlias();
 
     }
@@ -23,11 +23,18 @@ public class LOWER extends SingleRowFunctionElement {
         this("", parameters);
     }
 
-    private void makeExpression(MQLElement ... parameters) {
+    public LOWER(String alias, List<MQLElement> parameters) {
+        super(parameters);
+        this.alias = alias;
+        makeExpression(parameters);
+        setHasAlias();
+    }
+
+    private void makeExpression(List<MQLElement> parameters) {
         expression = "LOWER(";
 
-        for (int i=0; i<parameters.length; i++) {
-            MQLElement each = parameters[i];
+        for (int i=0; i<parameters.size(); i++) {
+            MQLElement each = parameters.get(i);
 
             if (each instanceof ValueElement && ((ValueElement) each).getValueType() == ValueType.STRING) {
                 expression += "'" + each.getElementExpression() + "'";
@@ -35,7 +42,7 @@ public class LOWER extends SingleRowFunctionElement {
                 expression += each.getElementExpression();
             }
 
-            if (i < parameters.length-1) {
+            if (i < parameters.size()-1) {
                 expression += ",";
             }
         }

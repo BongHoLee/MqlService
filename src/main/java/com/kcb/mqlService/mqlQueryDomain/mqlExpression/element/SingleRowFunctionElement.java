@@ -16,6 +16,11 @@ public abstract class SingleRowFunctionElement implements MQLElement {
         setFunctionType();
     }
 
+    public SingleRowFunctionElement(List<MQLElement> parameters) {
+        this.parameters = parameters;
+        setFunctionType();
+    }
+
     private void setFunctionType() {
         int columnCount = 0;
         for (MQLElement each : parameters) {

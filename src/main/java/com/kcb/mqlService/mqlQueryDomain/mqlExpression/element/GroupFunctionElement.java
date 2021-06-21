@@ -7,14 +7,12 @@ public abstract class GroupFunctionElement implements MQLElement{
     private MQLElement parameter;
     private String parameterExpression = "";
 
-    public GroupFunctionElement(MQLElement parameter) {
-        this.parameter = parameter;
+    public GroupFunctionElement() {
+        
+    }
 
-        if (parameter instanceof ValueElement && ((ValueElement) parameter).getValueType() == ValueType.STRING) {
-            parameterExpression = "'" + parameter.getElementExpression() + "'";
-        } else {
-            parameterExpression = parameter.getElementExpression();
-        }
+    public GroupFunctionElement(MQLElement parameter) {
+        addParameter(parameter);
     }
 
     public Object executeAbout(int start, int end, MQLDataStorage mqlDataStorage) {
@@ -26,6 +24,16 @@ public abstract class GroupFunctionElement implements MQLElement{
             return executeWithSingleRowFunctionParameter(start, end, (SingleRowFunctionElement) parameter, mqlDataStorage);
         } else {
             throw new RuntimeException("Not Valid Parameter Type!");
+        }
+    }
+
+    public void addParameter(MQLElement parameter) {
+        this.parameter = parameter;
+
+        if (parameter instanceof ValueElement && ((ValueElement) parameter).getValueType() == ValueType.STRING) {
+            parameterExpression = "'" + parameter.getElementExpression() + "'";
+        } else {
+            parameterExpression = parameter.getElementExpression();
         }
     }
 

@@ -15,20 +15,28 @@ public class LENGTH extends SingleRowFunctionElement {
     public LENGTH(String alias, MQLElement ... parameters) {
         super(parameters);
         this.alias = alias;
-        makeExpression(parameters);
+        makeExpression(Arrays.asList(parameters));
         setHasAlias();
 
+    }
+
+    public LENGTH(String alias, List<MQLElement> parameters) {
+        super(parameters);
+        this.alias = alias;
+        makeExpression(parameters);
+        setHasAlias();
     }
 
     public LENGTH(MQLElement ... parameters) {
         this("", parameters);
     }
 
-    private void makeExpression(MQLElement ... parameters) {
+
+    private void makeExpression(List<MQLElement> parameters) {
         expression = "LENGTH(";
 
-        for (int i=0; i<parameters.length; i++) {
-            MQLElement each = parameters[i];
+        for (int i=0; i<parameters.size(); i++) {
+            MQLElement each = parameters.get(i);
 
             if (each instanceof ValueElement && ((ValueElement) each).getValueType() == ValueType.STRING) {
                 expression += "'" + each.getElementExpression() + "'";
@@ -36,7 +44,7 @@ public class LENGTH extends SingleRowFunctionElement {
                 expression += each.getElementExpression();
             }
 
-            if (i < parameters.length-1) {
+            if (i < parameters.size()-1) {
                 expression += ",";
             }
         }

@@ -13,17 +13,32 @@ public class AVG extends GroupFunctionElement {
     private String alias = "";
     private boolean hasAlias;
 
+    public AVG() {
+        super();
+    }
+
+    public AVG(String alias) {
+        this.alias = alias;
+        setHasAlias();
+    }
+
     public AVG(String alias, MQLElement parameter) {
         super(parameter);
         this.alias = alias;
         expression = "AVG(" + getParameterExpression() + ")";
+        setHasAlias();
 
     }
 
     public AVG(MQLElement parameter) {
         this("", parameter);
-
     }
+
+
+
+
+
+
 
     private void setHasAlias() {
         hasAlias =  !alias.isEmpty();
