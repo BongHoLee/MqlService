@@ -3,6 +3,7 @@ package com.kcb.mqlService.mqlFactory.validator;
 import com.kcb.mqlService.mqlFactory.SqlContextStorage;
 import com.kcb.mqlService.mqlFactory.exception.MQLQueryNotValidException;
 import net.sf.jsqlparser.statement.select.PlainSelect;
+import net.sf.jsqlparser.statement.select.SelectVisitorAdapter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -22,6 +23,7 @@ public class SyntaxValidator implements MQLValidator{
             logger.error("'GROUP BY' clause must exist to use 'HAVING' clause : {}", sqlContextStorage.getSelect().toString());
             throw  new MQLQueryNotValidException();
         }
+
 
 
         return true;

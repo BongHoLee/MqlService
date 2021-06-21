@@ -11,15 +11,29 @@ public class COUNT extends GroupFunctionElement {
     private String alias = "";
     private boolean hasAlias;
 
+    public COUNT(String alias) {
+        this.alias = alias;
+        setHasAlias();
+    }
+
     public COUNT(String alias, MQLElement parameter) {
         super(parameter);
         this.alias = alias;
-        expression = "COUNT(" + getParameterExpression() + ")";
+        setExpression();
         setHasAlias();
+    }
+
+    public void addParameter(MQLElement parameter) {
+        super.addParameter(parameter);
+        setExpression();
     }
 
     public COUNT(MQLElement parameter) {
         this("", parameter);
+    }
+
+    private void setExpression() {
+        expression = "COUNT(" + getParameterExpression() + ")";
     }
 
     private void setHasAlias() {

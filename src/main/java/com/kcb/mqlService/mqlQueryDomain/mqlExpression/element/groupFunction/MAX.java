@@ -13,15 +13,29 @@ public class MAX extends GroupFunctionElement {
     private String alias = "";
     private boolean hasAlias;
 
+    public MAX(String alias) {
+        this.alias = alias;
+        setHasAlias();
+    }
+
     public MAX(String alias, MQLElement parameter) {
         super(parameter);
         this.alias = alias;
-        expression = "MAX(" + getParameterExpression() + ")";
+        setExpression();
         setHasAlias();
     }
 
     public MAX(MQLElement parameter) {
         this("", parameter);
+    }
+
+    public void addParameter(MQLElement parameter) {
+        super.addParameter(parameter);
+        setExpression();
+    }
+
+    private void setExpression() {
+        expression = "MAX(" + getParameterExpression() + ")";
     }
 
     private void setHasAlias() {

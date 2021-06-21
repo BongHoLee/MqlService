@@ -11,6 +11,12 @@ public class SUBSTR extends SingleRowFunctionElement {
     private String alias = "";
     private boolean hasAlias;
 
+    public SUBSTR(String alias) {
+        super();
+        this.alias = alias;
+        setHasAlias();
+    }
+
     public SUBSTR(String alias, MQLElement ... parameters) {
         super(parameters);
         this.alias = alias;
@@ -27,6 +33,11 @@ public class SUBSTR extends SingleRowFunctionElement {
         this.alias = alias;
         makeExpression(parameters);
         setHasAlias();
+    }
+
+    public void setParameters(List<MQLElement> parameters) {
+        super.setParameters(parameters);
+        makeExpression(parameters);
     }
 
     private void makeExpression(List<MQLElement> parameters) {

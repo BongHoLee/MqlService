@@ -11,6 +11,8 @@ import net.sf.jsqlparser.statement.select.PlainSelect;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -28,7 +30,9 @@ public class ItemsOfGeneralClauseValidator implements MQLValidator{
         ExpressionVisitor visitor = new ExpressionVisitorAdapter() {
             @Override
             public void visit(Function function) {
+                parameterValidCheck(function);
                 functionValidCheck(function, sqlContextStorage);
+
             }
 
             @Override
@@ -115,6 +119,34 @@ public class ItemsOfGeneralClauseValidator implements MQLValidator{
                     }
                 });
             });
+        }
+    }
+
+    private void parameterValidCheck(Function function) {
+        List<String> temp = new ArrayList<>();
+
+        if (DefinedFunction.GROUP_FUNCTION.getDefinedFunctionList().contains(function.getName())) {
+            if (function.getParameters().getExpressions().size() > 1) {
+                logger.error("Group Function can have only one parameter ");
+                throw new MQLQueryNotValidException();
+            }
+        }
+
+        function.getParameters().getExpressions().forEach(expression -> {
+
+            expression.accept(new ExpressionVisitorAdapter() {
+
+                @Override
+                public void visit(Column column) {
+                    temp.add(column.getName(true));
+                    super.visit(column);
+                }
+            });
+        });
+
+        if (temp.size() > 1) {
+            logger.error("Function couldn't more than one Column Parameters : Function : {}, Columns : {} ", function.getName(), temp);
+            throw new MQLQueryNotValidException();
         }
     }
 
