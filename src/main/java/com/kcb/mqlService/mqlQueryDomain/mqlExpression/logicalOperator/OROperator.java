@@ -18,6 +18,15 @@ public class OROperator  implements MQLOperatingExpression{
         this.rightExpression = rightExpression;
     }
 
+    public OROperator(){}
+
+    public void setLeftExpression(MQLOperatingExpression leftExpression) {
+        this.leftExpression = leftExpression;
+    }
+
+    public void setRightExpression(MQLOperatingExpression rightExpression) {
+        this.rightExpression = rightExpression;
+    }
 
     @Override
     public MQLDataStorage operatingWith(MQLDataStorage mqlDataStorage) {

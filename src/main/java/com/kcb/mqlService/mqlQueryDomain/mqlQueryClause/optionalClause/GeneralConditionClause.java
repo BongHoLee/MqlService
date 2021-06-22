@@ -5,11 +5,14 @@ import com.kcb.mqlService.mqlQueryDomain.mqlExpression.MQLOperatingExpression;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.logicalOperator.ANDOperator;
 import com.kcb.mqlService.mqlQueryDomain.mqlQueryClause.OptionalClause;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class GeneralConditionClause implements OptionalClause {
-    private List<GeneralCondition> generalConditions;
+    private List<GeneralCondition> generalConditions = new ArrayList<>();
+
+    public GeneralConditionClause() {}
 
     public GeneralConditionClause(List<GeneralCondition> generalConditions) {
         this.generalConditions = generalConditions;
@@ -17,6 +20,10 @@ public class GeneralConditionClause implements OptionalClause {
 
     public GeneralConditionClause(GeneralCondition ... generalConditions) {
         this.generalConditions = Arrays.asList(generalConditions);
+    }
+
+    public void addCondition(GeneralCondition generalCondition) {
+        generalConditions.add(generalCondition);
     }
 
     @Override

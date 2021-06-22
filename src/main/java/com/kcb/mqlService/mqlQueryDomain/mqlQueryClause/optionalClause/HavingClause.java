@@ -7,7 +7,13 @@ import com.kcb.mqlService.mqlQueryDomain.mqlQueryClause.OptionalClause;
 public class HavingClause implements OptionalClause {
     private MQLOperatingExpression operatingExpression;
 
+    public HavingClause(){}
+
     public HavingClause(MQLOperatingExpression operatingExpression) {
+        this.operatingExpression = operatingExpression;
+    }
+
+    public void setOperatingExpression(MQLOperatingExpression operatingExpression) {
         this.operatingExpression = operatingExpression;
     }
 

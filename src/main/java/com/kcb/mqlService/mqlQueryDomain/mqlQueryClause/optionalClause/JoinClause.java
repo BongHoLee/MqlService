@@ -8,7 +8,13 @@ public class JoinClause implements GeneralCondition {
 
     private MQLOperatingExpression operatingExpression;
 
+    public JoinClause(){}
+
     public JoinClause(MQLOperatingExpression operatingExpression) {
+        this.operatingExpression = operatingExpression;
+    }
+
+    public void setOperatingExpression(MQLOperatingExpression operatingExpression) {
         this.operatingExpression = operatingExpression;
     }
 

@@ -1,5 +1,7 @@
 package com.kcb.mqlService.mqlQueryDomain.mqlQueryClause;
 
+import com.kcb.mqlService.mqlFactory.SelectClauseFactory;
+import com.kcb.mqlService.mqlFactory.SqlContextStorage;
 import com.kcb.mqlService.mqlQueryDomain.mqlData.MQLDataSource;
 import com.kcb.mqlService.mqlQueryDomain.mqlData.MQLDataStorage;
 import com.kcb.mqlService.mqlQueryDomain.mqlData.MQLTable;
@@ -213,13 +215,14 @@ public class SelectClauseTest {
     }
 
     /**
-     * SELECT  E.ProductID, E.Price, E.Unit, A.CategoryID, A.CategoryName
+     * SELECT  A.CategoryID, A.CategoryName, E.CategoryID, E.ProductID, E.Price, E.Unit
      * FROM Products E
-     * JOIN Categories A ON E.CategoryID=A.CategoryID
-     * WHERE E.PRICE > 20 AND E.CategoryID >= 7
+     * JOIN Categories A ON A.CategoryID=E.CategoryID
+     * WHERE E.PRICE > 20 AND A.CategoryID >= 7
      */
     @Test
     public void selectPlainWithJoinAndWhereAndWhereConditionClauseTest() {
+
 
         List<MQLElement> selectItems = Arrays.asList(
                 new ColumnElement("A.CategoryID"),

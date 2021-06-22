@@ -28,7 +28,6 @@ public class GroupByClause implements OptionalClause {
     }
 
     public GroupByClause() {
-        this.groupingElements = new ArrayList<>();
     }
 
     @Override

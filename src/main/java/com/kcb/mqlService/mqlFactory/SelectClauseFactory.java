@@ -55,14 +55,13 @@ public class SelectClauseFactory {
     }
 
     private List<OptionalClause> optionalClauses(SqlContextStorage sqlContextStorage) {
-        List<OptionalClause> optionalClauses = new ArrayList<>();
-
-        return optionalClauses;
+        return OptionalClauseFactory.getInstance().create(sqlContextStorage);
     }
 
     private void selectItemVisit(SelectExpressionItem item, List<MQLElement> elements) {
 
-        item.getExpression().accept(expressionVisitor(elements,item.getAlias().getName()) );
+        String alias = item.getAlias() == null ? "" : item.getAlias().getName();
+        item.getExpression().accept(expressionVisitor(elements,alias) );
     }
 
 

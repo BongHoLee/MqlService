@@ -7,7 +7,13 @@ import com.kcb.mqlService.mqlQueryDomain.mqlQueryClause.OptionalClause;
 public class WhereClause implements GeneralCondition {
     private MQLOperatingExpression expression;
 
+    public WhereClause(){}
+
     public WhereClause(MQLOperatingExpression expression) {
+        this.expression = expression;
+    }
+
+    public void setOperatingExpression(MQLOperatingExpression expression) {
         this.expression = expression;
     }
 

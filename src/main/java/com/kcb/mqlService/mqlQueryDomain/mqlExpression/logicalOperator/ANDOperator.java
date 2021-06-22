@@ -13,8 +13,18 @@ public  class ANDOperator implements MQLOperatingExpression {
     private MQLOperatingExpression leftExpression;
     private MQLOperatingExpression rightExpression;
 
+    public ANDOperator(){}
+
     public ANDOperator(MQLOperatingExpression leftExpression, MQLOperatingExpression rightExpression) {
         this.leftExpression = leftExpression;
+        this.rightExpression = rightExpression;
+    }
+
+    public void setLeftExpression(MQLOperatingExpression leftExpression) {
+        this.leftExpression = leftExpression;
+    }
+
+    public void setRightExpression(MQLOperatingExpression rightExpression) {
         this.rightExpression = rightExpression;
     }
 

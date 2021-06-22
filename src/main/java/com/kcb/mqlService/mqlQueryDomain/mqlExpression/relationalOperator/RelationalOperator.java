@@ -31,7 +31,7 @@ public class RelationalOperator {
 
     // NotEqualTo  (!=)
 
-    public boolean notEqualTo(Object t1, Object t2) {
+    public static boolean notEqualTo(Object t1, Object t2) {
 
         if (t1 instanceof String && t2 instanceof String) {
             return notEqualTo((String)t1, (String)t2);
