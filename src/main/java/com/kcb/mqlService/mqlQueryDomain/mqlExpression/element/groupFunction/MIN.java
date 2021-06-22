@@ -13,15 +13,29 @@ public class MIN extends GroupFunctionElement {
     private String alias = "";
     private boolean hasAlias;
 
+    public MIN(String alias) {
+        this.alias = alias;
+        setHasAlias();
+    }
+
     public MIN(String alias, MQLElement parameter) {
         super(parameter);
         this.alias = alias;
-        expression = "MIN(" + getParameterExpression() + ")";
+        setExpression();
         setHasAlias();
     }
 
     public MIN(MQLElement parameter) {
         this("", parameter);
+    }
+
+    public void addParameter(MQLElement parameter) {
+        super.addParameter(parameter);
+        setExpression();
+    }
+
+    private void setExpression() {
+        expression = "MIN(" + getParameterExpression() + ")";
     }
 
     private void setHasAlias() {

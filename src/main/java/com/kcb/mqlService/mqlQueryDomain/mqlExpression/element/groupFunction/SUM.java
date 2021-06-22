@@ -13,15 +13,29 @@ public class SUM extends GroupFunctionElement {
     private String alias = "";
     private boolean hasAlias;
 
+    public SUM(String alias) {
+        this.alias = alias;
+        setHasAlias();
+    }
+
     public SUM(String alias, MQLElement parameter) {
         super(parameter);
         this.alias = alias;
-        expression = "SUM(" + getParameterExpression() + ")";
+        setExpression();
         setHasAlias();
     }
 
     public SUM(MQLElement parameter) {
         this("", parameter);
+    }
+
+    public void addParameter(MQLElement parameter) {
+        super.addParameter(parameter);
+        setExpression();
+    }
+
+    private void setExpression() {
+        expression = "SUM(" + getParameterExpression() + ")";
     }
 
     private void setHasAlias() {

@@ -1,5 +1,6 @@
 package com.kcb.mqlService.mqlFactory;
 
+import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.ColumnElement;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.MQLElement;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.ValueElement;
 import com.kcb.mqlService.mqlQueryDomain.mqlQueryClause.FromClause;
@@ -75,7 +76,7 @@ public class SelectClauseFactory {
 
             @Override
             public void visit(Column column) {
-                elements.add(columnElement(column, alias));
+                elements.add(new ColumnElement(alias, column.getName(true)));
             }
 
 
@@ -107,8 +108,5 @@ public class SelectClauseFactory {
         return MQLFunctionFactory.getInstance().create(function, alias);
     }
 
-    private MQLElement columnElement(Column column, String alias) {
-        return MQLColumnFactory.getInstance().create(column, alias);
-    }
 
 }

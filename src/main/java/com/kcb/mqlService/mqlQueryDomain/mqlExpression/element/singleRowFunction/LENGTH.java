@@ -12,12 +12,18 @@ public class LENGTH extends SingleRowFunctionElement {
     private boolean hasAlias;
     private String alias = "";
 
+    public LENGTH(String alias) {
+        super();
+        this.alias = alias;
+        setHasAlias();
+    }
+
+
     public LENGTH(String alias, MQLElement ... parameters) {
         super(parameters);
         this.alias = alias;
         makeExpression(Arrays.asList(parameters));
         setHasAlias();
-
     }
 
     public LENGTH(String alias, List<MQLElement> parameters) {
@@ -25,6 +31,11 @@ public class LENGTH extends SingleRowFunctionElement {
         this.alias = alias;
         makeExpression(parameters);
         setHasAlias();
+    }
+
+    public void setParameters(List<MQLElement> parameters) {
+        super.setParameters(parameters);
+        makeExpression(parameters);
     }
 
     public LENGTH(MQLElement ... parameters) {

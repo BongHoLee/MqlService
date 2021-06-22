@@ -11,6 +11,12 @@ public class LOWER extends SingleRowFunctionElement {
     private boolean hasAlias;
     private String alias = "";
 
+    public LOWER(String alias) {
+        super();
+        this.alias = alias;
+        setHasAlias();
+    }
+
     public LOWER(String alias, MQLElement ... parameters) {
         super(parameters);
         this.alias = alias;
@@ -28,6 +34,11 @@ public class LOWER extends SingleRowFunctionElement {
         this.alias = alias;
         makeExpression(parameters);
         setHasAlias();
+    }
+
+    public void setParameters(List<MQLElement> parameters) {
+        super.setParameters(parameters);
+        makeExpression(parameters);
     }
 
     private void makeExpression(List<MQLElement> parameters) {

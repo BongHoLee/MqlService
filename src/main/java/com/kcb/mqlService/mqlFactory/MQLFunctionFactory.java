@@ -1,8 +1,11 @@
 package com.kcb.mqlService.mqlFactory;
 
-import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.MQLElement;
-import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.ValueElement;
-import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.groupFunction.SUM;
+import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.*;
+import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.groupFunction.*;
+import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.singleRowFunction.LENGTH;
+import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.singleRowFunction.LOWER;
+import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.singleRowFunction.SUBSTR;
+import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.singleRowFunction.UPPER;
 import com.kcb.mqlService.utils.DefinedFunction;
 import net.sf.jsqlparser.expression.*;
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
@@ -27,74 +30,132 @@ public class MQLFunctionFactory {
 
     public MQLElement create(Function function, String alias) {
         if (DefinedFunction.GROUP_FUNCTION.getDefinedFunctionList().contains(function.getName())) {
-            return groupFunction(function, alias, null);
+            return groupFunction(function, alias);
         } else {
             return singleRowFunction(function, alias);
         }
 
     }
 
-    private MQLElement groupFunction(Function function, String alias, MQLElement visitElement) {
-        MQLElement parameterElement = null;
-
+    private MQLElement groupFunction(Function function, String alias) {
+        GroupFunctionElement groupFunctionElement = null;
 
         switch (function.getName()) {
             case "SUM" :
-                visitElement =  new SUM(alias, parameter(function.getParameters().getExpressions().get(0), parameterElement));
+                groupFunctionElement = new SUM(alias);
+                break;
+            case "MIN" :
+                groupFunctionElement = new MIN(alias);
+                break;
+            case "MAX" :
+                groupFunctionElement = new MAX(alias);
+                break;
+            case "COUNT" :
+                groupFunctionElement = new COUNT(alias);
+                break;
+            case "AVG" :
+                groupFunctionElement = new AVG(alias);
+                break;
         }
 
-        return visitElement;
+        setGroupFunctionParameter(function, groupFunctionElement);
+        return groupFunctionElement;
     }
 
-    private MQLElement singleRowFunction(Function function, String alias) {
-
-    }
-
-    private List<MQLElement> parameters(ExpressionList parameterList) {
-
-    }
-
-    private MQLElement parameter(Expression parameter, MQLElement visitElement) {
-        parameter.accept(visitor(visitElement));
-
-        return visitElement;
-    }
-
-    private ExpressionVisitor visitor(MQLElement visitElement) {
-        List<MQLElement> tmpList = new ArrayList<>();
-        ExpressionVisitor visitor = new ExpressionVisitorAdapter() {
-            @Override
-            public void visit(Function function) {
-                tmpList.add()
-            }
-
+    private void setGroupFunctionParameter(Function function, GroupFunctionElement groupFunctionElement) {
+        function.getParameters().getExpressions().get(0).accept(new ExpressionVisitorAdapter(){
             @Override
             public void visit(Column column) {
-
+                groupFunctionElement.addParameter(new ColumnElement(column.getName(true)));
             }
 
-
             @Override
-            public void visit(LongValue value) {
-
+            public void visit(Function function) {
+                groupFunctionElement.addParameter(MQLFunctionFactory.getInstance().create(function, ""));
             }
 
             @Override
             public void visit(DoubleValue value) {
+                groupFunctionElement.addParameter(new ValueElement(value.getValue()));
+            }
 
+            @Override
+            public void visit(LongValue value) {
+                groupFunctionElement.addParameter(new ValueElement(value.getValue()));
             }
 
             @Override
             public void visit(DateValue value) {
-
+                groupFunctionElement.addParameter(new ValueElement(value.getValue().toString()));
             }
 
             @Override
             public void visit(StringValue value) {
-
+                groupFunctionElement.addParameter(new ValueElement(value.getValue()));
             }
-        };
-
-        return visitor;
+        });
     }
+
+    private MQLElement singleRowFunction(Function function, String alias) {
+        SingleRowFunctionElement singleRowFunctionElement = null;
+
+        switch (function.getName()) {
+            case "LENGTH":
+                singleRowFunctionElement = new LENGTH(alias);
+                break;
+            case "LOWER":
+                singleRowFunctionElement = new LOWER(alias);
+                break;
+            case "SUBSTR":
+                singleRowFunctionElement = new SUBSTR(alias);
+                break;
+            case "UPPER":
+                singleRowFunctionElement = new UPPER(alias);
+                break;
+        }
+
+        List<MQLElement> parameters = new ArrayList<>();
+        setSingleRowFunctionParameters(function, parameters);
+        singleRowFunctionElement.setParameters(parameters);
+        return singleRowFunctionElement;
+    }
+
+    private void setSingleRowFunctionParameters(Function function, List<MQLElement> parameters) {
+        function.getParameters().getExpressions().forEach(expression ->  {
+            expression.accept(new ExpressionVisitorAdapter(){
+
+                @Override
+                public void visit(Function function) {
+                    parameters.add(MQLFunctionFactory.getInstance().create(function, ""));
+                }
+
+                @Override
+                public void visit(Column column) {
+                    parameters.add(new ColumnElement(column.getName(true)));
+                }
+
+                @Override
+                public void visit(DoubleValue value) {
+                    parameters.add(new ValueElement(value.getValue()));
+                }
+
+                @Override
+                public void visit(LongValue value) {
+                    parameters.add(new ValueElement(value.getValue()));
+                }
+
+                @Override
+                public void visit(DateValue value) {
+                    parameters.add(new ValueElement(value.getValue().toString()));
+                }
+
+                @Override
+                public void visit(StringValue value) {
+                    parameters.add(new ValueElement(value.getValue()));
+                }
+            });
+        });
+    }
+
+
 }

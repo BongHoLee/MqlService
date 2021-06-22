@@ -11,12 +11,19 @@ public abstract class SingleRowFunctionElement implements MQLElement {
     private SingleRowFunctionParameterType singleRowFunctionParameterType;
     private String columnParameterName;
 
+    public SingleRowFunctionElement(){}
+
     public SingleRowFunctionElement(MQLElement ... parameters) {
         this.parameters = Arrays.asList(parameters);
         setFunctionType();
     }
 
     public SingleRowFunctionElement(List<MQLElement> parameters) {
+        this.parameters = parameters;
+        setFunctionType();
+    }
+
+    public void setParameters(List<MQLElement> parameters) {
         this.parameters = parameters;
         setFunctionType();
     }

@@ -13,6 +13,7 @@ import net.sf.jsqlparser.statement.select.SelectItemVisitorAdapter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -34,6 +35,7 @@ public class ItemsOfRelatedGroupByClauseValidator implements MQLValidator{
 
             @Override
             public void visit(Function function) {
+                parameterValidCheck(function);
                 functionValidCheck(function, sqlContextStorage);
             }
 
@@ -133,12 +135,41 @@ public class ItemsOfRelatedGroupByClauseValidator implements MQLValidator{
         }
     }
 
+
     private void validColumnCheck(Column column, Map<String, String> tableAliasAndNames, List<String> groupByNames) {
         if (!tableAliasAndNames.containsKey(column.getTable().getName())) {
             logger.error("Column {} is not valid. check out defined Table : {}", column.toString(), tableAliasAndNames);
             throw new MQLQueryNotValidException();
         } else if (!(groupByNames.size() == 0 || groupByNames.contains(column.toString()))) {
             logger.error("Column {} is not valid. check out group by : {}", column.toString(), groupByNames);
+            throw new MQLQueryNotValidException();
+        }
+    }
+
+    private void parameterValidCheck(Function function) {
+        List<String> temp = new ArrayList<>();
+
+        if (DefinedFunction.GROUP_FUNCTION.getDefinedFunctionList().contains(function.getName())) {
+            if (function.getParameters().getExpressions().size() > 1) {
+                logger.error("Group Function can have only one parameter ");
+                throw new MQLQueryNotValidException();
+            }
+        }
+
+        function.getParameters().getExpressions().forEach(expression -> {
+
+            expression.accept(new ExpressionVisitorAdapter(){
+
+                @Override
+                public void visit(Column column) {
+                    temp.add(column.getName(true));
+                    super.visit(column);
+                }
+            });
+        });
+
+        if (temp.size() > 1) {
+            logger.error("Function couldn't more than one Column Parameters : Function : {}, Columns : {} ", function.getName(), temp);
             throw new MQLQueryNotValidException();
         }
     }

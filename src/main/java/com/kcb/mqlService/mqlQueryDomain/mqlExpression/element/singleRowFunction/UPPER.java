@@ -12,6 +12,12 @@ public class UPPER extends SingleRowFunctionElement {
     private String alias = "";
     private boolean hasAlias;
 
+    public UPPER(String alias) {
+        super();
+        this.alias = alias;
+        setHasAlias();
+    }
+
     public UPPER(String alias, MQLElement ... parameters) {
         super(parameters);
         this.alias = alias;
@@ -24,6 +30,11 @@ public class UPPER extends SingleRowFunctionElement {
         this.alias = alias;
         makeExpression(parameters);
         setHasAlias();
+    }
+
+    public void setParameters(List<MQLElement> parameters) {
+        super.setParameters(parameters);
+        makeExpression(parameters);
     }
 
     public UPPER(MQLElement ... parameters) {

@@ -252,4 +252,17 @@ public class ColumnAndFunctionValidatorTest {
         columnAndFunctionValidator.isValid(sqlContextStorage);
     }
 
+    @Test
+    public void 컬럼_파라미터_두개이상_함수일때() {
+        String sql = "SELECT A.ID, LENGTH(A.AGE, B.ID)\n" +
+                "FROM table1 A\n"
+                ;
+
+        SqlContextStorage sqlContextStorage = new SqlContextStorage(sql);
+        ItemsOfRelatedGroupByClauseValidator columnAndFunctionValidator = new ItemsOfRelatedGroupByClauseValidator();
+
+        thrown.expect(MQLQueryNotValidException.class);
+        columnAndFunctionValidator.isValid(sqlContextStorage);
+    }
+
 }
