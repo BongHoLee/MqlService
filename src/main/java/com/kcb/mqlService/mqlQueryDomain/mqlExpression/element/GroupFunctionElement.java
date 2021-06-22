@@ -8,7 +8,7 @@ public abstract class GroupFunctionElement implements MQLElement{
     private String parameterExpression = "";
 
     public GroupFunctionElement() {
-        
+
     }
 
     public GroupFunctionElement(MQLElement parameter) {
