@@ -34,12 +34,4 @@ public class MQLQueryContextFactory {
 
     }
 
-
-
-
-
-
-
-
-
 }
