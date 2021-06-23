@@ -41,11 +41,48 @@ public class MQLQueryGroupFactoryTest {
     }
 
     @Test
-    public void test() {
+    public void MQLGroupFactory_생성_및_실행_테스트() {
         MQLResourceConfiguration.addFilePath("src/test/resources");
         MQLQueryGroup queryGroup = MQLQueryGroupFactory.getInstance().create();
 
-        System.out.println(queryGroup);
+        List<Map<String, Object>> query1Result = queryGroup.executeQuery("Query1", rawDataSource);
+        query1Result.forEach(eachRow -> {
+            assertThat(eachRow.keySet(), hasItems("E.SupplierID", "A.CategoryID", "A.CategoryName", "SUM(E.Price)"));
+            assertThat(eachRow.keySet(), hasSize(4));
+            assertThat((Double)eachRow.get("E.SupplierID"), lessThan(7.0));
+        });
+
+        List<Map<String, Object>> query2Result = queryGroup.executeQuery("Query2", rawDataSource);
+        query2Result.forEach(eachRow -> {
+            assertThat(eachRow.keySet(), hasItems("E.ProductID", "E.Price", "E.Unit", "A.CategoryID", "A.CategoryName", "E.CategoryID"));
+            assertThat(eachRow.keySet(), hasSize(6));
+            assertThat((Double)eachRow.get("E.Price"), greaterThan(20.0));
+            assertThat((Double)eachRow.get("A.CategoryID"), greaterThanOrEqualTo(7.0));
+            assertThat(eachRow.get("A.CategoryID"), is(equalTo(eachRow.get("E.CategoryID"))));
+        });
+
+        List<Map<String, Object>> query3Result = queryGroup.executeQuery("Query3", rawDataSource);
+        query3Result.forEach(eachRow -> {
+            assertThat(eachRow.keySet(), hasItems("CategoryID", "CategoryName", "SupplierID", "PriceSum"));
+            assertThat(eachRow.keySet(), hasSize(4));
+            assertThat((Double)eachRow.get("SupplierID"), lessThan(7.0));
+        });
+
+        List<Map<String, Object>> query4Result = queryGroup.executeQuery("Query4", rawDataSource);
+        query4Result.forEach(eachRow -> {
+            assertThat(eachRow.keySet(), hasItems("ProductName", "Unit", "ProductNameLength", "UnitLength"));
+            assertThat(eachRow.keySet(), hasSize(4));
+            assertThat(String.valueOf(eachRow.get("ProductName")).length(), is(equalTo((int)eachRow.get("ProductNameLength"))));
+            assertThat(String.valueOf(eachRow.get("Unit")).length(), is(equalTo((int)eachRow.get("UnitLength"))));
+            assertThat((int)eachRow.get("ProductNameLength"), is(greaterThan((int)eachRow.get("UnitLength"))));
+        });
+
+        List<Map<String, Object>> query5Result = queryGroup.executeQuery("Query5", rawDataSource);
+        query5Result.forEach(eachRow -> {
+            assertThat(eachRow.keySet(), hasItems("SupplierID", "LengthCategoryID", "SumLengthSupplierID"));
+            assertThat(eachRow.keySet(), hasSize(3));
+            assertThat(String.valueOf(eachRow.get("LengthCategoryID")).length(), is(greaterThan(String.valueOf(eachRow.get("SumLengthSupplierID")).length())));
+        });
     }
 
 }

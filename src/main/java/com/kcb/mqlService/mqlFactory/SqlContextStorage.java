@@ -9,15 +9,20 @@ import net.sf.jsqlparser.statement.select.FromItemVisitorAdapter;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.statement.select.SelectVisitorAdapter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.StringReader;
 import java.util.*;
 
 public class SqlContextStorage {
+    private static final Logger logger = LogManager.getLogger(SqlContextStorage.class);
+
     private Select select;
     private PlainSelect plainSelect;
     private Map<String, String> usedTableAliasWithName = new HashMap<>();
     private List<String> groupByElementsNames = new ArrayList<>();
+
 
     private List<MQLValidator> MQLValidators = Arrays.asList(
             new SyntaxValidator(),
@@ -64,8 +69,13 @@ public class SqlContextStorage {
             public void visit(PlainSelect plainSelect) {
                 if (plainSelect.getFromItem() != null) {
                     plainSelect.getFromItem().accept(new FromItemVisitorAdapter() {
+
                         @Override
                         public void visit(Table table) {
+                            if (table.getAlias() == null) {
+                                logger.error("MQL Query Must Have 'FROM' clause : {}", select.toString());
+                                throw  new MQLQueryNotValidException();
+                            }
                             usedTableAliasWithName.put(table.getAlias().getName(), table.getFullyQualifiedName());
                         }
                     });
@@ -77,6 +87,10 @@ public class SqlContextStorage {
                             eachJoin.getRightItem().accept(new FromItemVisitorAdapter() {
                                 @Override
                                 public void visit(Table table) {
+                                    if (table.getAlias() == null) {
+                                        logger.error("MQL Query Must Have 'FROM' clause : {}", select.toString());
+                                        throw  new MQLQueryNotValidException();
+                                    }
                                     usedTableAliasWithName.put(table.getAlias().getName(), table.getFullyQualifiedName());
                                 }
                             });
@@ -96,4 +110,6 @@ public class SqlContextStorage {
     public List<String> getGroupByElementsNames() {
         return groupByElementsNames;
     }
+
+
 }

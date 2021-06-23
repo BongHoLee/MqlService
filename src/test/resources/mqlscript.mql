@@ -1,29 +1,56 @@
 <mqlQueryGroup>
     <mql id="Query1">
         <script>
-            <![CDATA[  SELECT A.Column AS Acolumn, B.Column AS Bcolumn
-                FROM DataSource1 A, DataSource2 B
-                WHERE A.KEY = B.KEY
+            <![CDATA[
+      SELECT A.CategoryID, A.CategoryName, E.SupplierID, SUM(E.Price)
+      From Categories A
+      JOIN Products E ON A.CategoryID=E.CategoryID
+      WHERE E.SupplierID < 5
+      GROUP BY A.CategoryID, A.CategoryName, E.SupplierID
             ]]>
         </script>
     </mql>
     <mql id="Query2">
         <script>
         <![CDATA[
-            SELECT A.Column AS Acolumn, B.Column AS Bcolumn
-            FROM DataSource1 A, DataSource2 B
-            WHERE A.KEY = B.KEY
-            GROUP BY A.Column, B.Column
+        SELECT  A.CategoryID, A.CategoryName, E.CategoryID, E.ProductID, E.Price, E.Unit
+        FROM Products E
+        JOIN Categories A ON A.CategoryID=E.CategoryID
+        WHERE E.Price > 20 AND A.CategoryID >= 7
         ]]>
         </script>
     </mql>
+
     <mql id="Query3">
     <script>
         <![CDATA[
-            SELECT A.Column AS Acolumn, B.Column AS Bcolumn
-            FROM DataSource1 A, DataSource2 B
-            WHERE A.KEY = B.KEY AND A.NAME = B.NAME
+      SELECT A.CategoryID AS CategoryID, A.CategoryName AS CategoryName, E.SupplierID AS SupplierID, SUM(E.Price) AS PriceSum
+      From Categories A
+      JOIN Products E ON A.CategoryID=E.CategoryID
+      WHERE E.SupplierID < 5
+      GROUP BY A.CategoryID, A.CategoryName, E.SupplierID
        ]]>
     </script>
+    </mql>
+
+    <mql id="Query4">
+        <script>
+            <![CDATA[
+     SELECT E.ProductName AS ProductName, LENGTH(E.ProductName) AS ProductNameLength, E.Unit AS Unit, LENGTH(E.Unit) AS UnitLength
+     FROM Products
+     WHERE LENGTH(E.ProductName) > LENGTH(E.Unit)
+       ]]>
+        </script>
+    </mql>
+
+    <mql id="Query5">
+        <script>
+            <![CDATA[
+     SELECT E.SupplierID AS SupplierID, SUM(LENGTH(E.CategoryID)) AS SumLengthCategoryID, LENGTH(E.SupplierID) AS LengthSupplierID
+     FROM Products E
+     GROUP BY E.SupplierID
+     HAVING SUM(LENGTH(E.CategoryID)) < LENGTH(E.SupplierID)
+       ]]>
+        </script>
     </mql>
 </mqlQueryGroup>

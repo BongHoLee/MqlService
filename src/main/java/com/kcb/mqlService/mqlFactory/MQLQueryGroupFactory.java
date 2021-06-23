@@ -32,6 +32,7 @@ public class MQLQueryGroupFactory {
 
         } catch (Exception e) {
             e.printStackTrace();
+            throw new RuntimeException();
         }
 
         return queryGroup;

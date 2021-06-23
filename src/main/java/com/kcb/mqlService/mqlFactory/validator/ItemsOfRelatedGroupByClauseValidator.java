@@ -36,7 +36,7 @@ public class ItemsOfRelatedGroupByClauseValidator implements MQLValidator{
             @Override
             public void visit(Function function) {
                 parameterValidCheck(function);
-                functionValidCheck(function, sqlContextStorage);
+                functionValidCheck(function, rootFunctionIsGroupFunction(function), sqlContextStorage);
             }
 
             @Override
@@ -74,15 +74,15 @@ public class ItemsOfRelatedGroupByClauseValidator implements MQLValidator{
         return true;
     }
 
-    private void functionValidCheck(Function function, SqlContextStorage sqlContextStorage) {
+    private void functionValidCheck(Function function, boolean rootIsGroup, SqlContextStorage sqlContextStorage) {
         List<String> groupByNames = sqlContextStorage.getGroupByElementsNames();
 
         if (DefinedFunction.GROUP_FUNCTION.getDefinedFunctionList().contains(function.getName())) {
-            functionParameterDefinedCheck(function, sqlContextStorage);
+            functionParameterDefinedCheck(function, rootIsGroup, sqlContextStorage);
 
         } else if (DefinedFunction.SINGLE_ROW_FUNCTION.getDefinedFunctionList().contains(function.getName())) {
 
-            functionParameterDefinedCheck(function, sqlContextStorage);
+            functionParameterDefinedCheck(function, rootIsGroup, sqlContextStorage);
 
             if (groupByNames != null && groupByNames.size() > 0) {
 
@@ -94,7 +94,7 @@ public class ItemsOfRelatedGroupByClauseValidator implements MQLValidator{
 
                                 @Override
                                 public void visit(Column column) {
-                                    if (!groupByNames.contains(column.toString())) {
+                                    if (!rootIsGroup && !groupByNames.contains(column.toString())) {
                                         logger.error("item {} is not valid. check out group by : {}", function.toString(), groupByNames);
                                         throw new MQLQueryNotValidException(function + " not valid in select item");
                                     }
@@ -111,7 +111,7 @@ public class ItemsOfRelatedGroupByClauseValidator implements MQLValidator{
         }
     }
 
-    private void functionParameterDefinedCheck(Function function, SqlContextStorage sqlContextStorage) {
+    private void functionParameterDefinedCheck(Function function, boolean rootIsGroup, SqlContextStorage sqlContextStorage) {
         Map<String, String> tableAliasAndNames = sqlContextStorage.getUsedTableAliasWithName();
 
         if (function.getParameters().getExpressions() != null) {
@@ -128,7 +128,7 @@ public class ItemsOfRelatedGroupByClauseValidator implements MQLValidator{
 
                     @Override
                     public void visit(Function function) {
-                        functionValidCheck(function, sqlContextStorage);
+                        functionValidCheck(function, rootIsGroup, sqlContextStorage);
                     }
                 });
             });
@@ -172,6 +172,14 @@ public class ItemsOfRelatedGroupByClauseValidator implements MQLValidator{
             logger.error("Function couldn't more than one Column Parameters : Function : {}, Columns : {} ", function.getName(), temp);
             throw new MQLQueryNotValidException();
         }
+    }
+
+    private boolean rootFunctionIsGroupFunction(Function function) {
+        if (DefinedFunction.GROUP_FUNCTION.getDefinedFunctionList().contains(function.getName())) {
+            return true;
+        }
+
+        return false;
     }
 
 

@@ -351,7 +351,7 @@ public class SelectClauseTest {
     }
 
     /**
-     * SELECT A.CategoryID CategoryID, A.CategoryName CategoryName, E.SupplierID SupplierID, SUM(E.Price) PriceSUm
+     * SELECT A.CategoryID AS CategoryID, A.CategoryName AS CategoryName, E.SupplierID AS SupplierID, SUM(E.Price) AS PriceSum
      * From Categories A
      * JOIN Products E ON A.CategoryID=E.CategoryID
      * WHERE E.SupplierID < 5
@@ -699,9 +699,9 @@ public class SelectClauseTest {
     }
 
     /**
-     SELECT ProductName, LENGTH(ProductName), Unit, LENGTH(Unit)
+     SELECT E.ProductName AS ProductName, LENGTH(E.ProductName) AS ProductNameLength, E.Unit AS Unit, LENGTH(E.Unit) AS UnitLength
      FROM Products
-     WHERE LENGTH(ProductName) > LENGTH(Unit)
+     WHERE LENGTH(E.ProductName) > LENGTH(E.Unit)
      */
     @Test
     public void selectSingleRowFunctionWithSingleRowFunctionAndAlias() {

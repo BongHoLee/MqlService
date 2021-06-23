@@ -54,33 +54,6 @@ public class SelectClauseFactoryTest {
         mqlDataStorage = from.makeMqlDataSources(rawDataSource);
     }
 
-
-
-    @Test
-    public void SelectClauseFactory_Join_Where_포함된경우() {
-
-        String sql = "     SELECT  A.CategoryID, A.CategoryName, E.CategoryID, E.ProductID, E.Price, E.Unit\n" +
-                "     FROM Products E\n" +
-                "     JOIN Categories A ON A.CategoryID=E.CategoryID\n" +
-                "     WHERE E.Price > 20 AND A.CategoryID >= 7";
-
-        SqlContextStorage sqlContextStorage = new SqlContextStorage(sql);
-        SelectClause selectClause = SelectClauseFactory.getInstance().create(sqlContextStorage);
-
-        List<Map<String, Object>> result = selectClause.executeQueryWith(rawDataSource);
-
-        System.out.println(result);
-        result.forEach(eachRow -> {
-            assertThat(eachRow.keySet(), hasItems("E.ProductID", "E.Price", "E.Unit", "A.CategoryID", "A.CategoryName", "E.CategoryID"));
-            assertThat(eachRow.keySet(), hasSize(6));
-            assertThat((Double)eachRow.get("E.Price"), greaterThan(20.0));
-            assertThat((Double)eachRow.get("A.CategoryID"), greaterThanOrEqualTo(7.0));
-            assertThat(eachRow.get("A.CategoryID"), is(equalTo(eachRow.get("E.CategoryID"))));
-        });
-
-    }
-
-
     /**
      * SELECT A.CategoryID, A.CategoryName, E.SupplierID, SUM(E.Price)
      * From Categories A
@@ -88,7 +61,6 @@ public class SelectClauseFactoryTest {
      * WHERE E.SupplierID < 5
      * GROUP BY A.CategoryID, A.CategoryName, E.SupplierID
      */
-
     @Test
     public void SelectClauseFactory_Join_Where_GROUPBY_포함된경우() {
 
@@ -102,7 +74,7 @@ public class SelectClauseFactoryTest {
         SelectClause select = SelectClauseFactory.getInstance().create(sqlContextStorage);
 
         List<Map<String, Object>> result = select.executeQueryWith(rawDataSource);
-        System.out.println(result);
+
         result.forEach(eachRow -> {
             assertThat(eachRow.keySet(), hasItems("E.SupplierID", "A.CategoryID", "A.CategoryName", "SUM(E.Price)"));
             assertThat(eachRow.keySet(), hasSize(4));
@@ -110,4 +82,57 @@ public class SelectClauseFactoryTest {
         });
 
     }
+
+    @Test
+    public void selectClauseFactory_Join_Where_포함된경우() {
+
+        String sql = "     SELECT  A.CategoryID, A.CategoryName, E.CategoryID, E.ProductID, E.Price, E.Unit\n" +
+                "     FROM Products E\n" +
+                "     JOIN Categories A ON A.CategoryID=E.CategoryID\n" +
+                "     WHERE E.Price > 20 AND A.CategoryID >= 7";
+
+        SqlContextStorage sqlContextStorage = new SqlContextStorage(sql);
+        SelectClause selectClause = SelectClauseFactory.getInstance().create(sqlContextStorage);
+
+        List<Map<String, Object>> result = selectClause.executeQueryWith(rawDataSource);
+
+        result.forEach(eachRow -> {
+            assertThat(eachRow.keySet(), hasItems("E.ProductID", "E.Price", "E.Unit", "A.CategoryID", "A.CategoryName", "E.CategoryID"));
+            assertThat(eachRow.keySet(), hasSize(6));
+            assertThat((Double)eachRow.get("E.Price"), greaterThan(20.0));
+            assertThat((Double)eachRow.get("A.CategoryID"), greaterThanOrEqualTo(7.0));
+            assertThat(eachRow.get("A.CategoryID"), is(equalTo(eachRow.get("E.CategoryID"))));
+        });
+
+    }
+
+    /**
+     * SELECT A.CategoryID AS CategoryID, A.CategoryName AS CategoryName, E.SupplierID AS SupplierID, SUM(E.Price) AS PriceSum
+     * From Categories A
+     * JOIN Products E ON A.CategoryID=E.CategoryID
+     * WHERE E.SupplierID < 5
+     * GROUP BY A.CategoryID, A.CategoryName, E.SupplierID
+     */
+    @Test
+    public void selectClauseFactory_Join_Where_GroupBy_포함된경우() {
+        String sql = "      SELECT A.CategoryID AS CategoryID, A.CategoryName AS CategoryName, E.SupplierID AS SupplierID, SUM(E.Price) AS PriceSum\n" +
+                "      From Categories A\n" +
+                "      JOIN Products E ON A.CategoryID=E.CategoryID\n" +
+                "      WHERE E.SupplierID < 5\n" +
+                "      GROUP BY A.CategoryID, A.CategoryName, E.SupplierID";
+
+        SqlContextStorage sqlContextStorage = new SqlContextStorage(sql);
+        SelectClause selectClause = SelectClauseFactory.getInstance().create(sqlContextStorage);
+
+        List<Map<String, Object>> result = selectClause.executeQueryWith(rawDataSource);
+
+        result.forEach(eachRow -> {
+            assertThat(eachRow.keySet(), hasItems("CategoryID", "CategoryName", "SupplierID", "PriceSum"));
+            assertThat(eachRow.keySet(), hasSize(4));
+            assertThat((Double)eachRow.get("SupplierID"), lessThan(7.0));
+        });
+    }
+
+
+
 }
