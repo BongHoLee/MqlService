@@ -11,6 +11,7 @@ import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class MQLValidatorTest {
+    private String queryId = "testQuery";
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
@@ -19,7 +20,7 @@ public class MQLValidatorTest {
         thrown.expect(MQLQueryNotValidException.class);
         String sql = "SELECT A.CustomerID AS CustomerID, B.CategoryID\n";
 
-        SqlContextStorage sqlContextStorage = new SqlContextStorage(sql);
+        SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId, sql);
         sqlContextStorage.isValid();
     }
 
@@ -30,7 +31,7 @@ public class MQLValidatorTest {
                 "FROM table1 A, table2 B\n" +
                 "HAVING A.ID=B.ID";
 
-        SqlContextStorage sqlContextStorage = new SqlContextStorage(sql);
+        SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId, sql);
         sqlContextStorage.isValid();
     }
 }

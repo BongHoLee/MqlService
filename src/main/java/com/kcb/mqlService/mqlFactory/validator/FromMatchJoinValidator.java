@@ -113,7 +113,7 @@ public class FromMatchJoinValidator implements MQLValidator {
                     });
                 }
 
-                validCheck(sqlContextStorage.getUsedTableAliasWithName(), usedJoinSet);
+                validCheck(sqlContextStorage.getQueryId(), sqlContextStorage.getUsedTableAliasWithName(), usedJoinSet);
             }
 
         });
@@ -121,10 +121,10 @@ public class FromMatchJoinValidator implements MQLValidator {
         return true;
     }
 
-    private void validCheck(Map<String, String> tableAliasName, Set<String> usedJoin) {
+    private void validCheck(String queryId, Map<String, String> tableAliasName, Set<String> usedJoin) {
         if (!usedJoin.equals(tableAliasName.keySet()) && tableAliasName.keySet().size() > 1) {
-            logger.error("Used Table : {} | Joined Table: {}", tableAliasName.keySet(), usedJoin);
-            throw new MQLQueryNotValidException("Used Table : " + tableAliasName.keySet() + " | Joined Table : " + usedJoin);
+            logger.error("Query ID: {}, Used Table : {} | Joined Table: {}", queryId, tableAliasName.keySet(), usedJoin);
+            throw new MQLQueryNotValidException(queryId + "is not valid query");
         }
 
     }

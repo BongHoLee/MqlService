@@ -30,14 +30,14 @@ public class ItemsOfGeneralClauseValidator implements MQLValidator{
         ExpressionVisitor visitor = new ExpressionVisitorAdapter() {
             @Override
             public void visit(Function function) {
-                parameterValidCheck(function);
+                parameterValidCheck(sqlContextStorage.getQueryId(), function);
                 functionValidCheck(function, sqlContextStorage);
 
             }
 
             @Override
             public void visit(Column column) {
-                validColumnCheck(column, sqlContextStorage);
+                validColumnCheck(sqlContextStorage.getQueryId(), column, sqlContextStorage);
             }
         };
 
@@ -77,22 +77,22 @@ public class ItemsOfGeneralClauseValidator implements MQLValidator{
         return true;
     }
 
-    private void validColumnCheck(Column column, SqlContextStorage sqlContextStorage) {
+    private void validColumnCheck(String queryId, Column column, SqlContextStorage sqlContextStorage) {
         Map<String, String> tableAliasAndNames = sqlContextStorage.getUsedTableAliasWithName();
 
         if (!tableAliasAndNames.containsKey(column.getTable().getName())) {
-            logger.error("Column {} is not valid. check out defined Table : {}", column.toString(), tableAliasAndNames);
-            throw new MQLQueryNotValidException();
+            logger.error("Query ID : {}, Column {} is not valid. check out defined Table : {}", queryId, column.toString(), tableAliasAndNames);
+            throw new MQLQueryNotValidException(queryId + "is not valid query");
         }
     }
 
     private void functionValidCheck(Function function, SqlContextStorage sqlContextStorage) {
         if (DefinedFunction.GROUP_FUNCTION.getDefinedFunctionList().contains(function.getName())) {
-            logger.error("Group Function {} can't used in clause", function);
-            throw new MQLQueryNotValidException();
+            logger.error("Query ID : {}, Group Function {} can't used in clause", sqlContextStorage.getQueryId(), function);
+            throw new MQLQueryNotValidException(sqlContextStorage.getQueryId() + "is not valid query");
         } else if (!DefinedFunction.SINGLE_ROW_FUNCTION.getDefinedFunctionList().contains(function.getName())) {
-            logger.error("{} is can't use. defined function : {}, {}", function.toString(), DefinedFunction.GROUP_FUNCTION.getDefinedFunctionList(), DefinedFunction.SINGLE_ROW_FUNCTION.getDefinedFunctionList());
-            throw new MQLQueryNotValidException();
+            logger.error("Query ID : {}, {} is can't use. defined function : {}, {}", sqlContextStorage.getQueryId(), function.toString(), DefinedFunction.GROUP_FUNCTION.getDefinedFunctionList(), DefinedFunction.SINGLE_ROW_FUNCTION.getDefinedFunctionList());
+            throw new MQLQueryNotValidException(sqlContextStorage.getQueryId() + "is not valid query");
         } else if (DefinedFunction.SINGLE_ROW_FUNCTION.getDefinedFunctionList().contains(function.getName())) {
             functionParameterDefinedCheck(function, sqlContextStorage);
         }
@@ -108,8 +108,8 @@ public class ItemsOfGeneralClauseValidator implements MQLValidator{
                     @Override
                     public void visit(Column column) {
                         if (!tableAliasAndNames.containsKey(column.getTable().getName())) {
-                            logger.error("item {} is not valid. table {} is not defined", function.toString(), column.getTable());
-                            throw new MQLQueryNotValidException(function + " not valid");
+                            logger.error("Query ID : {}, item {} is not valid. table {} is not defined", sqlContextStorage.getQueryId(), function.toString(), column.getTable());
+                            throw new MQLQueryNotValidException(sqlContextStorage.getQueryId() + "is not valid query");
                         }
                     }
 
@@ -122,13 +122,13 @@ public class ItemsOfGeneralClauseValidator implements MQLValidator{
         }
     }
 
-    private void parameterValidCheck(Function function) {
+    private void parameterValidCheck(String queryID, Function function) {
         List<String> temp = new ArrayList<>();
 
         if (DefinedFunction.GROUP_FUNCTION.getDefinedFunctionList().contains(function.getName())) {
             if (function.getParameters().getExpressions().size() > 1) {
-                logger.error("Group Function can have only one parameter ");
-                throw new MQLQueryNotValidException();
+                logger.error("Query ID : {}, Group Function can have only one parameter ", queryID);
+                throw new MQLQueryNotValidException(queryID + "is not valid query");
             }
         }
 
@@ -145,8 +145,8 @@ public class ItemsOfGeneralClauseValidator implements MQLValidator{
         });
 
         if (temp.size() > 1) {
-            logger.error("Function couldn't more than one Column Parameters : Function : {}, Columns : {} ", function.getName(), temp);
-            throw new MQLQueryNotValidException();
+            logger.error("Query ID : {}, Function couldn't more than one Column Parameters : Function : {}, Columns : {} ", queryID, function.getName(), temp);
+            throw new MQLQueryNotValidException(queryID + "is not valid query");
         }
     }
 

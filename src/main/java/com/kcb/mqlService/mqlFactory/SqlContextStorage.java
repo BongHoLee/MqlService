@@ -22,6 +22,7 @@ public class SqlContextStorage {
     private PlainSelect plainSelect;
     private Map<String, String> usedTableAliasWithName = new HashMap<>();
     private List<String> groupByElementsNames = new ArrayList<>();
+    private String queryId;
 
 
     private List<MQLValidator> MQLValidators = Arrays.asList(
@@ -31,14 +32,15 @@ public class SqlContextStorage {
             new ItemsOfRelatedGroupByClauseValidator()
     );
 
-    public SqlContextStorage(String script) {
+    public SqlContextStorage(String queryId, String script) {
         try {
+            this.queryId = queryId;
             this.select = (Select) CCJSqlParserUtil.parse(new StringReader(script));
             this.plainSelect = (PlainSelect) select.getSelectBody();
             setOtherDatas();
         } catch (JSQLParserException e) {
             e.printStackTrace();
-            throw new MQLQueryNotValidException();
+            throw new MQLQueryNotValidException(queryId + "is not valid query");
         }
     }
 
@@ -47,6 +49,9 @@ public class SqlContextStorage {
     }
     public Select getSelect() {
         return select;
+    }
+    public String getQueryId() {
+        return queryId;
     }
 
     public Map<String, String> getUsedTableAliasWithName() {
@@ -73,8 +78,8 @@ public class SqlContextStorage {
                         @Override
                         public void visit(Table table) {
                             if (table.getAlias() == null) {
-                                logger.error("MQL Query Must Have 'FROM' clause : {}", select.toString());
-                                throw  new MQLQueryNotValidException();
+                                logger.error("Query Id : {},  MQL Query Must Have 'FROM' clause : {}", queryId, select.toString());
+                                throw new MQLQueryNotValidException(queryId + "is not valid query");
                             }
                             usedTableAliasWithName.put(table.getAlias().getName(), table.getFullyQualifiedName());
                         }
@@ -88,8 +93,8 @@ public class SqlContextStorage {
                                 @Override
                                 public void visit(Table table) {
                                     if (table.getAlias() == null) {
-                                        logger.error("MQL Query Must Have 'FROM' clause : {}", select.toString());
-                                        throw  new MQLQueryNotValidException();
+                                        logger.error("Query Id : {}, MQL Query Must Have 'FROM' clause : {}", queryId, select.toString());
+                                        throw new MQLQueryNotValidException(queryId + "is not valid query");
                                     }
                                     usedTableAliasWithName.put(table.getAlias().getName(), table.getFullyQualifiedName());
                                 }

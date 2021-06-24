@@ -15,13 +15,13 @@ public class SyntaxValidator implements MQLValidator{
         PlainSelect plainSelect = sqlContextStorage.getPlainSelect();
 
         if (plainSelect.getFromItem() == null) {
-            logger.error("MQL Query Must Have 'FROM' clause : {}", sqlContextStorage.getSelect().toString());
-            throw  new MQLQueryNotValidException();
+            logger.error("Query ID : {}, MQL Query Must Have 'FROM' clause : {}", sqlContextStorage.getQueryId(), sqlContextStorage.getSelect().toString());
+            throw new MQLQueryNotValidException(sqlContextStorage.getQueryId() + "is not valid query");
         }
 
         if (plainSelect.getGroupBy() == null && plainSelect.getHaving() != null) {
-            logger.error("'GROUP BY' clause must exist to use 'HAVING' clause : {}", sqlContextStorage.getSelect().toString());
-            throw  new MQLQueryNotValidException();
+            logger.error("Query ID : {}, 'GROUP BY' clause must exist to use 'HAVING' clause : {}", sqlContextStorage.getQueryId(), sqlContextStorage.getSelect().toString());
+            throw new MQLQueryNotValidException(sqlContextStorage.getQueryId() + "is not valid query");
         }
 
 

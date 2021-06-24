@@ -1,6 +1,9 @@
 package com.kcb.mqlService.mqlFactory;
 
+import com.kcb.mqlService.mqlFactory.exception.MQLQueryNotValidException;
 import com.kcb.mqlService.utils.MQLResourceConfiguration;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -21,6 +24,7 @@ public class MQLScriptDocumentFactory {
 
     private static MQLScriptDocumentFactory instance;
     private final String tagName = "mql";
+    private static final Logger logger = LogManager.getLogger(MQLScriptDocumentFactory.class);
 
 
     private MQLScriptDocumentFactory() {
@@ -62,7 +66,8 @@ public class MQLScriptDocumentFactory {
                             .map(node -> (Element) node)
                             .forEach(element -> {
                                 if (scriptDocumentMap.containsKey(element.getAttribute("id"))) {
-                                    throw new RuntimeException("MQL ID IS DUPLICATED!!" + element.getAttribute("id"));
+                                    logger.error("MQL ID IS DUPLICATED!! {}", element.getAttribute("id") );
+                                    throw new MQLQueryNotValidException();
                                 }
 
                                 scriptDocumentMap.put(element.getAttribute("id"), element.getElementsByTagName("script").item(0).getTextContent());

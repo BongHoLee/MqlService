@@ -39,10 +39,12 @@ import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 public class SelectClauseFactoryTest {
     private MQLDataStorage mqlDataStorage;
     private Map<String, List<Map<String, Object>>> rawDataSource;
+    private String queryId = "testQuery";
 
     @Before
     public void makeMqlDataSource() {
         MQLDataSource mqlDataSource = new MQLDataSource();
+        
 
         rawDataSource = new HashMap<>();
         rawDataSource.put("A", TestDataFactory.tableOf("categories"));
@@ -70,7 +72,7 @@ public class SelectClauseFactoryTest {
                 "      WHERE E.SupplierID < 5\n" +
                 "      GROUP BY A.CategoryID, A.CategoryName, E.SupplierID";
 
-        SqlContextStorage sqlContextStorage = new SqlContextStorage(sql);
+        SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId,sql);
         SelectClause select = SelectClauseFactory.getInstance().create(sqlContextStorage);
 
         List<Map<String, Object>> result = select.executeQueryWith(rawDataSource);
@@ -91,7 +93,7 @@ public class SelectClauseFactoryTest {
                 "     JOIN Categories A ON A.CategoryID=E.CategoryID\n" +
                 "     WHERE E.Price > 20 AND A.CategoryID >= 7";
 
-        SqlContextStorage sqlContextStorage = new SqlContextStorage(sql);
+        SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId,sql);
         SelectClause selectClause = SelectClauseFactory.getInstance().create(sqlContextStorage);
 
         List<Map<String, Object>> result = selectClause.executeQueryWith(rawDataSource);
@@ -121,7 +123,7 @@ public class SelectClauseFactoryTest {
                 "      WHERE E.SupplierID < 5\n" +
                 "      GROUP BY A.CategoryID, A.CategoryName, E.SupplierID";
 
-        SqlContextStorage sqlContextStorage = new SqlContextStorage(sql);
+        SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId,sql);
         SelectClause selectClause = SelectClauseFactory.getInstance().create(sqlContextStorage);
 
         List<Map<String, Object>> result = selectClause.executeQueryWith(rawDataSource);

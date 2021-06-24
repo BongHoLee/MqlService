@@ -11,6 +11,8 @@ import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class FromMatchJoinValidatorTest {
+    
+    private String queryId = "testQuery";
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -24,7 +26,7 @@ public class FromMatchJoinValidatorTest {
         String sql = "SELECT A.CustomerID AS CustomerID, B.CategoryID\n" +
                 "FROM Customers A, Categories B \n";
 
-        SqlContextStorage sqlContextStorage = new SqlContextStorage(sql);
+        SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId,sql);
 
         FromMatchJoinValidator fromMatchJoinValidator = new FromMatchJoinValidator();
         fromMatchJoinValidator.isValid(sqlContextStorage);
@@ -41,7 +43,7 @@ public class FromMatchJoinValidatorTest {
                 ;
 
 
-        SqlContextStorage sqlContextStorage = new SqlContextStorage(sql);
+        SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId,sql);
         FromMatchJoinValidator fromMatchJoinValidator = new FromMatchJoinValidator();
 
         fromMatchJoinValidator.isValid(sqlContextStorage);
@@ -55,7 +57,7 @@ public class FromMatchJoinValidatorTest {
                 "Where A.ID=B.ID";
 
 
-        SqlContextStorage sqlContextStorage = new SqlContextStorage(sql);
+        SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId,sql);
         FromMatchJoinValidator fromMatchJoinValidator = new FromMatchJoinValidator();
 
         assertThat(fromMatchJoinValidator.isValid(sqlContextStorage), is(true));
@@ -73,7 +75,7 @@ public class FromMatchJoinValidatorTest {
                 ;
 
 
-        SqlContextStorage sqlContextStorage = new SqlContextStorage(sql);
+        SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId,sql);
         FromMatchJoinValidator fromMatchJoinValidator = new FromMatchJoinValidator();
 
         fromMatchJoinValidator.isValid(sqlContextStorage);
@@ -86,7 +88,7 @@ public class FromMatchJoinValidatorTest {
                 "FROM Customers A";
 
 
-        SqlContextStorage sqlContextStorage = new SqlContextStorage(sql);
+        SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId,sql);
         FromMatchJoinValidator fromMatchJoinValidator = new FromMatchJoinValidator();
         assertThat(fromMatchJoinValidator.isValid(sqlContextStorage), is(true));
     }
@@ -100,7 +102,7 @@ public class FromMatchJoinValidatorTest {
                 ;
 
 
-        SqlContextStorage sqlContextStorage = new SqlContextStorage(sql);
+        SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId,sql);
         FromMatchJoinValidator fromMatchJoinValidator = new FromMatchJoinValidator();
         assertThat(fromMatchJoinValidator.isValid(sqlContextStorage), is(true));
     }
@@ -117,7 +119,7 @@ public class FromMatchJoinValidatorTest {
                 "WHERE C.ID=B.ID";
 
 
-        SqlContextStorage sqlContextStorage = new SqlContextStorage(sql);
+        SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId,sql);
         FromMatchJoinValidator fromMatchJoinValidator = new FromMatchJoinValidator();
         fromMatchJoinValidator.isValid(sqlContextStorage);
     }
@@ -135,7 +137,7 @@ public class FromMatchJoinValidatorTest {
                 ;
 
 
-        SqlContextStorage sqlContextStorage = new SqlContextStorage(sql);
+        SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId,sql);
         FromMatchJoinValidator fromMatchJoinValidator = new FromMatchJoinValidator();
         fromMatchJoinValidator.isValid(sqlContextStorage);
     }

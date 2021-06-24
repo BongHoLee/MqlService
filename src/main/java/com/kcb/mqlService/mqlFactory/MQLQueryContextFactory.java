@@ -23,13 +23,13 @@ public class MQLQueryContextFactory {
         return factory;
     }
 
-    public MQLQueryContext create(String script) {
-        SqlContextStorage sqlContextStorage = new SqlContextStorage(script);
+    public MQLQueryContext create(String queryId, String script) {
+        SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId, script);
         if (sqlContextStorage.isValid()) {
             return new MQLQueryContext(SelectClauseFactory.getInstance().create(sqlContextStorage));
         } else {
-            logger.error("MQL Validation Failed : {}", script);
-            throw new MQLQueryNotValidException();
+            logger.error("Query Id : {}, MQL Validation Failed : {}", queryId, script);
+            throw new MQLQueryNotValidException(queryId + "is not valid query");
         }
 
     }
