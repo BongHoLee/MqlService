@@ -1,31 +1,16 @@
 package com.kcb.mqlService.mqlQueryDomain.mqlFactory.contextFindTest.factory;
 
-import com.kcb.mqlService.mqlFactory.OptionalClauseFactory;
+
 import com.kcb.mqlService.mqlFactory.SelectClauseFactory;
 import com.kcb.mqlService.mqlFactory.SqlContextStorage;
-import com.kcb.mqlService.mqlFactory.exception.MQLQueryNotValidException;
 import com.kcb.mqlService.mqlQueryDomain.mqlData.MQLDataSource;
 import com.kcb.mqlService.mqlQueryDomain.mqlData.MQLDataStorage;
-import com.kcb.mqlService.mqlQueryDomain.mqlExpression.ColumnOperandExpression;
-import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.ColumnElement;
-import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.MQLElement;
-import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.ValueElement;
-import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.groupFunction.SUM;
-import com.kcb.mqlService.mqlQueryDomain.mqlExpression.operatingVisitor.WithColumnTargetOperating;
-import com.kcb.mqlService.mqlQueryDomain.mqlExpression.operatingVisitor.WithValueTargetOperating;
-import com.kcb.mqlService.mqlQueryDomain.mqlExpression.relationalOperator.RelationalOperator;
 import com.kcb.mqlService.mqlQueryDomain.mqlQueryClause.FromClause;
-import com.kcb.mqlService.mqlQueryDomain.mqlQueryClause.OptionalClause;
 import com.kcb.mqlService.mqlQueryDomain.mqlQueryClause.SelectClause;
-import com.kcb.mqlService.mqlQueryDomain.mqlQueryClause.optionalClause.GeneralConditionClause;
-import com.kcb.mqlService.mqlQueryDomain.mqlQueryClause.optionalClause.GroupByClause;
-import com.kcb.mqlService.mqlQueryDomain.mqlQueryClause.optionalClause.JoinClause;
-import com.kcb.mqlService.mqlQueryDomain.mqlQueryClause.optionalClause.WhereClause;
 import com.kcb.mqlService.testData.TestDataFactory;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,7 +29,6 @@ public class SelectClauseFactoryTest {
     @Before
     public void makeMqlDataSource() {
         MQLDataSource mqlDataSource = new MQLDataSource();
-        
 
         rawDataSource = new HashMap<>();
         rawDataSource.put("A", TestDataFactory.tableOf("categories"));
@@ -72,7 +56,7 @@ public class SelectClauseFactoryTest {
                 "      WHERE E.SupplierID < 5\n" +
                 "      GROUP BY A.CategoryID, A.CategoryName, E.SupplierID";
 
-        SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId,sql);
+        SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId, sql);
         SelectClause select = SelectClauseFactory.getInstance().create(sqlContextStorage);
 
         List<Map<String, Object>> result = select.executeQueryWith(rawDataSource);
@@ -93,7 +77,7 @@ public class SelectClauseFactoryTest {
                 "     JOIN Categories A ON A.CategoryID=E.CategoryID\n" +
                 "     WHERE E.Price > 20 AND A.CategoryID >= 7";
 
-        SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId,sql);
+        SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId, sql);
         SelectClause selectClause = SelectClauseFactory.getInstance().create(sqlContextStorage);
 
         List<Map<String, Object>> result = selectClause.executeQueryWith(rawDataSource);
@@ -123,7 +107,7 @@ public class SelectClauseFactoryTest {
                 "      WHERE E.SupplierID < 5\n" +
                 "      GROUP BY A.CategoryID, A.CategoryName, E.SupplierID";
 
-        SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId,sql);
+        SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId, sql);
         SelectClause selectClause = SelectClauseFactory.getInstance().create(sqlContextStorage);
 
         List<Map<String, Object>> result = selectClause.executeQueryWith(rawDataSource);
@@ -134,7 +118,4 @@ public class SelectClauseFactoryTest {
             assertThat((Double)eachRow.get("SupplierID"), lessThan(7.0));
         });
     }
-
-
-
 }

@@ -37,7 +37,7 @@
         <script>
             <![CDATA[
      SELECT E.ProductName AS ProductName, LENGTH(E.ProductName) AS ProductNameLength, E.Unit AS Unit, LENGTH(E.Unit) AS UnitLength
-     FROM Products
+     FROM Products E
      WHERE LENGTH(E.ProductName) > LENGTH(E.Unit)
        ]]>
         </script>

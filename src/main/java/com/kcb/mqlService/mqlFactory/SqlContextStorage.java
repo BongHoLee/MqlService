@@ -78,7 +78,7 @@ public class SqlContextStorage {
                         @Override
                         public void visit(Table table) {
                             if (table.getAlias() == null) {
-                                logger.error("Query Id : {},  MQL Query Must Have 'FROM' clause : {}", queryId, select.toString());
+                                logger.error("Query Id : {},  MQL Query Must Have Data Source ID in 'FROM' clause : {}", queryId, select.toString());
                                 throw new MQLQueryNotValidException(queryId + "is not valid query");
                             }
                             usedTableAliasWithName.put(table.getAlias().getName(), table.getFullyQualifiedName());

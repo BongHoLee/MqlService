@@ -9,17 +9,19 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 public class ColumnAndFunctionValidatorTest {
+
     private String queryId = "testQuery";
+
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
     @Test
     public void selectItem_From절에없는_테이블컬럼사용할때() {
-        String sql = "SELECT E.SuppleirID, C.ID\n" +
-                "FROM Products E\n"
-                ;
+        String sql =
+                "SELECT E.SuppleirID, C.ID\n" +
+                "FROM Products E\n";
 
-        SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId,sql);
+        SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId, sql);
         ItemsOfRelatedGroupByClauseValidator columnAndFunctionValidator = new ItemsOfRelatedGroupByClauseValidator();
 
         thrown.expect(MQLQueryNotValidException.class);
@@ -30,10 +32,9 @@ public class ColumnAndFunctionValidatorTest {
     public void selectItem_함수에서_From절에없는_테이블컬럼사용할때() {
         String sql = "SELECT A.ID, B.ID, LENGTH(C.ID)\n" +
                 "FROM table1 A, table2 B\n" +
-                "WHERE A.ID = B.ID"
-                ;
+                "WHERE A.ID = B.ID";
 
-        SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId,sql);
+        SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId, sql);
         ItemsOfRelatedGroupByClauseValidator columnAndFunctionValidator = new ItemsOfRelatedGroupByClauseValidator();
 
         thrown.expect(MQLQueryNotValidException.class);
@@ -44,10 +45,9 @@ public class ColumnAndFunctionValidatorTest {
     public void selectItem_함수에서_정의되지않은_함수사용할때() {
         String sql = "SELECT A.ID, B.ID, LENGTH(TEMP(A.ID))\n" +
                 "FROM table1 A, table2 B\n" +
-                "WHERE A.ID = B.ID"
-                ;
+                "WHERE A.ID = B.ID";
 
-        SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId,sql);
+        SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId, sql);
         ItemsOfRelatedGroupByClauseValidator columnAndFunctionValidator = new ItemsOfRelatedGroupByClauseValidator();
 
         thrown.expect(MQLQueryNotValidException.class);
@@ -58,10 +58,9 @@ public class ColumnAndFunctionValidatorTest {
     public void join에서_From절에없는_테이블컬럼사용할때() {
         String sql = "SELECT A.ID, B.ID\n" +
                 "FROM table1 A\n" +
-                "JOIN table2 B ON B.ID=C.ID"
-                ;
+                "JOIN table2 B ON B.ID=C.ID";
 
-        SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId,sql);
+        SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId, sql);
         ItemsOfGeneralClauseValidator columnAndFunctionValidator = new ItemsOfGeneralClauseValidator();
 
         thrown.expect(MQLQueryNotValidException.class);
@@ -72,10 +71,9 @@ public class ColumnAndFunctionValidatorTest {
     public void join절_함수에서_정의되지않은_테이블컬럼사용할때() {
         String sql = "SELECT A.ID, B.ID\n" +
                 "FROM table1 A\n" +
-                "JOIN table2 B ON A.ID=B.ID AND LENGTH(C.ID)=1"
-                ;
+                "JOIN table2 B ON A.ID=B.ID AND LENGTH(C.ID)=1";
 
-        SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId,sql);
+        SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId, sql);
         ItemsOfGeneralClauseValidator columnAndFunctionValidator = new ItemsOfGeneralClauseValidator();
 
         thrown.expect(MQLQueryNotValidException.class);
@@ -86,10 +84,9 @@ public class ColumnAndFunctionValidatorTest {
     public void join절_그룹함수사용할때() {
         String sql = "SELECT A.ID, B.ID\n" +
                 "FROM table1 A\n" +
-                "JOIN table2 B ON A.ID=B.ID AND LENGTH(SUM(C.ID))>1"
-                ;
+                "JOIN table2 B ON A.ID=B.ID AND LENGTH(SUM(C.ID))>1";
 
-        SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId,sql);
+        SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId, sql);
         ItemsOfGeneralClauseValidator columnAndFunctionValidator = new ItemsOfGeneralClauseValidator();
 
         thrown.expect(MQLQueryNotValidException.class);
@@ -101,10 +98,9 @@ public class ColumnAndFunctionValidatorTest {
         String sql = "SELECT A.ID, B.ID\n" +
                 "FROM table1 A\n" +
                 "JOIN table2 B ON A.ID=B.ID\n" +
-                "WHERE A.ID=C.ID"
-                ;
+                "WHERE A.ID=C.ID";
 
-        SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId,sql);
+        SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId, sql);
         ItemsOfGeneralClauseValidator columnAndFunctionValidator = new ItemsOfGeneralClauseValidator();
 
         thrown.expect(MQLQueryNotValidException.class);
@@ -116,10 +112,9 @@ public class ColumnAndFunctionValidatorTest {
         String sql = "SELECT A.ID, B.ID\n" +
                 "FROM table1 A\n" +
                 "JOIN table2 B ON A.ID=B.ID\n" +
-                "WHERE A.ID=LENGTH(TEMP(A.ID))"
-                ;
+                "WHERE A.ID=LENGTH(TEMP(A.ID))";
 
-        SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId,sql);
+        SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId, sql);
         ItemsOfGeneralClauseValidator columnAndFunctionValidator = new ItemsOfGeneralClauseValidator();
 
         thrown.expect(MQLQueryNotValidException.class);
@@ -130,10 +125,9 @@ public class ColumnAndFunctionValidatorTest {
     public void where절_그룹함수사용할때() {
         String sql = "SELECT A.ID, B.ID\n" +
                 "FROM table1 A\n" +
-                "WHERE LENGTH(SUM(A.ID)) > 1"
-                ;
+                "WHERE LENGTH(SUM(A.ID)) > 1";
 
-        SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId,sql);
+        SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId, sql);
         ItemsOfGeneralClauseValidator columnAndFunctionValidator = new ItemsOfGeneralClauseValidator();
 
         thrown.expect(MQLQueryNotValidException.class);
@@ -146,10 +140,9 @@ public class ColumnAndFunctionValidatorTest {
                 "FROM table1 A\n" +
                 "JOIN table2 B ON A.ID=B.ID AND B.AGE=A.AGE\n" +
                 "WHERE A.NAME='lee'\n" +
-                "GROUP BY A.ID, B.ID, C.ID"
-                ;
+                "GROUP BY A.ID, B.ID, C.ID";
 
-        SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId,sql);
+        SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId, sql);
         ItemsOfGeneralClauseValidator columnAndFunctionValidator = new ItemsOfGeneralClauseValidator();
 
         thrown.expect(MQLQueryNotValidException.class);
@@ -162,10 +155,9 @@ public class ColumnAndFunctionValidatorTest {
                 "FROM table1 A\n" +
                 "JOIN table2 B ON A.ID=B.ID AND B.AGE=A.AGE\n" +
                 "WHERE A.NAME='lee'\n" +
-                "GROUP BY A.ID, B.ID, LENGTH(TEMP(A.ID))"
-                ;
+                "GROUP BY A.ID, B.ID, LENGTH(TEMP(A.ID))";
 
-        SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId,sql);
+        SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId, sql);
         ItemsOfGeneralClauseValidator columnAndFunctionValidator = new ItemsOfGeneralClauseValidator();
 
         thrown.expect(MQLQueryNotValidException.class);
@@ -178,10 +170,9 @@ public class ColumnAndFunctionValidatorTest {
                 "FROM table1 A\n" +
                 "JOIN table2 B ON A.ID=B.ID AND B.AGE=A.AGE\n" +
                 "WHERE A.NAME='lee'\n" +
-                "GROUP BY A.ID, B.ID, LENGTH(SUM(A.ID))"
-                ;
+                "GROUP BY A.ID, B.ID, LENGTH(SUM(A.ID))";
 
-        SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId,sql);
+        SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId, sql);
         ItemsOfGeneralClauseValidator columnAndFunctionValidator = new ItemsOfGeneralClauseValidator();
 
         thrown.expect(MQLQueryNotValidException.class);
@@ -194,10 +185,9 @@ public class ColumnAndFunctionValidatorTest {
                 "FROM table1 A\n" +
                 "JOIN table2 B ON A.ID=B.ID AND B.AGE=A.AGE\n" +
                 "WHERE A.NAME='lee'\n" +
-                "GROUP BY A.ID, B.ID, LENGTH(A.AGE)"
-                ;
+                "GROUP BY A.ID, B.ID, LENGTH(A.AGE)";
 
-        SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId,sql);
+        SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId, sql);
         ItemsOfRelatedGroupByClauseValidator columnAndFunctionValidator = new ItemsOfRelatedGroupByClauseValidator();
 
         thrown.expect(MQLQueryNotValidException.class);
@@ -210,10 +200,9 @@ public class ColumnAndFunctionValidatorTest {
                 "FROM table1 A\n" +
                 "JOIN table2 B ON A.ID=B.ID AND B.AGE=A.AGE\n" +
                 "WHERE A.NAME='lee'\n" +
-                "GROUP BY A.ID, B.ID, A.AGE"
-                ;
+                "GROUP BY A.ID, B.ID, A.AGE";
 
-        SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId,sql);
+        SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId, sql);
         ItemsOfRelatedGroupByClauseValidator columnAndFunctionValidator = new ItemsOfRelatedGroupByClauseValidator();
 
         columnAndFunctionValidator.isValid(sqlContextStorage);
@@ -226,10 +215,9 @@ public class ColumnAndFunctionValidatorTest {
                 "JOIN table2 B ON A.ID=B.ID AND B.AGE=A.AGE\n" +
                 "WHERE A.NAME='lee'\n" +
                 "GROUP BY A.ID, B.ID, A.AGE\n" +
-                "HAVING SUM(A.ID)>LENGTH(B.AGE)"
-                ;
+                "HAVING SUM(A.ID)>LENGTH(B.AGE)";
 
-        SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId,sql);
+        SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId, sql);
         ItemsOfRelatedGroupByClauseValidator columnAndFunctionValidator = new ItemsOfRelatedGroupByClauseValidator();
 
         thrown.expect(MQLQueryNotValidException.class);
@@ -243,10 +231,9 @@ public class ColumnAndFunctionValidatorTest {
                 "JOIN table2 B ON A.ID=B.ID AND B.AGE=A.AGE\n" +
                 "WHERE A.NAME='lee'\n" +
                 "GROUP BY A.ID, B.ID, A.AGE\n" +
-                "HAVING SUM(A.ID)>LENGTH(C.AGE)"
-                ;
+                "HAVING SUM(A.ID)>LENGTH(C.AGE)";
 
-        SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId,sql);
+        SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId, sql);
         ItemsOfRelatedGroupByClauseValidator columnAndFunctionValidator = new ItemsOfRelatedGroupByClauseValidator();
 
         thrown.expect(MQLQueryNotValidException.class);
@@ -256,10 +243,9 @@ public class ColumnAndFunctionValidatorTest {
     @Test
     public void 컬럼_파라미터_두개이상_함수일때() {
         String sql = "SELECT A.ID, LENGTH(A.AGE, B.ID)\n" +
-                "FROM table1 A\n"
-                ;
+                "FROM table1 A\n";
 
-        SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId,sql);
+        SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId, sql);
         ItemsOfRelatedGroupByClauseValidator columnAndFunctionValidator = new ItemsOfRelatedGroupByClauseValidator();
 
         thrown.expect(MQLQueryNotValidException.class);

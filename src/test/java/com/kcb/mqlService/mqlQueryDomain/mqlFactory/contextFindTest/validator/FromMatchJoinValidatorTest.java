@@ -21,7 +21,6 @@ public class FromMatchJoinValidatorTest {
     public void from테이블_두개이상_조건구문_없을때() {
 
         thrown.expect(MQLQueryNotValidException.class);
-        thrown.expectMessage("Used Table : [A, B] | Joined Table : []");
 
         String sql = "SELECT A.CustomerID AS CustomerID, B.CategoryID\n" +
                 "FROM Customers A, Categories B \n";
@@ -35,7 +34,6 @@ public class FromMatchJoinValidatorTest {
     @Test
     public void from테이블_두개이상_Where조건존재_하지만_묵시적조인없을때() {
         thrown.expect(MQLQueryNotValidException.class);
-        thrown.expectMessage("Used Table : [A, B] | Joined Table : []");
 
         String sql = "SELECT A.CustomerID AS CustomerID, B.CategoryID\n" +
                 "FROM Customers A, Categories B \n" +
@@ -67,7 +65,6 @@ public class FromMatchJoinValidatorTest {
     @Test
     public void from테이블_세개_Where조건존재_묵시적조인1개존재할때() {
         thrown.expect(MQLQueryNotValidException.class);
-        thrown.expectMessage("Used Table : [A, B, C] | Joined Table : [A, B]");
 
         String sql = "SELECT A.CustomerID AS CustomerID, B.CategoryID, C.EmployeeID\n" +
                 "FROM Customers A, Categories B, Employees C \n" +
@@ -111,7 +108,6 @@ public class FromMatchJoinValidatorTest {
     @Test
     public void from테이블_두개AB_없는테이블C_조인에서사용할때() {
         thrown.expect(MQLQueryNotValidException.class);
-        thrown.expectMessage("Used Table : [A, B] | Joined Table : [A, B, C]");
 
         String sql = "SELECT A.CustomerID AS CustomerID, B.CategoryID, C.EmployeeID\n" +
                 "FROM Customers A\n" +
@@ -127,7 +123,6 @@ public class FromMatchJoinValidatorTest {
     @Test
     public void fromTable_moreThanTwo_WithJoin_And_WithGroupBy() {
         thrown.expect(MQLQueryNotValidException.class);
-        thrown.expectMessage("Used Table : [A, B] | Joined Table : [A, B, C]");
 
         String sql = "SELECT A.CustomerID AS CustomerID, B.CategoryID, C.EmployeeID, LENGTH(A.ID), SUM(A.ID)\n" +
                 "FROM Customers A\n" +
