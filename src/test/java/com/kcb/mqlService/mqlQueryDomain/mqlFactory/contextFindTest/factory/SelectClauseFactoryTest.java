@@ -135,15 +135,40 @@ public class SelectClauseFactoryTest {
                 "      JOIN Products E ON A.CategoryID=E.CategoryID\n" +
                 "      WHERE E.SupplierID < 5\n";
 
-
-
         SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId, sql);
         sqlContextStorage.isValid();
         SelectClause selectClause = SelectClauseFactory.getInstance().create(sqlContextStorage);
 
         List<Map<String, Object>> result = selectClause.executeQueryWith(rawDataSource);
 
+        result.forEach(eachRow -> {
+            assertThat(eachRow.keySet(), hasItems("A.Description",
+                    "E.SupplierID",
+                    "E.CategoryID",
+                    "E.Unit",
+                    "E.ProductID",
+                    "E.Price",
+                    "A.CategoryID",
+                    "E.ProductName",
+                    "A.CategoryName"));
+            assertThat(eachRow.keySet(), hasSize(9));
+        });
 
+    }
+
+    @Test
+    public void 테이블다수_allColumns존재시() {
+
+        String sql = "      SELECT *\n" +
+                "      From Categories A\n" +
+                "      JOIN Products E ON A.CategoryID=E.CategoryID\n" +
+                "      WHERE E.SupplierID < 5\n";
+
+        SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId, sql);
+        sqlContextStorage.isValid();
+        SelectClause selectClause = SelectClauseFactory.getInstance().create(sqlContextStorage);
+
+        List<Map<String, Object>> result = selectClause.executeQueryWith(rawDataSource);
 
         result.forEach(eachRow -> {
             assertThat(eachRow.keySet(), hasItems("A.Description",

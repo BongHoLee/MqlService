@@ -38,24 +38,25 @@ public class MQLValidatorTest {
     }
 
     @Test
-    public void allTableColumns_존재() {
-
+    public void groupby있을때_allColums_존재시_exception() {
+        thrown.expect(MQLQueryNotValidException.class);
         String sql = "SELECT   A.*, B.*\n" +
                 "FROM table1 A, table2 B\n" +
-                "WHERE A.ID=B.ID";
+                "WHERE A.ID=B.ID\n" +
+                "GROUP BY A.ID"
+                ;
 
         SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId, sql);
         sqlContextStorage.isValid();
     }
 
     @Test
-    public void groupby없을때_group함수_일반컬럼_함께존재시() {
-
-        String sql = "SELECT T2.*, T2.CRDID \n" +
+    public void groupby없을때_group함수_일반컬럼_함께존재시_exception() {
+        thrown.expect(MQLQueryNotValidException.class);
+        String sql = "SELECT COUNT(T1.CRDID), T2.CRDID \n" +
                 "FROM TEMP1 T1, TEMP2 T2 \n" +
                 "WHERE T1.CRDID > T2.CRDID \n"
                 ;
-
 
         SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId, sql);
         sqlContextStorage.isValid();

@@ -194,7 +194,7 @@ public class ItemsOfRelatedGroupByClauseValidator implements MQLValidator{
     }
 
     private void validSelectColumnCheck(String queryId, Column column, Map<String, String> tableAliasAndNames, List<String> groupByNames) {
-        if (column.getName(false).equals("*")) {
+        if (column.getName(false).equals("*") || column.getName(false).contains(".*")) {
             if (!groupByNames.isEmpty()) {
                 logger.error("Query ID : {}, '*' cannot be used with 'GROUP BY'", queryId);
                 throw new MQLQueryNotValidException(queryId + "is not valid query");
@@ -205,7 +205,7 @@ public class ItemsOfRelatedGroupByClauseValidator implements MQLValidator{
     }
 
     private void validHavingColumnCheck(String queryId, Column column, Map<String, String> tableAliasAndNames, List<String> groupByNames) {
-        if (column.getName(false).equals("*")) {
+        if (column.getName(false).equals("*") || column.getName(false).contains(".*")) {
             logger.error("Query ID : {}, '*' is not valid : {}", queryId, tableAliasAndNames);
             throw new MQLQueryNotValidException(queryId + "is not valid query");
         }
