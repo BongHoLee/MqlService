@@ -114,6 +114,7 @@ public class GeneralConditionClauseTest {
         );
 
         MQLDataStorage result = multiJoin.executeClause(mqlDataStorage);
+        print(result);
         result.getMqlTable().getTableData().forEach(eachRow -> {
             assertThat((Double)eachRow.get(column1), allOf(is(equalTo((Double)eachRow.get(column2))), is(equalTo((Double)eachRow.get(column3)))));
         });

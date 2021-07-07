@@ -127,7 +127,7 @@ public class SUBSTR extends SingleRowFunctionElement {
         } else if (p1 instanceof SingleRowFunctionElement){
             return execute(((SingleRowFunctionElement) p1).executeAbout(singleRow), start, end, singleRow);
         } else {
-            throw new RuntimeException("UPPER Parameter must String");
+            throw new RuntimeException("Not Valid SUBSTR parameter type!");
         }
     }
 
@@ -142,7 +142,7 @@ public class SUBSTR extends SingleRowFunctionElement {
         } else if (p1 instanceof SingleRowFunctionElement){
             return execute(((SingleRowFunctionElement) p1).executeAbout(singleRow), start, singleRow);
         } else {
-            throw new RuntimeException("UPPER Parameter must String");
+            throw new RuntimeException("Not Valid SUBSTR parameter type!");
         }
     }
 }
