@@ -92,10 +92,6 @@ public class ItemsOfGeneralClauseValidator implements MQLValidator{
 
     private void validColumnCheck(String queryId, Column column, SqlContextStorage sqlContextStorage) {
         Map<String, String> tableAliasAndNames = sqlContextStorage.getUsedTableAliasWithName();
-        if (column.getName(false).equals("*")) {
-            logger.error("Query ID : {}, '*' is not valid : {}", queryId, tableAliasAndNames);
-            throw new MQLQueryNotValidException(queryId + "is not valid query");
-        }
 
         if (column.getTable() == null || !tableAliasAndNames.containsKey(column.getTable().getName())) {
             logger.error("Query ID : {}, Column {} is not valid. check out defined Table : {}", queryId, column.toString(), tableAliasAndNames);

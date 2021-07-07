@@ -27,11 +27,11 @@ public class OtherTest {
 
 
         map.put("int", 1);
-        map.put("Integer", new Integer(1));
+        map.put("Integer", 1);
         map.put("double", 1.0);
-        map.put("Double", new Double(1.0));
+        map.put("Double", 1.0);
         map.put("long", 1);
-        map.put("Long", new Long(1));
+        map.put("Long", 1L);
         map.put("LargeNumber", 1111111111111111111L);
 
         Long test = ((Number) map.get("int")).longValue();

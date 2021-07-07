@@ -29,7 +29,7 @@ public class ItemsOfRelatedGroupByClauseValidator implements MQLValidator{
         Map<String, String> tableAliasAndNames = sqlContextStorage.getUsedTableAliasWithName();
         List<String> groupByNames = sqlContextStorage.getGroupByElementsNames();
 
-        ExpressionVisitorAdapter selectVisitor = new ExpressionVisitorAdapter() {
+        ExpressionVisitorAdapter visitor = new ExpressionVisitorAdapter() {
 
             @Override
             public void visit(Function function) {
@@ -39,51 +39,24 @@ public class ItemsOfRelatedGroupByClauseValidator implements MQLValidator{
 
             @Override
             public void visit(Column column) {
-                validSelectColumnCheck(sqlContextStorage.getQueryId(), column, tableAliasAndNames, groupByNames);
+                validColumnCheck(sqlContextStorage.getQueryId(), column, tableAliasAndNames, groupByNames);
             }
 
             @Override
             public void visit(AllColumns allColumns) {
                 Column allColumn = new Column(allColumns.toString());
-                validSelectColumnCheck(sqlContextStorage.getQueryId(), allColumn, tableAliasAndNames, groupByNames);
+                validColumnCheck(sqlContextStorage.getQueryId(), allColumn, tableAliasAndNames, groupByNames);
             }
 
             @Override
             public void visit(AllTableColumns allTableColumns) {
                 Column allColumnTables = new Column(allTableColumns.getTable(), "*");
-                validSelectColumnCheck(sqlContextStorage.getQueryId(), allColumnTables, tableAliasAndNames, groupByNames);
+                validColumnCheck(sqlContextStorage.getQueryId(), allColumnTables, tableAliasAndNames, groupByNames);
             }
 
         };
 
-        ExpressionVisitorAdapter havingVisitor = new ExpressionVisitorAdapter() {
-
-            @Override
-            public void visit(Function function) {
-                parameterValidCheck(sqlContextStorage.getQueryId(), function);
-                functionValidCheck(function, rootFunctionIsGroupFunction(function), sqlContextStorage);
-            }
-
-            @Override
-            public void visit(Column column) {
-                validHavingColumnCheck(sqlContextStorage.getQueryId(), column, tableAliasAndNames, groupByNames);
-            }
-
-            @Override
-            public void visit(AllColumns allColumns) {
-                Column allColumn = new Column(allColumns.toString());
-                validHavingColumnCheck(sqlContextStorage.getQueryId(), allColumn, tableAliasAndNames, groupByNames);
-            }
-
-            @Override
-            public void visit(AllTableColumns allTableColumns) {
-                Column allColumnTables = new Column(allTableColumns.getTable(), "*");
-                validHavingColumnCheck(sqlContextStorage.getQueryId(), allColumnTables, tableAliasAndNames, groupByNames);
-            }
-
-        };
-
-        return selectItemsValid(selectVisitor, sqlContextStorage) && havingItemValidCheck(havingVisitor, sqlContextStorage);
+        return selectItemsValid(visitor, sqlContextStorage) && havingItemsValid(visitor, sqlContextStorage);
     }
 
 
@@ -113,7 +86,7 @@ public class ItemsOfRelatedGroupByClauseValidator implements MQLValidator{
     }
 
     // 2. having column and function validation
-    private boolean havingItemValidCheck(ExpressionVisitor visitor, SqlContextStorage sqlContextStorage) {
+    private boolean havingItemsValid(ExpressionVisitor visitor, SqlContextStorage sqlContextStorage) {
         PlainSelect plainSelect = sqlContextStorage.getPlainSelect();
         if (plainSelect.getHaving() != null) {
             plainSelect.getHaving().accept(visitor);
@@ -184,33 +157,22 @@ public class ItemsOfRelatedGroupByClauseValidator implements MQLValidator{
     }
 
     private void validColumnCheck(String queryId, Column column, Map<String, String> tableAliasAndNames, List<String> groupByNames) {
-        if (column.getTable() == null || !tableAliasAndNames.containsKey(column.getTable().getName())) {
-            logger.error("Query ID : {}, Column {} is not valid. check out defined Table : {}", queryId, column.toString(), tableAliasAndNames);
-            throw new MQLQueryNotValidException(queryId + "is not valid query");
-        } else if (!(groupByNames.size() == 0 || groupByNames.contains(column.toString()))) {
-            logger.error("Query ID : {}, Column {} is not valid. check out group by : {}", queryId, column.toString(), groupByNames);
-            throw new MQLQueryNotValidException(queryId + "is not valid query");
-        }
-    }
-
-    private void validSelectColumnCheck(String queryId, Column column, Map<String, String> tableAliasAndNames, List<String> groupByNames) {
+        // '*' 표현식일 때
         if (column.getName(false).equals("*") || column.getName(false).contains(".*")) {
             if (!groupByNames.isEmpty()) {
                 logger.error("Query ID : {}, '*' cannot be used with 'GROUP BY'", queryId);
                 throw new MQLQueryNotValidException(queryId + "is not valid query");
             }
+        // '*' 외 표현식 일 때
         } else {
-            validColumnCheck(queryId, column, tableAliasAndNames, groupByNames);
+            if (column.getTable() == null || !tableAliasAndNames.containsKey(column.getTable().getName())) {
+                logger.error("Query ID : {}, Column {} is not valid. check out defined Table : {}", queryId, column.toString(), tableAliasAndNames);
+                throw new MQLQueryNotValidException(queryId + "is not valid query");
+            } else if (!(groupByNames.size() == 0 || groupByNames.contains(column.toString()))) {
+                logger.error("Query ID : {}, Column {} is not valid. check out group by : {}", queryId, column.toString(), groupByNames);
+                throw new MQLQueryNotValidException(queryId + "is not valid query");
+            }
         }
-    }
-
-    private void validHavingColumnCheck(String queryId, Column column, Map<String, String> tableAliasAndNames, List<String> groupByNames) {
-        if (column.getName(false).equals("*") || column.getName(false).contains(".*")) {
-            logger.error("Query ID : {}, '*' is not valid : {}", queryId, tableAliasAndNames);
-            throw new MQLQueryNotValidException(queryId + "is not valid query");
-        }
-
-        validColumnCheck(queryId, column, tableAliasAndNames, groupByNames);
     }
 
     private void parameterValidCheck(String queryId, Function function) {
