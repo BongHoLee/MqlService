@@ -55,6 +55,11 @@ public class COUNT extends GroupFunctionElement {
     protected Object executeWithColumnParameter(int start, int end, ColumnElement parameter, MQLDataStorage mqlDataStorage) {
         String columnName = parameter.getColumnName();
 
+        if (columnName.equals("*")) {
+            return defaultCounting(start, end);
+        }
+
+
         return IntStream.range(start, end+1).filter(idx -> {
             Map<String, Object> eachMap = mqlDataStorage.getMqlTable().getTableData().get(idx);
             return eachMap.containsKey(columnName) && eachMap.get(columnName) != null;

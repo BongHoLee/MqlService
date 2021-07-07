@@ -29,11 +29,13 @@ public class ColumnElement implements MQLElement{
     }
 
     private void splitExpression() {
-        String[] splited = columnName.split("\\.");
-        if (splited.length > 0) {
-            dataSourceId = splited[0];
-        } else {
-            throw new RuntimeException("Column MUST HAVE DataSource ID ex : A.KEY");
+        if (!columnName.equals("*")) {
+            String[] splited = columnName.split("\\.");
+            if (splited.length > 0) {
+                dataSourceId = splited[0];
+            } else {
+                throw new RuntimeException("Column MUST HAVE DataSource ID ex : A.KEY");
+            }
         }
     }
 

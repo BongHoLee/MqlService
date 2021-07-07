@@ -8,6 +8,8 @@ import com.kcb.mqlService.mqlQueryDomain.mqlQueryClause.OptionalClause;
 import com.kcb.mqlService.mqlQueryDomain.mqlQueryClause.SelectClause;
 import net.sf.jsqlparser.expression.*;
 import net.sf.jsqlparser.schema.Column;
+import net.sf.jsqlparser.statement.select.AllColumns;
+import net.sf.jsqlparser.statement.select.AllTableColumns;
 import net.sf.jsqlparser.statement.select.SelectExpressionItem;
 import net.sf.jsqlparser.statement.select.SelectItemVisitorAdapter;
 
@@ -44,6 +46,19 @@ public class SelectClauseFactory {
                 public void visit(SelectExpressionItem item) {
                     selectItemVisit(item, elements);
                 }
+
+                @Override
+                public void visit(AllColumns columns) {
+                    SelectExpressionItem allColumns = new SelectExpressionItem(new Column(columns.toString()));
+                    selectItemVisit(allColumns, elements);
+                }
+
+                @Override
+                public void visit(AllTableColumns columns) {
+                    SelectExpressionItem allTableColumns = new SelectExpressionItem(new Column(columns.toString()));
+                    selectItemVisit(allTableColumns, elements);
+                }
+
             });
         });
 
@@ -77,7 +92,6 @@ public class SelectClauseFactory {
             public void visit(Column column) {
                 elements.add(new ColumnElement(alias, column.getName(true)));
             }
-
 
             @Override
             public void visit(LongValue value) {

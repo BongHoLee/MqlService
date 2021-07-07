@@ -25,7 +25,6 @@ public class FromMatchJoinValidator implements MQLValidator {
         return tableCountWithJoinAndWhereIsValid(sqlContextStorage);
     }
 
-
     private boolean tableCountWithJoinAndWhereIsValid(SqlContextStorage sqlContextStorage) {
         Select select = sqlContextStorage.getSelect();
 

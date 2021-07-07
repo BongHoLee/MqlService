@@ -7,6 +7,8 @@ import net.sf.jsqlparser.expression.ExpressionVisitor;
 import net.sf.jsqlparser.expression.ExpressionVisitorAdapter;
 import net.sf.jsqlparser.expression.Function;
 import net.sf.jsqlparser.schema.Column;
+import net.sf.jsqlparser.statement.select.AllColumns;
+import net.sf.jsqlparser.statement.select.AllTableColumns;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -27,17 +29,28 @@ public class ItemsOfGeneralClauseValidator implements MQLValidator{
     @Override
     public boolean isValid(SqlContextStorage sqlContextStorage) {
 
-        ExpressionVisitor visitor = new ExpressionVisitorAdapter() {
+        ExpressionVisitorAdapter visitor = new ExpressionVisitorAdapter() {
             @Override
             public void visit(Function function) {
                 parameterValidCheck(sqlContextStorage.getQueryId(), function);
                 functionValidCheck(function, sqlContextStorage);
-
             }
 
             @Override
             public void visit(Column column) {
                 validColumnCheck(sqlContextStorage.getQueryId(), column, sqlContextStorage);
+            }
+
+            @Override
+            public void visit(AllColumns allColumns) {
+                Column allColumn = new Column(allColumns.toString());
+                validColumnCheck(sqlContextStorage.getQueryId(), allColumn, sqlContextStorage);
+            }
+
+            @Override
+            public void visit(AllTableColumns allTableColumns) {
+                Column allColumnTables = new Column(allTableColumns.getTable(), "*");
+                validColumnCheck(sqlContextStorage.getQueryId(), allColumnTables, sqlContextStorage);
             }
         };
 
@@ -79,11 +92,16 @@ public class ItemsOfGeneralClauseValidator implements MQLValidator{
 
     private void validColumnCheck(String queryId, Column column, SqlContextStorage sqlContextStorage) {
         Map<String, String> tableAliasAndNames = sqlContextStorage.getUsedTableAliasWithName();
+        if (column.getName(false).equals("*")) {
+            logger.error("Query ID : {}, '*' is not valid : {}", queryId, tableAliasAndNames);
+            throw new MQLQueryNotValidException(queryId + "is not valid query");
+        }
 
-        if (!tableAliasAndNames.containsKey(column.getTable().getName())) {
+        if (column.getTable() == null || !tableAliasAndNames.containsKey(column.getTable().getName())) {
             logger.error("Query ID : {}, Column {} is not valid. check out defined Table : {}", queryId, column.toString(), tableAliasAndNames);
             throw new MQLQueryNotValidException(queryId + "is not valid query");
         }
+
     }
 
     private void functionValidCheck(Function function, SqlContextStorage sqlContextStorage) {

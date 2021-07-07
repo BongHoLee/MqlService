@@ -7,9 +7,7 @@ import net.sf.jsqlparser.expression.ExpressionVisitor;
 import net.sf.jsqlparser.expression.ExpressionVisitorAdapter;
 import net.sf.jsqlparser.expression.Function;
 import net.sf.jsqlparser.schema.Column;
-import net.sf.jsqlparser.statement.select.PlainSelect;
-import net.sf.jsqlparser.statement.select.SelectExpressionItem;
-import net.sf.jsqlparser.statement.select.SelectItemVisitorAdapter;
+import net.sf.jsqlparser.statement.select.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -31,7 +29,7 @@ public class ItemsOfRelatedGroupByClauseValidator implements MQLValidator{
         Map<String, String> tableAliasAndNames = sqlContextStorage.getUsedTableAliasWithName();
         List<String> groupByNames = sqlContextStorage.getGroupByElementsNames();
 
-        ExpressionVisitor visitor = new ExpressionVisitorAdapter() {
+        ExpressionVisitorAdapter selectVisitor = new ExpressionVisitorAdapter() {
 
             @Override
             public void visit(Function function) {
@@ -41,21 +39,71 @@ public class ItemsOfRelatedGroupByClauseValidator implements MQLValidator{
 
             @Override
             public void visit(Column column) {
-                validColumnCheck(sqlContextStorage.getQueryId(), column, tableAliasAndNames, groupByNames);
+                validSelectColumnCheck(sqlContextStorage.getQueryId(), column, tableAliasAndNames, groupByNames);
             }
+
+            @Override
+            public void visit(AllColumns allColumns) {
+                Column allColumn = new Column(allColumns.toString());
+                validSelectColumnCheck(sqlContextStorage.getQueryId(), allColumn, tableAliasAndNames, groupByNames);
+            }
+
+            @Override
+            public void visit(AllTableColumns allTableColumns) {
+                Column allColumnTables = new Column(allTableColumns.getTable(), "*");
+                validSelectColumnCheck(sqlContextStorage.getQueryId(), allColumnTables, tableAliasAndNames, groupByNames);
+            }
+
         };
 
-        return selectItemsValid(visitor, sqlContextStorage) && havingItemValidCheck(visitor, sqlContextStorage);
+        ExpressionVisitorAdapter havingVisitor = new ExpressionVisitorAdapter() {
+
+            @Override
+            public void visit(Function function) {
+                parameterValidCheck(sqlContextStorage.getQueryId(), function);
+                functionValidCheck(function, rootFunctionIsGroupFunction(function), sqlContextStorage);
+            }
+
+            @Override
+            public void visit(Column column) {
+                validHavingColumnCheck(sqlContextStorage.getQueryId(), column, tableAliasAndNames, groupByNames);
+            }
+
+            @Override
+            public void visit(AllColumns allColumns) {
+                Column allColumn = new Column(allColumns.toString());
+                validHavingColumnCheck(sqlContextStorage.getQueryId(), allColumn, tableAliasAndNames, groupByNames);
+            }
+
+            @Override
+            public void visit(AllTableColumns allTableColumns) {
+                Column allColumnTables = new Column(allTableColumns.getTable(), "*");
+                validHavingColumnCheck(sqlContextStorage.getQueryId(), allColumnTables, tableAliasAndNames, groupByNames);
+            }
+
+        };
+
+        return selectItemsValid(selectVisitor, sqlContextStorage) && havingItemValidCheck(havingVisitor, sqlContextStorage);
     }
 
 
     // 1. selectItem validate
-    private boolean selectItemsValid(ExpressionVisitor visitor, SqlContextStorage sqlContextStorage) {
+    private boolean selectItemsValid(ExpressionVisitorAdapter visitor, SqlContextStorage sqlContextStorage) {
         sqlContextStorage.getPlainSelect().getSelectItems().forEach(each -> {
             each.accept(new SelectItemVisitorAdapter() {
                 @Override
                 public void visit(SelectExpressionItem item) {
                     item.getExpression().accept(visitor);
+                }
+
+                @Override
+                public void visit(AllColumns columns) {
+                    visitor.visit(columns);
+                }
+
+                @Override
+                public void visit(AllTableColumns columns) {
+                    visitor.visit(columns);
                 }
             });
         });
@@ -114,7 +162,7 @@ public class ItemsOfRelatedGroupByClauseValidator implements MQLValidator{
     private void functionParameterDefinedCheck(Function function, boolean rootIsGroup, SqlContextStorage sqlContextStorage) {
         Map<String, String> tableAliasAndNames = sqlContextStorage.getUsedTableAliasWithName();
 
-        if (function.getParameters().getExpressions() != null) {
+        if (function.getParameters() != null && function.getParameters().getExpressions() != null) {
             function.getParameters().getExpressions().forEach(eachParam -> {
                 eachParam.accept(new ExpressionVisitorAdapter() {
 
@@ -135,9 +183,8 @@ public class ItemsOfRelatedGroupByClauseValidator implements MQLValidator{
         }
     }
 
-
     private void validColumnCheck(String queryId, Column column, Map<String, String> tableAliasAndNames, List<String> groupByNames) {
-        if (!tableAliasAndNames.containsKey(column.getTable().getName())) {
+        if (column.getTable() == null || !tableAliasAndNames.containsKey(column.getTable().getName())) {
             logger.error("Query ID : {}, Column {} is not valid. check out defined Table : {}", queryId, column.toString(), tableAliasAndNames);
             throw new MQLQueryNotValidException(queryId + "is not valid query");
         } else if (!(groupByNames.size() == 0 || groupByNames.contains(column.toString()))) {
@@ -146,27 +193,59 @@ public class ItemsOfRelatedGroupByClauseValidator implements MQLValidator{
         }
     }
 
+    private void validSelectColumnCheck(String queryId, Column column, Map<String, String> tableAliasAndNames, List<String> groupByNames) {
+        if (column.getName(false).equals("*")) {
+            if (!groupByNames.isEmpty()) {
+                logger.error("Query ID : {}, '*' cannot be used with 'GROUP BY'", queryId);
+                throw new MQLQueryNotValidException(queryId + "is not valid query");
+            }
+        } else {
+            validColumnCheck(queryId, column, tableAliasAndNames, groupByNames);
+        }
+    }
+
+    private void validHavingColumnCheck(String queryId, Column column, Map<String, String> tableAliasAndNames, List<String> groupByNames) {
+        if (column.getName(false).equals("*")) {
+            logger.error("Query ID : {}, '*' is not valid : {}", queryId, tableAliasAndNames);
+            throw new MQLQueryNotValidException(queryId + "is not valid query");
+        }
+
+        validColumnCheck(queryId, column, tableAliasAndNames, groupByNames);
+    }
+
     private void parameterValidCheck(String queryId, Function function) {
         List<String> temp = new ArrayList<>();
 
         if (DefinedFunction.GROUP_FUNCTION.getDefinedFunctionList().contains(function.getName())) {
-            if (function.getParameters().getExpressions().size() > 1) {
-                logger.error("Query ID : {}, Group Function can have only one parameter ", queryId);
-                throw new MQLQueryNotValidException(queryId + "is not valid query");
+            if (!function.isAllColumns()) {
+                if (function.getParameters() != null) {
+                    if (function.getParameters().getExpressions().size() > 1) {
+                        logger.error("Query ID : {}, Group Function can have only one parameter ", queryId);
+                        throw new MQLQueryNotValidException(queryId + "is not valid query");
+                    }
+
+                    if (function.getParameters().getExpressions().size() < 1) {
+                        logger.error("Query ID : {}, Group Function must have parameter ", queryId);
+                        throw new MQLQueryNotValidException(queryId + "is not valid query");
+                    }
+                } else {
+                    logger.error("Query ID : {}, Group Function must have parameter ", queryId);
+                    throw new MQLQueryNotValidException(queryId + "is not valid query");
+                }
             }
         }
 
-        function.getParameters().getExpressions().forEach(expression -> {
-
-            expression.accept(new ExpressionVisitorAdapter(){
-
-                @Override
-                public void visit(Column column) {
-                    temp.add(column.getName(true));
-                    super.visit(column);
-                }
+        if (function.getParameters() != null) {
+            function.getParameters().getExpressions().forEach(expression -> {
+                expression.accept(new ExpressionVisitorAdapter() {
+                    @Override
+                    public void visit(Column column) {
+                        temp.add(column.getName(true));
+                        super.visit(column);
+                    }
+                });
             });
-        });
+        }
 
         if (temp.size() > 1) {
             logger.error("Query ID : {}, Function couldn't more than one Column Parameters : Function : {}, Columns : {} ", queryId, function.getName(), temp);

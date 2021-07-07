@@ -5,6 +5,7 @@ import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.*;
 import com.kcb.mqlService.mqlQueryDomain.mqlQueryClause.optionalClause.NoneClause;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class SelectClause{
     private List<MQLElement> selectElements = new ArrayList<>();
@@ -30,6 +31,7 @@ public class SelectClause{
         this(selectElements, from, Arrays.asList(optionalClauses));
     }
 
+
     private void distinguish() {
         for (MQLElement eachElement : selectElements) {
             if (eachElement instanceof ValueElement) {
@@ -41,7 +43,6 @@ public class SelectClause{
             } else if (eachElement instanceof GroupFunctionElement) {
                 groupFunctionElements.add((GroupFunctionElement) eachElement);
             }
-
         }
     }
 
@@ -87,7 +88,7 @@ public class SelectClause{
     private List<Map<String, Object>> extractFromPlain(MQLDataStorage dataStorage) {
         List<Map<String, Object>> extractedResult = new ArrayList<>();
 
-        // only group element has (ex : COUNT(*))
+        // only group element has (ex : SELECT COUNT(*) FROM ...)
         if (valueElements.isEmpty() && columnElements.isEmpty() && singleRowFunctionElements.isEmpty()) {
             Map<String, Object> extractedMap = new HashMap<>();
             extractGroupFunction(0, dataStorage.getMqlTable().getTableData().size()-1, dataStorage, extractedMap);
@@ -111,7 +112,23 @@ public class SelectClause{
 
     private void extractColumn(int idx, MQLDataStorage dataStorage, Map<String, Object> map) {
         for (ColumnElement element : columnElements) {
-            map.put(getAliasOrName(element), dataStorage.getMqlTable().getTableData().get(idx).get(element.getElementExpression()));
+            if (element.getColumnName().contains("*")) {
+
+                if (element.getColumnName().equals("*")) {
+                    map.putAll(dataStorage.getMqlTable().getTableData().get(idx));
+                } else if (element.getColumnName().contains(".*")) {
+                    String key = element.getColumnName().split("\\.")[0];
+                    Map<String, Object> origin = dataStorage.getMqlTable().getTableData().get(idx);
+                    origin.keySet()
+                            .stream()
+                            .filter(eachKey -> eachKey.split("\\.")[0].equals(key))
+                            .forEach(filteredKey -> map.put(filteredKey, origin.get(filteredKey)));
+
+                }
+
+            } else {
+                map.put(getAliasOrName(element), dataStorage.getMqlTable().getTableData().get(idx).get(element.getElementExpression()));
+            }
         }
 
     }

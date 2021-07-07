@@ -63,37 +63,43 @@ public class MQLFunctionFactory {
     }
 
     private void setGroupFunctionParameter(Function function, GroupFunctionElement groupFunctionElement) {
-        function.getParameters().getExpressions().get(0).accept(new ExpressionVisitorAdapter(){
-            @Override
-            public void visit(Column column) {
-                groupFunctionElement.addParameter(new ColumnElement(column.getName(true)));
-            }
 
-            @Override
-            public void visit(Function function) {
-                groupFunctionElement.addParameter(MQLFunctionFactory.getInstance().create(function, ""));
-            }
+        if (function.isAllColumns()) {
+            groupFunctionElement.addParameter(new ColumnElement("*"));
+        } else {
+            function.getParameters().getExpressions().get(0).accept(new ExpressionVisitorAdapter() {
+                @Override
+                public void visit(Column column) {
+                    groupFunctionElement.addParameter(new ColumnElement(column.getName(true)));
+                }
 
-            @Override
-            public void visit(DoubleValue value) {
-                groupFunctionElement.addParameter(new ValueElement(value.getValue()));
-            }
+                @Override
+                public void visit(Function function) {
+                    groupFunctionElement.addParameter(MQLFunctionFactory.getInstance().create(function, ""));
+                }
 
-            @Override
-            public void visit(LongValue value) {
-                groupFunctionElement.addParameter(new ValueElement(value.getValue()));
-            }
+                @Override
+                public void visit(DoubleValue value) {
+                    groupFunctionElement.addParameter(new ValueElement(value.getValue()));
+                }
 
-            @Override
-            public void visit(DateValue value) {
-                groupFunctionElement.addParameter(new ValueElement(value.getValue().toString()));
-            }
+                @Override
+                public void visit(LongValue value) {
+                    groupFunctionElement.addParameter(new ValueElement(value.getValue()));
+                }
 
-            @Override
-            public void visit(StringValue value) {
-                groupFunctionElement.addParameter(new ValueElement(value.getValue()));
-            }
-        });
+                @Override
+                public void visit(DateValue value) {
+                    groupFunctionElement.addParameter(new ValueElement(value.getValue().toString()));
+                }
+
+                @Override
+                public void visit(StringValue value) {
+                    groupFunctionElement.addParameter(new ValueElement(value.getValue()));
+                }
+            });
+        }
+
     }
 
     private MQLElement singleRowFunction(Function function, String alias) {

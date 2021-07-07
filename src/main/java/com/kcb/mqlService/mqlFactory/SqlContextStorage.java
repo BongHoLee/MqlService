@@ -25,12 +25,7 @@ public class SqlContextStorage {
     private String queryId;
 
 
-    private List<MQLValidator> MQLValidators = Arrays.asList(
-            new SyntaxValidator(),
-            new FromMatchJoinValidator(),
-            new ItemsOfGeneralClauseValidator(),
-            new ItemsOfRelatedGroupByClauseValidator()
-    );
+    private MQLValidator mqlValidator = new MQLValidatorBox();
 
     public SqlContextStorage(String queryId, String script) {
         try {
@@ -59,12 +54,7 @@ public class SqlContextStorage {
     }
 
     public boolean isValid() {
-        for (MQLValidator validator : MQLValidators) {
-            if (!validator.isValid(this))
-                return false;
-        }
-
-        return true;
+        return mqlValidator.isValid(this);
     }
 
     private void setOtherDatas() {
