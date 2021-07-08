@@ -5,6 +5,7 @@ import com.kcb.mqlService.mqlFactory.SqlContextStorage;
 import com.kcb.mqlService.mqlFactory.exception.MQLQueryNotValidException;
 import com.kcb.mqlService.mqlFactory.validator.FromMatchJoinValidator;
 import com.kcb.mqlService.mqlQueryDomain.mqlQueryClause.SelectClause;
+import org.apache.log4j.BasicConfigurator;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;

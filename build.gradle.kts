@@ -22,8 +22,15 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation ("com.github.jsqlparser:jsqlparser:4.0")
 
-    implementation ("org.apache.logging.log4j:log4j-api:2.0")
-    implementation("org.apache.logging.log4j:log4j-core:2.0")
+
+    implementation("org.slf4j:slf4j-api:1.7.30")
+    implementation ("org.slf4j:slf4j-log4j12:1.7.30")
+
+    implementation("org.apache.logging.log4j:log4j-api:2.10.0")
+    implementation("org.apache.logging.log4j:log4j-core:2.10.0")
+    implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.10.0")
+    implementation("org.apache.logging.log4j:log4j-1.2-api:2.10.0")
+
 }
 
 configure<JavaPluginConvention> {
@@ -36,4 +43,12 @@ tasks {
     compileTestKotlin {
         kotlinOptions.jvmTarget = "1.8"
     }
+}
+
+tasks.withType<Jar>() {
+
+    // build시 jsqlParser dependency 추가.
+    configurations["compileClasspath"]
+        .filter{ file ->file.name.contains("jsqlparser")}
+        .forEach{ file: File -> from(zipTree(file.absoluteFile))}
 }

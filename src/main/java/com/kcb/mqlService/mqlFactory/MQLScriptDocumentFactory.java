@@ -1,9 +1,11 @@
 package com.kcb.mqlService.mqlFactory;
 
 import com.kcb.mqlService.mqlFactory.exception.MQLQueryNotValidException;
+import com.kcb.mqlService.mqlFactory.validator.SyntaxValidator;
 import com.kcb.mqlService.utils.MQLResourceConfiguration;
 import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -24,7 +26,7 @@ public class MQLScriptDocumentFactory {
 
     private static MQLScriptDocumentFactory instance;
     private final String tagName = "mql";
-    private static final Logger logger = LogManager.getLogger(MQLScriptDocumentFactory.class);
+    private static final Logger logger = LoggerFactory.getLogger(MQLScriptDocumentFactory.class);
 
 
     private MQLScriptDocumentFactory() {

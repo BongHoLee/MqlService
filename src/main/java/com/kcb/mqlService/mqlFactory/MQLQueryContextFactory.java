@@ -7,11 +7,12 @@ import com.kcb.mqlService.mqlQueryDomain.mqlQueryClause.SelectClause;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.parser.CCJSqlParserManager;
 import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MQLQueryContextFactory {
     private static MQLQueryContextFactory factory;
-    private static final Logger logger = LogManager.getLogger(MQLQueryContextFactory.class);
+    private static final Logger logger = LoggerFactory.getLogger(MQLQueryContextFactory.class);
 
     private MQLQueryContextFactory(){}
 

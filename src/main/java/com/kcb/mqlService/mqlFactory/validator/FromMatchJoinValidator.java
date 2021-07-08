@@ -11,14 +11,15 @@ import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.statement.select.SelectVisitorAdapter;
 import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 public class FromMatchJoinValidator implements MQLValidator {
-    private static final Logger logger = LogManager.getLogger(FromMatchJoinValidator.class);
+    private static final Logger logger = LoggerFactory.getLogger(FromMatchJoinValidator.class);
 
     @Override
     public boolean isValid(SqlContextStorage sqlContextStorage) {

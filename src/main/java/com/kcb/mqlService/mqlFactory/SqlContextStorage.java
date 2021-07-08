@@ -10,13 +10,14 @@ import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.statement.select.SelectVisitorAdapter;
 import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.StringReader;
 import java.util.*;
 
 public class SqlContextStorage {
-    private static final Logger logger = LogManager.getLogger(SqlContextStorage.class);
+    private static final Logger logger = LoggerFactory.getLogger(SqlContextStorage.class);
 
     private Select select;
     private PlainSelect plainSelect;
