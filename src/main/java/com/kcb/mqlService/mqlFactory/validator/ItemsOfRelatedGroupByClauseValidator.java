@@ -161,16 +161,23 @@ public class ItemsOfRelatedGroupByClauseValidator implements MQLValidator{
         // '*' 표현식일 때
         if (column.getName(false).equals("*") || column.getName(false).contains(".*")) {
             if (!groupByNames.isEmpty()) {
-                logger.error("Query ID : {}, '*' cannot be used with 'GROUP BY'", queryId);
+                logger.error("Query ID : {} => '*' cannot be used with 'GROUP BY'", queryId);
                 throw new MQLQueryNotValidException(queryId + "is not valid query");
+            } else if (column.getName(false).contains(".*")) {
+                String columnTable = column.getTable().getName();
+                if (!tableAliasAndNames.containsKey(columnTable)) {
+                    logger.error("Query ID : {} => table alias({}) of {} is not defined", queryId, columnTable, column.getFullyQualifiedName());
+                    throw new MQLQueryNotValidException(queryId + "is not valid query");
+                }
             }
+
         // '*' 외 표현식 일 때
         } else {
             if (column.getTable() == null || !tableAliasAndNames.containsKey(column.getTable().getName())) {
-                logger.error("Query ID : {}, Column {} is not valid. check out defined Table : {}", queryId, column.toString(), tableAliasAndNames);
+                logger.error("Query ID : {} => table alias({}) of {} is not defined", queryId, column.getTable().getName(), column.getFullyQualifiedName());
                 throw new MQLQueryNotValidException(queryId + "is not valid query");
             } else if (!(groupByNames.size() == 0 || groupByNames.contains(column.toString()))) {
-                logger.error("Query ID : {}, Column {} is not valid. check out group by : {}", queryId, column.toString(), groupByNames);
+                logger.error("Query ID : {}, Column {} is not valid. check out group by : {}", queryId, column, groupByNames);
                 throw new MQLQueryNotValidException(queryId + "is not valid query");
             }
         }

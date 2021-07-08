@@ -80,18 +80,8 @@ public class SyntaxValidator implements MQLValidator{
                     }
 
                 });
-
-
-
             }
-
-
-
-
-
         }
-
-
 
         return true;
     }

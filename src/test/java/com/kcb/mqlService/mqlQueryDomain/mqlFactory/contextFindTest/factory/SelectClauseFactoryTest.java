@@ -185,6 +185,7 @@ public class SelectClauseFactoryTest {
 
     }
 
+
     public void print(List<Map<String, Object>> result) {
         System.out.println(result);
         System.out.println(result.size());
