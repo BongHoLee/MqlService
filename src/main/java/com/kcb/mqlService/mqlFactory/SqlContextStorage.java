@@ -35,7 +35,7 @@ public class SqlContextStorage {
             this.plainSelect = (PlainSelect) select.getSelectBody();
             setOtherDatas();
         } catch (JSQLParserException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
             throw new MQLQueryNotValidException(queryId + "is not valid query");
         }
     }

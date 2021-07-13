@@ -5,6 +5,7 @@ import com.kcb.mqlService.mqlQueryDomain.MQLQueryGroup;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.xml.parsers.ParserConfigurationException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,9 +33,8 @@ public class MQLQueryGroupFactory {
                 queryGroup.put(queryId, context);
             }
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException();
+        } catch (ParserConfigurationException e) {
+            throw new RuntimeException(e);
         }
 
         return queryGroup;

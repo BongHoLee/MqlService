@@ -14,6 +14,7 @@ import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
 
@@ -40,7 +41,7 @@ public class MQLScriptDocumentFactory {
         return instance;
     }
 
-    public Map<String, String> create() throws Exception {
+    public Map<String, String> create() throws ParserConfigurationException {
 
         Map<String, String> scriptDocumentMap = new HashMap<>();
 

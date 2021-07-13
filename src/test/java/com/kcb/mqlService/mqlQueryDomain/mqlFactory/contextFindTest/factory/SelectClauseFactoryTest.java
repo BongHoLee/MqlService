@@ -185,14 +185,6 @@ public class SelectClauseFactoryTest {
 
     }
 
-    @Test
-    public void selectItem_table_alias없을때() {
-        String sql = "SELECT CRDID FROM TEMP1 T1";
-
-        SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId, sql);
-        sqlContextStorage.isValid();
-    }
-
 
     public void print(List<Map<String, Object>> result) {
         System.out.println(result);
