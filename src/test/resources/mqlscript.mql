@@ -53,4 +53,35 @@
        ]]>
         </script>
     </mql>
+
+    <mql id="Query6">
+        <script>
+            <![CDATA[
+SELECT E.ProductID, E.SupplierID, A.CategoryID, E.Price
+FROM Categories A
+JOIN Products E ON A.CategoryID=E.ProductID
+WHERE E.SupplierID < A.CategoryID OR E.Price > 100
+       ]]>
+        </script>
+    </mql>
+
+    <mql id="Query7">
+        <script>
+            <![CDATA[
+SELECT E.ProductID, E.SupplierID, A.CategoryID, E.Price
+FROM Categories A, Products E
+WHERE A.CategoryID=E.ProductID AND E.SupplierID < A.CategoryID AND E.Price < 100
+       ]]>
+        </script>
+    </mql>
+
+    <mql id="Query8">
+        <script>
+            <![CDATA[
+SELECT E.ProductID, E.SupplierID, A.CategoryID, E.Price
+FROM Categories A, Products E
+WHERE A.CategoryID=E.ProductID AND E.SupplierID < A.CategoryID OR E.Price > 100
+       ]]>
+        </script>
+    </mql>
 </mqlQueryGroup>

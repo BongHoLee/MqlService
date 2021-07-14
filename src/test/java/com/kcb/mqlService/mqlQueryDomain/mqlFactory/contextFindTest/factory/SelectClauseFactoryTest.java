@@ -185,6 +185,36 @@ public class SelectClauseFactoryTest {
 
     }
 
+    /**
+     * SELECT E.ProductID, E.SupplierID, A.CategoryID, E.Price
+     * FROM Categories A, Products E
+     * WHERE A.CategoryID=E.ProductID AND E.SupplierID < A.CategoryID AND E.Price < 100
+     */
+
+    @Test
+    public void 논리연산_이어나왔을때() {
+
+        String sql =
+                " SELECT E.ProductID, E.SupplierID, A.CategoryID, E.Price\n" +
+                " FROM Categories A, Products E\n" +
+                " WHERE A.CategoryID=E.ProductID AND E.SupplierID < A.CategoryID AND E.Price < 100";
+
+        SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId, sql);
+        sqlContextStorage.isValid();
+        SelectClause selectClause = SelectClauseFactory.getInstance().create(sqlContextStorage);
+
+        List<Map<String, Object>> result = selectClause.executeQueryWith(rawDataSource);
+        result.forEach(eachRow -> {
+            assertThat(eachRow.keySet(), hasItems("E.SupplierID", "E.ProductID", "E.Price", "A.CategoryID"));
+            assertThat(eachRow.keySet(), hasSize(4));
+            assertThat((Double)eachRow.get("A.CategoryID"), is(equalTo((Double)eachRow.get("E.ProductID"))));
+            assertThat((Double)eachRow.get("E.SupplierID"), is(lessThan((Double)eachRow.get("A.CategoryID"))));
+            assertThat((Double)eachRow.get("E.Price"), is(lessThan(100.0)));
+        });
+
+
+    }
+
 
     public void print(List<Map<String, Object>> result) {
         System.out.println(result);

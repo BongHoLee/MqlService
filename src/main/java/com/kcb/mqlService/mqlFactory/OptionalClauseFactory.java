@@ -68,9 +68,11 @@ public class OptionalClauseFactory {
 
                 if (sqlContextStorage.getPlainSelect().getJoins() != null) {
                     sqlContextStorage.getPlainSelect().getJoins().forEach(join -> {
-                        JoinClause joinClause = new JoinClause();
-                        joinClause.setOperatingExpression(createOperation(join.getOnExpression()));
-                        conditionClause.addCondition(joinClause);
+                        if (join.getOnExpression() != null) {
+                            JoinClause joinClause = new JoinClause();
+                            joinClause.setOperatingExpression(createOperation(join.getOnExpression()));
+                            conditionClause.addCondition(joinClause);
+                        }
                     });
                 }
 

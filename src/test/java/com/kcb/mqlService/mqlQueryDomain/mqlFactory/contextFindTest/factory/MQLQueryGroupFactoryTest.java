@@ -21,6 +21,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 
+
+
 public class MQLQueryGroupFactoryTest {
 
     private MQLDataStorage mqlDataStorage;
@@ -83,6 +85,33 @@ public class MQLQueryGroupFactoryTest {
             assertThat(eachRow.keySet(), hasSize(3));
             assertThat(String.valueOf(eachRow.get("LengthCategoryID")).length(), is(greaterThan(String.valueOf(eachRow.get("SumLengthSupplierID")).length())));
         });
+
+        List<Map<String, Object>> query6Result = queryGroup.executeQuery("Query6", rawDataSource);
+        query6Result.forEach(eachRow -> {
+            assertThat(eachRow.keySet(), hasItems("E.ProductID", "E.SupplierID", "A.CategoryID", "E.Price"));
+            assertThat(eachRow.keySet(), hasSize(4));
+            assertThat(eachRow.get("E.ProductID"), is(equalTo(eachRow.get("A.CategoryID"))));
+        });
+
+        List<Map<String, Object>> query7Result = queryGroup.executeQuery("Query7", rawDataSource);
+        query7Result.forEach(eachRow -> {
+            assertThat(eachRow.keySet(), hasItems("E.SupplierID", "E.ProductID", "E.Price", "A.CategoryID"));
+            assertThat(eachRow.keySet(), hasSize(4));
+            assertThat((Double)eachRow.get("A.CategoryID"), is(equalTo((Double)eachRow.get("E.ProductID"))));
+            assertThat((Double)eachRow.get("E.SupplierID"), is(lessThan((Double)eachRow.get("A.CategoryID"))));
+            assertThat((Double)eachRow.get("E.Price"), is(lessThan(100.0)));
+        });
+
+        List<Map<String, Object>> query8Result = queryGroup.executeQuery("Query8", rawDataSource);
+        query8Result.forEach(eachRow -> {
+            assertThat(eachRow.keySet(), hasItems("E.SupplierID", "E.ProductID", "E.Price", "A.CategoryID"));
+            assertThat(eachRow.keySet(), hasSize(4));
+            assertThat(true, anyOf(
+                    is(eachRow.get("A.CategoryID").equals(eachRow.get("E.ProductID")) && (Double)eachRow.get("E.SupplierID") < (Double)eachRow.get("A.CategoryID")),
+                    is((Double)eachRow.get("E.Price") > 100.0)
+            ));
+        });
+
     }
 
 }
