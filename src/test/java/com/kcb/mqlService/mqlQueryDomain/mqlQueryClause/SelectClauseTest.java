@@ -289,9 +289,11 @@ public class SelectClauseTest {
         );
 
         SelectClause select = new SelectClause(
+                "testQuery",
+                "SELECT COUNT(*)",
                 selectItems,
                 new FromClause(),
-                new NoneClause()
+                Arrays.asList(new NoneClause())
         );
 
         List<Map<String, Object>> result = select.executeQueryWith(dataSource);
