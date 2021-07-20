@@ -31,6 +31,8 @@ public class SelectClauseFactory {
 
     public SelectClause create(SqlContextStorage sqlContextStorage) {
         return new SelectClause(
+                sqlContextStorage.getQueryId(),
+                sqlContextStorage.getQueryScript(),
                 elements(sqlContextStorage),
                 from(),
                 optionalClauses(sqlContextStorage)

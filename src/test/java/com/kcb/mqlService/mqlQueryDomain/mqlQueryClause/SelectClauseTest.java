@@ -78,10 +78,11 @@ public class SelectClauseTest {
 
 
         SelectClause select = new SelectClause(
+                "testQuery",
+                "SELECT E.SupplierID, SUM(LENGTH(E.ProductName)) FROM Products E GROUP BY E.SupplierID",
                 selectItems,
                 new FromClause(),
-                new NoneClause(),
-                new GroupByClause(new ColumnElement("E.SupplierID"))
+                Arrays.asList(new NoneClause(), new GroupByClause(new ColumnElement("E.SupplierID")))
         );
 
         List<Map<String, Object>> result = select.executeQueryWith(dataSource);

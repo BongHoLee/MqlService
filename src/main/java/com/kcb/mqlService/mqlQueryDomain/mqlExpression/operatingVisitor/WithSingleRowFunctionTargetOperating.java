@@ -34,6 +34,8 @@ public class WithSingleRowFunctionTargetOperating implements WithTargetOperating
     public MQLDataStorage operate(ColumnElement standardColumnElement, RelationalOperation rOperation, MQLDataStorage mqlDataStorage) {
         MQLTable resultTable = new MQLTable();
         MQLDataSource mqlDataSource = mqlDataStorage.getMqlDataSource();
+        String queryID = mqlDataStorage.getQueryID();
+        String queryScript = mqlDataStorage.getQueryScript();
 
         List<Map<String, Object>> mergedTableData = new ArrayList<>();
         List<Map<String, Object>> standardTableData = mqlDataSource.dataSourceOf(standardColumnElement.getDataSourceId());
@@ -77,13 +79,15 @@ public class WithSingleRowFunctionTargetOperating implements WithTargetOperating
 
         resultTable.setTableData(mergedTableData);
 
-        return new MQLDataStorage(mqlDataSource, resultTable);
+        return new MQLDataStorage(queryID, queryScript, mqlDataSource, resultTable);
     }
 
     @Override
     public MQLDataStorage operate(SingleRowFunctionElement standardFunctionElement, RelationalOperation rOperation, MQLDataStorage mqlDataStorage) {
         MQLTable resultTable = new MQLTable();
         MQLDataSource mqlDataSource = mqlDataStorage.getMqlDataSource();
+        String queryID = mqlDataStorage.getQueryID();
+        String queryScript = mqlDataStorage.getQueryScript();
         List<Map<String, Object>> mergedTableData = new ArrayList<>();
 
         // LENGTH(COLUMN) == LENGTH(COLUMN)
@@ -135,13 +139,15 @@ public class WithSingleRowFunctionTargetOperating implements WithTargetOperating
 
 
         resultTable.setTableData(mergedTableData);
-        return new MQLDataStorage(mqlDataSource, resultTable);
+        return new MQLDataStorage(queryID, queryScript, mqlDataSource, resultTable);
 
     }
 
     @Override
     public MQLDataStorage operate(ValueElement standardValueElement, RelationalOperation rOperation, MQLDataStorage mqlDataStorage) {
         MQLDataSource mqlDataSource = mqlDataStorage.getMqlDataSource();
+        String queryID = mqlDataStorage.getQueryID();
+        String queryScript = mqlDataStorage.getQueryScript();
 
         if (functionElement.hasColumn()) {
             String standardColumnKey = functionElement.getDataSourceIdForRow();
@@ -152,12 +158,12 @@ public class WithSingleRowFunctionTargetOperating implements WithTargetOperating
             ).collect(Collectors.toList());
 
             MQLTable resultTable = new MQLTable(new HashSet<>(Collections.singletonList(standardColumnKey)), filteredTable);
-            return new MQLDataStorage(mqlDataSource, resultTable);
+            return new MQLDataStorage(queryID, queryScript, mqlDataSource, resultTable);
         } else {
             if (rOperation.operating(standardValueElement.getValue(), functionElement.executeAbout(new HashMap<>()))) {
                 return mqlDataStorage;
             } else {
-                return new MQLDataStorage(new MQLDataSource(), new MQLTable());
+                return new MQLDataStorage(queryID, queryScript, new MQLDataSource(), new MQLTable());
             }
         }
     }
@@ -166,6 +172,8 @@ public class WithSingleRowFunctionTargetOperating implements WithTargetOperating
     public MQLDataStorage operate(GroupFunctionElement standardGroupFunctionElement, RelationalOperation rOperation, MQLDataStorage mqlDataStorage) {
 
         if (mqlDataStorage.getMqlTable().isGrouped()) {
+            String queryID = mqlDataStorage.getQueryID();
+            String queryScript = mqlDataStorage.getQueryScript();
             MQLTable table = new MQLTable(mqlDataStorage.getMqlTable());
             MQLDataSource mqlDataSource = mqlDataStorage.getMqlDataSource();
             List<Map<String, Object>> operatedTableData = new ArrayList<>();
@@ -187,7 +195,7 @@ public class WithSingleRowFunctionTargetOperating implements WithTargetOperating
 
             table.setTableData(operatedTableData);
             table.setGroupingIdx(updatedGroupingIdx);
-            return new MQLDataStorage(mqlDataSource, table);
+            return new MQLDataStorage(queryID, queryScript, mqlDataSource, table);
         } else {
             throw new RuntimeException("Can't Group function Operating!");
         }

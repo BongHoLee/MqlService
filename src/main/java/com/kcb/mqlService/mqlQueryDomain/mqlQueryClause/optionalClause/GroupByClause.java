@@ -1,5 +1,6 @@
 package com.kcb.mqlService.mqlQueryDomain.mqlQueryClause.optionalClause;
 
+import com.kcb.mqlService.mqlQueryDomain.mqlData.MQLDataSource;
 import com.kcb.mqlService.mqlQueryDomain.mqlData.MQLDataStorage;
 import com.kcb.mqlService.mqlQueryDomain.mqlData.MQLTable;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.ColumnElement;
@@ -37,7 +38,10 @@ public class GroupByClause implements OptionalClause {
 
     private MQLDataStorage groupingWith(MQLDataStorage mqlDataStorage) {
         MQLTable table = updateTable(mqlDataStorage.getMqlTable());
-        return new MQLDataStorage(mqlDataStorage.getMqlDataSource(), table);
+        MQLDataSource dataSource = mqlDataStorage.getMqlDataSource();
+        String queryID = mqlDataStorage.getQueryID();
+        String queryScript = mqlDataStorage.getQueryScript();
+        return new MQLDataStorage(queryID, queryScript,dataSource, table);
     }
 
     private MQLTable updateTable(MQLTable table) {

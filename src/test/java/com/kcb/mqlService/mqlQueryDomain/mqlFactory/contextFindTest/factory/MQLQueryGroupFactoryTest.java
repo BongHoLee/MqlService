@@ -39,7 +39,7 @@ public class MQLQueryGroupFactoryTest {
         rawDataSource.put("D", TestDataFactory.tableOf("test"));
         rawDataSource.put("E", TestDataFactory.tableOf("products"));
         FromClause from = new FromClause();
-        mqlDataStorage = from.makeMqlDataSources(rawDataSource);
+        mqlDataStorage = from.makeMqlDataSources("testQueryID", "testQueryScript", rawDataSource);
     }
 
     @Test

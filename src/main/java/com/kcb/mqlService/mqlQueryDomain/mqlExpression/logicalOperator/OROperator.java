@@ -30,9 +30,13 @@ public class OROperator  implements MQLOperatingExpression{
 
     @Override
     public MQLDataStorage operatingWith(MQLDataStorage mqlDataStorage) {
+        String queryID = mqlDataStorage.getQueryID();
+        String queryScript = mqlDataStorage.getQueryScript();
+        MQLDataSource mqlDataSource = mqlDataStorage.getMqlDataSource();
+
         MQLDataStorage leftDataStorage = leftExpression.operatingWith(mqlDataStorage);
         MQLDataStorage rightDataStorage = rightExpression.operatingWith(mqlDataStorage);
-        MQLDataSource mqlDataSource = leftDataStorage.getMqlDataSource();
+
 
         MQLTable leftTable = leftDataStorage.getMqlTable();
         MQLTable rightTable = rightDataStorage.getMqlTable();
@@ -44,7 +48,7 @@ public class OROperator  implements MQLOperatingExpression{
         mergedJoinSet.addAll(rightTable.getJoinSet());
 
 
-        return new MQLDataStorage(mqlDataSource, new MQLTable(mergedJoinSet, new ArrayList<>(new HashSet<>(mergedTable))));
+        return new MQLDataStorage(queryID, queryScript, mqlDataSource, new MQLTable(mergedJoinSet, new ArrayList<>(new HashSet<>(mergedTable))));
     }
 
 

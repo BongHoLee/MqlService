@@ -24,6 +24,7 @@ public class SqlContextStorage {
     private Map<String, String> usedTableAliasWithName = new HashMap<>();
     private List<String> groupByElementsNames = new ArrayList<>();
     private String queryId;
+    private String queryScript;
 
 
     private MQLValidator mqlValidator = new MQLValidatorBox();
@@ -31,6 +32,7 @@ public class SqlContextStorage {
     public SqlContextStorage(String queryId, String script) {
         try {
             this.queryId = queryId;
+            this.queryScript = script;
             this.select = (Select) CCJSqlParserUtil.parse(new StringReader(script));
             this.plainSelect = (PlainSelect) select.getSelectBody();
             setOtherDatas();
@@ -48,6 +50,10 @@ public class SqlContextStorage {
     }
     public String getQueryId() {
         return queryId;
+    }
+
+    public String getQueryScript() {
+        return queryScript;
     }
 
     public Map<String, String> getUsedTableAliasWithName() {

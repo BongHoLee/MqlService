@@ -64,6 +64,9 @@ public class WithGroupFunctionTargetOperating implements WithTargetOperating {
 
         MQLTable table = new MQLTable(mqlDataStorage.getMqlTable());
         MQLDataSource mqlDataSource = mqlDataStorage.getMqlDataSource();
+        String queryID = mqlDataStorage.getQueryID();
+        String queryScript = mqlDataStorage.getQueryScript();
+
         List<Map<String, Object>> operatedTableData = new ArrayList<>();
         List<Integer> updatedGroupingIdx = new ArrayList<>();
 
@@ -84,7 +87,7 @@ public class WithGroupFunctionTargetOperating implements WithTargetOperating {
 
         table.setTableData(operatedTableData);
         table.setGroupingIdx(updatedGroupingIdx);
-        return new MQLDataStorage(mqlDataSource, table);
+        return new MQLDataStorage(queryID, queryScript, mqlDataSource, table);
     }
 
     private Object compareValue(MQLDataStorage mqlDataStorage, int start, int end, MQLElement element) {

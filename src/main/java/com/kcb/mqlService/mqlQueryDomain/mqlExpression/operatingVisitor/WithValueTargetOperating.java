@@ -24,6 +24,8 @@ public class WithValueTargetOperating implements WithTargetOperating {
 
     @Override
     public MQLDataStorage operate(ColumnElement standardColumnElement, RelationalOperation rOperation, MQLDataStorage mqlDataStorage) {
+        String queryID = mqlDataStorage.getQueryID();
+        String queryScript = mqlDataStorage.getQueryScript();
         MQLDataSource mqlDataSource = mqlDataStorage.getMqlDataSource();
 
         String standardColumnKey = standardColumnElement.getColumnName();
@@ -36,12 +38,13 @@ public class WithValueTargetOperating implements WithTargetOperating {
         ).collect(Collectors.toList());
 
         MQLTable resultTable = new MQLTable(new HashSet<>(Collections.singletonList(standardDataSourceId)), filteredTable);
-        return new MQLDataStorage(mqlDataSource, resultTable);
+        return new MQLDataStorage(queryID, queryScript, mqlDataSource, resultTable);
     }
 
     @Override
     public MQLDataStorage operate(SingleRowFunctionElement standardFunctionElement, RelationalOperation rOperation, MQLDataStorage mqlDataStorage) {
-
+        String queryID = mqlDataStorage.getQueryID();
+        String queryScript = mqlDataStorage.getQueryScript();
         MQLDataSource mqlDataSource = mqlDataStorage.getMqlDataSource();
 
 
@@ -54,12 +57,12 @@ public class WithValueTargetOperating implements WithTargetOperating {
             ).collect(Collectors.toList());
 
             MQLTable resultTable = new MQLTable(new HashSet<>(Collections.singletonList(standardColumnKey)), filteredTable);
-            return new MQLDataStorage(mqlDataSource, resultTable);
+            return new MQLDataStorage(queryID, queryScript, mqlDataSource, resultTable);
         } else {
             if (rOperation.operating(standardFunctionElement.executeAbout(new HashMap<>()), compareValue.getValue())) {
                 return mqlDataStorage;
             } else {
-                return new MQLDataStorage(new MQLDataSource(), new MQLTable());
+                return new MQLDataStorage(queryID, queryScript, new MQLDataSource(), new MQLTable());
             }
         }
     }
@@ -73,6 +76,8 @@ public class WithValueTargetOperating implements WithTargetOperating {
     public MQLDataStorage operate(GroupFunctionElement standardGroupFunctionElement, RelationalOperation rOperation, MQLDataStorage mqlDataStorage) {
         MQLTable table = new MQLTable(mqlDataStorage.getMqlTable());
         MQLDataSource mqlDataSource = mqlDataStorage.getMqlDataSource();
+        String queryID = mqlDataStorage.getQueryID();
+        String queryScript = mqlDataStorage.getQueryScript();
         List<Map<String, Object>> operatedTableData = new ArrayList<>();
         List<Integer> updatedGroupingIdx = new ArrayList<>();
 
@@ -93,6 +98,6 @@ public class WithValueTargetOperating implements WithTargetOperating {
 
         table.setTableData(operatedTableData);
         table.setGroupingIdx(updatedGroupingIdx);
-        return new MQLDataStorage(mqlDataSource, table);
+        return new MQLDataStorage(queryID, queryScript, mqlDataSource, table);
     }
 }

@@ -21,7 +21,7 @@ public class FromClauseTest {
 
         FromClause fromClause = new FromClause();
 
-        MQLDataSource mqlDataSource = fromClause.makeMqlDataSources(rawDataSource).getMqlDataSource();
+        MQLDataSource mqlDataSource = fromClause.makeMqlDataSources("testQuery", "testQueryScript", rawDataSource).getMqlDataSource();
 
 
         assertThat(true, equalTo(isConvertedWithoutLeak(rawDataSource, mqlDataSource.getMqlDataSources())));

@@ -8,6 +8,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class SelectClause{
+    private String queryID;
+    private String queryScript;
     private List<MQLElement> selectElements = new ArrayList<>();
     private FromClause from;
     private List<OptionalClause> optionalClauses = Collections.singletonList(new NoneClause());
@@ -17,18 +19,18 @@ public class SelectClause{
     private List<SingleRowFunctionElement> singleRowFunctionElements = new ArrayList<>();
     private List<GroupFunctionElement> groupFunctionElements = new ArrayList<>();
 
-    public SelectClause(List<MQLElement> selectElements, FromClause from, List<OptionalClause> optionalClauses) {
+    public SelectClause(String queryID, String queryScript, List<MQLElement> selectElements, FromClause from, List<OptionalClause> optionalClauses) {
+        this.queryID = queryID;
+        this.queryScript = queryScript;
         this.selectElements = selectElements;
         this.from = from;
         this.optionalClauses = optionalClauses;
         distinguish();
     }
-    public SelectClause(List<MQLElement> selectElements, FromClause from) {
-        this(selectElements, from, Collections.singletonList(new NoneClause()));
-    }
+
 
     public SelectClause(List<MQLElement> selectElements, FromClause from, OptionalClause ... optionalClauses) {
-        this(selectElements, from, Arrays.asList(optionalClauses));
+        this("", "", selectElements, from, Arrays.asList(optionalClauses));
     }
 
 
@@ -48,7 +50,7 @@ public class SelectClause{
 
 
     public List<Map<String, Object>> executeQueryWith(Map<String, List<Map<String, Object>>> rawDataSource) {
-        MQLDataStorage dataStorage = from.makeMqlDataSources(rawDataSource);
+        MQLDataStorage dataStorage = from.makeMqlDataSources(queryID, queryScript, rawDataSource);
 
         for (OptionalClause eachClause : optionalClauses) {
             dataStorage = eachClause.executeClause(dataStorage);

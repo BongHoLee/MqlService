@@ -14,14 +14,20 @@ public class FromClause {
 
     private MQLDataSource mqlDataSource = new MQLDataSource();
 
-    public MQLDataStorage makeMqlDataSources(Map<String, List<Map<String, Object>>> rawDataSources) {
+    public MQLDataStorage makeMqlDataSources(String queryID, String queryScript, Map<String, List<Map<String, Object>>> rawDataSources) {
         mqlDataSource.makeFromRawDataSources(rawDataSources);
         MQLDataStorage mqlDataStorage = new MQLDataStorage(
+                queryID,
+                queryScript,
                 mqlDataSource,
                 new MQLTable()
         );
 
         return mqlDataStorage;
+    }
+
+    public MQLDataStorage makeMqlDataSources(Map<String, List<Map<String, Object>>> rawDataSources) {
+        return makeMqlDataSources("", "", rawDataSources);
     }
 
 
