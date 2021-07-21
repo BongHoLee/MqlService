@@ -128,6 +128,11 @@ public class SUBSTR extends SingleRowFunctionElement {
     private Object execute(Object p1, int start, int end, Map<String, Object> singleRow) {
         start = start == 0 ? 1 : start;
 
+        if (end < 1) {
+            logger.error("MQL Execute Exception. SUBSTR(param, start, end) `end` must larger than 1");
+            throw new MQLQueryExecuteException("MQL Execute Exception. SUBSTR(param, start, end) `end` must larger than 1");
+        }
+
         if (start > 0) {
             return positiveExecute(p1, start, end, singleRow);
         } else {
