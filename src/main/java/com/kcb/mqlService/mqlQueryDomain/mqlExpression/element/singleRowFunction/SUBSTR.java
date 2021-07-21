@@ -87,9 +87,14 @@ public class SUBSTR extends SingleRowFunctionElement {
 
     @Override
     public Object executeWith(List<MQLElement> parameters, Map<String, Object> singleRow) {
+
+        if (parameters == null || parameters.size() < 2) {
+            logger.error("MQL Execute Exception. SUBSTR must have at least two parameters");
+            throw new MQLQueryExecuteException("MQL Execute Exception. SUBSTR must have at least two parameters");
+        }
+
         MQLElement p1 = parameters.get(0);
         MQLElement p2 = parameters.get(1);
-
 
         if (!(p2 instanceof ValueElement)) {
             logger.error("MQL Execute Exception. SUBSTR's Second Parameter Type Must `Value`");
