@@ -59,7 +59,7 @@ public class SUM extends GroupFunctionElement {
 
         return IntStream.range(start, end+1).mapToDouble(idx -> {
             Map<String, Object> eachRow = mqlDataStorage.getMqlTable().getTableData().get(idx);
-            return eachRow.containsKey(columnName) && eachRow.get(columnName) != null && eachRow.get(columnName) instanceof Number ? (Double) eachRow.get(columnName) : 0;
+            return eachRow.containsKey(columnName) && eachRow.get(columnName) != null && eachRow.get(columnName) instanceof Number ? ((Number)eachRow.get(columnName)).doubleValue() : 0;
         }).sum();
 
     }
