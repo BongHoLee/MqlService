@@ -140,6 +140,23 @@ public class MQLFunctionFactory {
                     parameters.add(new ColumnElement(column.getName(true)));
                 }
 
+                // problem solved : negative value(ex: -5) is not applied to parameter value issue
+                @Override
+                public void visit(SignedExpression value) {
+                    Expression underlyingValue = value.getExpression();
+                    if (underlyingValue instanceof DoubleValue) {
+                        DoubleValue doubleValue = (DoubleValue) underlyingValue;
+                        doubleValue.setValue(value.getSign() == '-' ? -doubleValue.getValue() : doubleValue.getValue());
+                        visit(doubleValue);
+                    } else if (underlyingValue instanceof LongValue) {
+                        LongValue longValue = (LongValue) underlyingValue;
+                        longValue.setValue(value.getSign() == '-' ? -longValue.getValue() : longValue.getValue());
+                        visit(longValue);
+                    } else {
+                        super.visit(value);
+                    }
+                }
+
                 @Override
                 public void visit(DoubleValue value) {
                     parameters.add(new ValueElement(value.getValue()));

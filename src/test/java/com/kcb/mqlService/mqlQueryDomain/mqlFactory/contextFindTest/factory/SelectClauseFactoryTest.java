@@ -215,6 +215,24 @@ public class SelectClauseFactoryTest {
 
     }
 
+    /**
+     * SELECT SUBSTR(E.ProductName, 0, 3) FROM Products E
+     */
+
+    @Test
+    public void SUBSTR_negativeTest() {
+
+        String sql =
+                "SELECT SUBSTR(E.ProductName, -4, 3) FROM Products E";
+
+        SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId, sql);
+        sqlContextStorage.isValid();
+        SelectClause selectClause = SelectClauseFactory.getInstance().create(sqlContextStorage);
+
+        List<Map<String, Object>> result = selectClause.executeQueryWith(rawDataSource);
+        print(result);
+    }
+
 
     public void print(List<Map<String, Object>> result) {
         System.out.println(result);
