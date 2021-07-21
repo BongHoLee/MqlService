@@ -1,6 +1,11 @@
 package com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.singleRowFunction;
 
+import com.kcb.mqlService.mqlFactory.exception.MQLQueryExecuteException;
+import com.kcb.mqlService.mqlQueryDomain.MQLQueryGroup;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.*;
+import com.kcb.mqlService.utils.ExceptionThrowerUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -8,6 +13,8 @@ import java.util.List;
 import java.util.Map;
 
 public class LENGTH extends SingleRowFunctionElement {
+    private static final Logger logger = LoggerFactory.getLogger(LENGTH.class);
+
     private String expression = "";
     private boolean hasAlias;
     private String alias = "";
@@ -87,7 +94,7 @@ public class LENGTH extends SingleRowFunctionElement {
         return execute(parameters.get(0), singleRow);
     }
 
-    private Object execute(Object param, Map<String, Object> singleRow) {
+    private Object execute(Object param, Map<String, Object> singleRow)  {
         if (param instanceof String) {
             return ((String) param).length();
         }else if (param instanceof ValueElement && ((ValueElement) param).getValue() instanceof String) {
@@ -95,11 +102,13 @@ public class LENGTH extends SingleRowFunctionElement {
         } else if(param instanceof ValueElement && ((ValueElement) param).getValue() instanceof Number) {
             return (String.valueOf(((ValueElement) param).getValue())).length();
         }  else if(param instanceof ColumnElement ){
+            ExceptionThrowerUtil.isValidRow(singleRow,((ColumnElement) param).getColumnName());
             return String.valueOf((singleRow.get(((ColumnElement) param).getColumnName()))).length();
         } else if (param instanceof SingleRowFunctionElement){
             return execute(((SingleRowFunctionElement) param).executeAbout(singleRow), singleRow);
         } else {
-            throw new RuntimeException("LENGTH Parameter must String");
+            logger.error("MQL Execution Exception. LENGTH Parameter Must String. ");
+            throw new MQLQueryExecuteException("Execution Exception. LENGTH Parameter must String");
         }
     }
 }

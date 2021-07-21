@@ -1,12 +1,17 @@
 package com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.singleRowFunction;
 
+import com.kcb.mqlService.mqlFactory.exception.MQLQueryExecuteException;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.*;
+import com.kcb.mqlService.utils.ExceptionThrowerUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 public class UPPER extends SingleRowFunctionElement {
+    private static final Logger logger = LoggerFactory.getLogger(UPPER.class);
 
     private String expression = "";
     private String alias = "";
@@ -95,7 +100,11 @@ public class UPPER extends SingleRowFunctionElement {
         } else if (param instanceof SingleRowFunctionElement){
             return execute(((SingleRowFunctionElement) param).executeAbout(singleRow), singleRow);
         } else {
-            throw new RuntimeException("UPPER Parameter must String");
+            if (param instanceof ColumnElement)
+                ExceptionThrowerUtil.isValidRow(singleRow, ((ColumnElement) param).getColumnName());
+
+            logger.error("UPPER Parameter Must String!");
+            throw new MQLQueryExecuteException("UPPER Parameter must String");
         }
     }
 }

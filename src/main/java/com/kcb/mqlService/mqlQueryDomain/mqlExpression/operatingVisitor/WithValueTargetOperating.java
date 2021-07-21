@@ -11,6 +11,7 @@ import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.GroupFunctionElem
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.SingleRowFunctionElement;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.ValueElement;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.relationalOperator.RelationalOperation;
+import com.kcb.mqlService.utils.ExceptionThrowerUtil;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -34,8 +35,10 @@ public class WithValueTargetOperating implements WithTargetOperating {
         List<Map<String, Object>> tableData = mqlDataSource.dataSourceOf(standardDataSourceId);
 
         List<Map<String, Object>> filteredTable = tableData.stream().filter(
-                eachRow ->rOperation.operating(eachRow.get(standardColumnKey), compareValue.getValue())
-        ).collect(Collectors.toList());
+                eachRow -> {
+                    ExceptionThrowerUtil.isValidRow(queryID, eachRow, standardColumnKey);
+                    return rOperation.operating(eachRow.get(standardColumnKey), compareValue.getValue());
+                }).collect(Collectors.toList());
 
         MQLTable resultTable = new MQLTable(new HashSet<>(Collections.singletonList(standardDataSourceId)), filteredTable);
         return new MQLDataStorage(queryID, queryScript, mqlDataSource, resultTable);
@@ -53,8 +56,9 @@ public class WithValueTargetOperating implements WithTargetOperating {
             List<Map<String, Object>> tableData = mqlDataSource.dataSourceOf(standardColumnKey);
 
             List<Map<String, Object>> filteredTable = tableData.stream().filter(
-                    eachRow -> rOperation.operating(standardFunctionElement.executeAbout(eachRow), compareValue.getValue())
-            ).collect(Collectors.toList());
+                    eachRow -> {
+                        return rOperation.operating(standardFunctionElement.executeAbout(eachRow), compareValue.getValue());
+                    }).collect(Collectors.toList());
 
             MQLTable resultTable = new MQLTable(new HashSet<>(Collections.singletonList(standardColumnKey)), filteredTable);
             return new MQLDataStorage(queryID, queryScript, mqlDataSource, resultTable);

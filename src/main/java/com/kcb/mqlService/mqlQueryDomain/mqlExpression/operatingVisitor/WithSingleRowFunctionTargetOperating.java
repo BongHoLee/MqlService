@@ -12,6 +12,7 @@ import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.SingleRowFunction
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.ValueElement;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.relationalOperator.RelationalOperation;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.relationalOperator.RelationalOperator;
+import com.kcb.mqlService.utils.ExceptionThrowerUtil;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -49,7 +50,10 @@ public class WithSingleRowFunctionTargetOperating implements WithTargetOperating
             if (standardColumnElement.getColumnName().equals(functionElement.getDataSourceIdForRow())) {
                 List<Map<String, Object>> mergedSameTableData =
                         standardTableData.stream()
-                                .filter(eachRow -> rOperation.operating(eachRow.get(standardColumnElement.getColumnName()), functionElement.executeAbout(eachRow)))
+                                .filter(eachRow -> {
+                                    ExceptionThrowerUtil.isValidRow(queryID, eachRow, standardColumnElement.getColumnName());
+                                    return rOperation.operating(eachRow.get(standardColumnElement.getColumnName()), functionElement.executeAbout(eachRow));
+                                })
                                 .collect(Collectors.toList());
 
                 mergedTableData.addAll(mergedSameTableData);
@@ -58,6 +62,7 @@ public class WithSingleRowFunctionTargetOperating implements WithTargetOperating
             } else {
                 standardTableData.forEach(standardRow -> {
                     compareTableData.forEach(compareRow -> {
+                        ExceptionThrowerUtil.isValidRow(queryID, standardRow, standardColumnElement.getColumnName());
                         if (rOperation.operating(standardRow.get(standardColumnElement.getColumnName()), functionElement.executeAbout(compareRow))) {
                             Map<String, Object> mergedRow = new HashMap<>();
                             mergedRow.putAll(standardRow);
@@ -71,7 +76,10 @@ public class WithSingleRowFunctionTargetOperating implements WithTargetOperating
             // function(value) : ex) A.CustomerID > LENGTH(3)
         } else {
             List<Map<String, Object>> tempMergedTable = standardTableData.stream()
-                    .filter(eachRow -> rOperation.operating(eachRow.get(standardColumnElement.getColumnName()), functionElement.executeAbout(new HashMap<>())))
+                    .filter(eachRow -> {
+                        ExceptionThrowerUtil.isValidRow(queryID, eachRow, standardColumnElement.getColumnName());
+                        return rOperation.operating(eachRow.get(standardColumnElement.getColumnName()), functionElement.executeAbout(new HashMap<>()));
+                    })
                     .collect(Collectors.toList());
 
             mergedTableData.addAll(tempMergedTable);

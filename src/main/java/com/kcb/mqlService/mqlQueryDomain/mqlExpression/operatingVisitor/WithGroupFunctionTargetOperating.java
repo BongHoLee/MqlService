@@ -1,10 +1,15 @@
 package com.kcb.mqlService.mqlQueryDomain.mqlExpression.operatingVisitor;
 
+import com.kcb.mqlService.mqlFactory.exception.MQLQueryExecuteException;
 import com.kcb.mqlService.mqlQueryDomain.mqlData.MQLDataSource;
 import com.kcb.mqlService.mqlQueryDomain.mqlData.MQLDataStorage;
 import com.kcb.mqlService.mqlQueryDomain.mqlData.MQLTable;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.*;
+import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.singleRowFunction.SUBSTR;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.relationalOperator.RelationalOperation;
+import com.kcb.mqlService.utils.ExceptionThrowerUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,6 +18,8 @@ import java.util.Map;
 import java.util.function.Function;
 
 public class WithGroupFunctionTargetOperating implements WithTargetOperating {
+    private static final Logger logger = LoggerFactory.getLogger(WithGroupFunctionTargetOperating.class);
+
     private GroupFunctionElement compareTargetGroupFunction;
 
     public WithGroupFunctionTargetOperating(GroupFunctionElement compareTargetGroupFunction) {
@@ -24,7 +31,9 @@ public class WithGroupFunctionTargetOperating implements WithTargetOperating {
         if (isGrouped(mqlDataStorage) && mqlDataStorage.getMqlTable().getGroupingElements().contains(standardColumnElement.getColumnName())) {
             return operating(mqlDataStorage, rOperation, standardColumnElement);
         } else {
-            throw new RuntimeException("Can't Group function Operating!");
+            logger.error("Query ID: {}, Can't Group Function Operating Checkout MQL Syntax", mqlDataStorage.getQueryID());
+            logger.error("Query Script : {}", mqlDataStorage.getQueryScript());
+            throw new MQLQueryExecuteException("Can't Group function Operating. Query ID: " + mqlDataStorage.getQueryID());
         }
     }
 
@@ -33,7 +42,9 @@ public class WithGroupFunctionTargetOperating implements WithTargetOperating {
         if (isGrouped(mqlDataStorage)) {
             return operating(mqlDataStorage, rOperation, standardFunctionElement);
         } else {
-            throw new RuntimeException("Can't Group function Operating!");
+            logger.error("Query ID: {}, Can't Group Function Operating Checkout MQL Syntax", mqlDataStorage.getQueryID());
+            logger.error("Query Script : {}", mqlDataStorage.getQueryScript());
+            throw new MQLQueryExecuteException("Can't Group function Operating. Query ID: " + mqlDataStorage.getQueryID());
         }
 
     }
@@ -43,7 +54,9 @@ public class WithGroupFunctionTargetOperating implements WithTargetOperating {
         if (isGrouped(mqlDataStorage)) {
             return operating(mqlDataStorage, rOperation, standardValueElement);
         } else {
-            throw new RuntimeException("Can't Group function Operating!");
+            logger.error("Query ID: {}, Can't Group Function Operating Checkout MQL Syntax", mqlDataStorage.getQueryID());
+            logger.error("Query Script : {}", mqlDataStorage.getQueryScript());
+            throw new MQLQueryExecuteException("Can't Group function Operating. Query ID: " + mqlDataStorage.getQueryID());
         }
     }
 
@@ -52,7 +65,9 @@ public class WithGroupFunctionTargetOperating implements WithTargetOperating {
         if (isGrouped(mqlDataStorage)) {
             return operating(mqlDataStorage, rOperation, standardGroupFunctionElement);
         } else {
-            throw new RuntimeException("Can't Group function Operating!");
+            logger.error("Query ID: {}, Can't Group Function Operating Checkout MQL Syntax", mqlDataStorage.getQueryID());
+            logger.error("Query Script : {}", mqlDataStorage.getQueryScript());
+            throw new MQLQueryExecuteException("Can't Group function Operating. Query ID: " + mqlDataStorage.getQueryID());
         }
     }
 
@@ -92,7 +107,7 @@ public class WithGroupFunctionTargetOperating implements WithTargetOperating {
 
     private Object compareValue(MQLDataStorage mqlDataStorage, int start, int end, MQLElement element) {
         if (element instanceof ColumnElement) {
-
+            ExceptionThrowerUtil.isValidRow(mqlDataStorage.getQueryID(), mqlDataStorage.getMqlTable().getTableData().get(end), ((ColumnElement) element).getColumnName());
             return mqlDataStorage.getMqlTable().getTableData().get(end).get(((ColumnElement) element).getColumnName());
 
         } else if (element instanceof ValueElement) {
@@ -104,13 +119,17 @@ public class WithGroupFunctionTargetOperating implements WithTargetOperating {
             Map<String, Object> row = mqlDataStorage.getMqlTable().getTableData().get(end);
             if (((SingleRowFunctionElement) element).hasColumn()) {
 
-                if (mqlDataStorage.getMqlTable().getGroupingElements().contains(((SingleRowFunctionElement) element).getColumnParameterName())) {
+                if (
+                        mqlDataStorage.getMqlTable().getGroupingElements().contains(((SingleRowFunctionElement) element).getColumnParameterName()) ||
+                        mqlDataStorage.getMqlTable().getGroupingElements().contains(((SingleRowFunctionElement) element).getElementExpression())
+                ) {
 
                     return ((SingleRowFunctionElement) element).executeAbout(row);
 
                 } else {
 
-                    throw new RuntimeException(element.getElementExpression() + " should included in Group By Clause!");
+                    logger.error("Query ID : {}, {}  should included in Group By Clause!", mqlDataStorage.getQueryID(), element.getElementExpression());
+                    throw new MQLQueryExecuteException(element.getElementExpression() + " should included in Group By Clause!");
 
                 }
 
@@ -124,8 +143,8 @@ public class WithGroupFunctionTargetOperating implements WithTargetOperating {
             return ((GroupFunctionElement) element).executeAbout(start, end, mqlDataStorage);
 
         } else {
-
-            throw new RuntimeException("Not Valid Group Function Operating Element!");
+            logger.error("Query ID : {}, Not Valid Group Function Operating Element!", mqlDataStorage.getQueryID());
+            throw new MQLQueryExecuteException("Not Valid Group Function Operating Element!");
 
         }
 

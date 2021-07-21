@@ -1,12 +1,18 @@
 package com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.singleRowFunction;
 
+import com.kcb.mqlService.mqlFactory.exception.MQLQueryExecuteException;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.*;
+import com.kcb.mqlService.utils.ExceptionThrowerUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 public class LOWER extends SingleRowFunctionElement {
+    private static final Logger logger = LoggerFactory.getLogger(LOWER.class);
+
     private String expression = "";
     private boolean hasAlias;
     private String alias = "";
@@ -91,11 +97,13 @@ public class LOWER extends SingleRowFunctionElement {
         } else if (param instanceof ValueElement && ((ValueElement) param).getValue() instanceof String) {
             return ((String) ((ValueElement) param).getValue()).toLowerCase();
         } else if (param instanceof ColumnElement && singleRow.get(((ColumnElement) param).getColumnName()) instanceof String) {
+            ExceptionThrowerUtil.isValidRow(singleRow,((ColumnElement) param).getColumnName());
             return ((String) singleRow.get(((ColumnElement) param).getColumnName())).toLowerCase();
         } else if (param instanceof SingleRowFunctionElement){
             return execute(((SingleRowFunctionElement) param).executeAbout(singleRow), singleRow);
         } else {
-            throw new RuntimeException("LOWER Parameter must String");
+            logger.error("MQL Execution Exception. Lower Parameter Must String!");
+            throw new MQLQueryExecuteException("LOWER Parameter must String");
         }
     }
 }

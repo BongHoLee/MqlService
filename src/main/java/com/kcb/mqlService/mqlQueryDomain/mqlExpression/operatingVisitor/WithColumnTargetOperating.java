@@ -11,6 +11,7 @@ import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.GroupFunctionElem
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.SingleRowFunctionElement;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.ValueElement;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.relationalOperator.RelationalOperation;
+import com.kcb.mqlService.utils.ExceptionThrowerUtil;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -38,6 +39,9 @@ public class WithColumnTargetOperating implements WithTargetOperating {
 
         List<Map<String, Object>> joinedTable = new ArrayList<>();
         leftDataSource.forEach(standardRow -> rightDataSource.forEach(compareRow -> {
+            ExceptionThrowerUtil.isValidRow(queryID, standardRow, standardColumnElement.getColumnName());
+            ExceptionThrowerUtil.isValidRow(queryID, compareRow, compareTargetColumn.getColumnName());
+
             Object standardValue = standardRow.get(standardColumnElement.getColumnName());
             Object compareValue = compareRow.get(compareTargetColumn.getColumnName());
 
@@ -76,7 +80,10 @@ public class WithColumnTargetOperating implements WithTargetOperating {
             if (compareTargetColumn.getColumnName().equals(standardFunctionElement.getDataSourceIdForRow())) {
                 List<Map<String, Object>> mergedSameTableData =
                         standardTableData.stream()
-                                .filter(eachRow -> rOperation.operating(standardFunctionElement.executeAbout(eachRow), eachRow.get(compareTargetColumn.getColumnName())))
+                                .filter(eachRow -> {
+                                    ExceptionThrowerUtil.isValidRow(queryID, eachRow, compareTargetColumn.getColumnName());
+                                    return rOperation.operating(standardFunctionElement.executeAbout(eachRow), eachRow.get(compareTargetColumn.getColumnName()));
+                                })
                                 .collect(Collectors.toList());
 
                 mergedTableData.addAll(mergedSameTableData);
@@ -85,6 +92,7 @@ public class WithColumnTargetOperating implements WithTargetOperating {
             } else {
                 standardTableData.forEach(standardRow -> {
                     compareTableData.forEach(compareRow -> {
+                        ExceptionThrowerUtil.isValidRow(queryID, compareRow, compareTargetColumn.getColumnName());
                         if (rOperation.operating(standardFunctionElement.executeAbout(standardRow), compareRow.get(compareTargetColumn.getColumnName()))) {
                             Map<String, Object> mergedRow = new HashMap<>();
                             mergedRow.putAll(standardRow);
@@ -98,7 +106,10 @@ public class WithColumnTargetOperating implements WithTargetOperating {
             // function(value) : ex)  LENGTH(3) > A.CustomerID
         } else {
             List<Map<String, Object>> tempMergedTable = compareTableData.stream()
-                    .filter(eachRow -> rOperation.operating(standardFunctionElement.executeAbout(new HashMap<>()), eachRow.get(compareTargetColumn.getColumnName())))
+                    .filter(eachRow -> {
+                        ExceptionThrowerUtil.isValidRow(queryID, eachRow, compareTargetColumn.getColumnName());
+                        return rOperation.operating(standardFunctionElement.executeAbout(new HashMap<>()), eachRow.get(compareTargetColumn.getColumnName()));
+                    })
                     .collect(Collectors.toList());
 
             mergedTableData.addAll(tempMergedTable);
@@ -109,6 +120,15 @@ public class WithColumnTargetOperating implements WithTargetOperating {
         return new MQLDataStorage(queryID, queryScript, mqlDataSource, resultTable);
     }
 
+    /**
+     *
+     * @param standardValueElement
+     * @param rOperation
+     * @param mqlDataStorage
+     * @return
+     *
+     * Where A.ID = 1
+     */
     @Override
     public MQLDataStorage operate(ValueElement standardValueElement, RelationalOperation rOperation, MQLDataStorage mqlDataStorage) {
         MQLDataSource mqlDataSource = mqlDataStorage.getMqlDataSource();
@@ -121,7 +141,10 @@ public class WithColumnTargetOperating implements WithTargetOperating {
         List<Map<String, Object>> tableData = mqlDataSource.dataSourceOf(compareDataSourceId);
 
         List<Map<String, Object>> filteredTable = tableData.stream().filter(
-                eachRow ->rOperation.operating(standardValueElement.getValue(), eachRow.get(compareColumnKey))
+                eachRow -> {
+                    ExceptionThrowerUtil.isValidRow(queryID, eachRow, compareColumnKey);
+                    return rOperation.operating(standardValueElement.getValue(), eachRow.get(compareColumnKey));
+                }
         ).collect(Collectors.toList());
 
         MQLTable resultTable = new MQLTable(new HashSet<>(Collections.singletonList(compareDataSourceId)), filteredTable);

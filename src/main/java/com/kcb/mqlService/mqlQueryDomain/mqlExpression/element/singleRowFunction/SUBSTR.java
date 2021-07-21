@@ -1,12 +1,18 @@
 package com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.singleRowFunction;
 
+import com.kcb.mqlService.mqlFactory.exception.MQLQueryExecuteException;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.*;
+import com.kcb.mqlService.utils.ExceptionThrowerUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 public class SUBSTR extends SingleRowFunctionElement {
+    private static final Logger logger = LoggerFactory.getLogger(SUBSTR.class);
+
     private String expression = "";
     private String alias = "";
     private boolean hasAlias;
@@ -85,18 +91,24 @@ public class SUBSTR extends SingleRowFunctionElement {
         MQLElement p2 = parameters.get(1);
 
 
-        if (!(p2 instanceof ValueElement))
-            throw new RuntimeException("SUBSTR second Parameter type is not valid");
+        if (!(p2 instanceof ValueElement)) {
+            logger.error("MQL Execute Exception. SUBSTR's Second Parameter Type Must `Value`");
+            throw new MQLQueryExecuteException("SUBSTR second Parameter type is not valid");
+        }
 
         // SUBSTR('abc', 1, 5)
         if (parameters.size() > 2) {
             MQLElement p3 = parameters.get(2);
-            if (!(p3 instanceof ValueElement))
-                throw new RuntimeException("SUBSTR third Parameter type is not valid");
+            if (!(p3 instanceof ValueElement)) {
+                logger.error("MQL Execute Exception. SUBSTR's Third Parameter Type Must `Value`");
+                throw new MQLQueryExecuteException("SUBSTR third Parameter type is not valid");
+            }
             try {
                 return execute(p1, Integer.parseInt(p2.getElementExpression()), Integer.parseInt(p3.getElementExpression()), singleRow);
             } catch (RuntimeException e) {
-                throw new RuntimeException("SUBSTR second, third Parameter type is not valid");
+                e.printStackTrace();
+                logger.error("MQL Execute Exception. SUBSTR's Second, Third Parameter Type Must `Value`");
+                throw new MQLQueryExecuteException("SUBSTR second, third Parameter type is not valid");
             }
 
         // SUBSTR('abc', 2)
@@ -104,7 +116,9 @@ public class SUBSTR extends SingleRowFunctionElement {
             try {
                 return execute(p1, Integer.parseInt(p2.getElementExpression()), singleRow);
             } catch (RuntimeException e) {
-                throw new RuntimeException("SUBSTR second Parameter type is not valid");
+                e.printStackTrace();
+                logger.error("MQL Execute Exception. SUBSTR's Second Parameter Type Must `Value`");
+                throw new MQLQueryExecuteException("SUBSTR second Parameter type is not valid");
             }
         }
 
@@ -127,7 +141,11 @@ public class SUBSTR extends SingleRowFunctionElement {
         } else if (p1 instanceof SingleRowFunctionElement){
             return execute(((SingleRowFunctionElement) p1).executeAbout(singleRow), start, end, singleRow);
         } else {
-            throw new RuntimeException("Not Valid SUBSTR parameter type!");
+            if (p1 instanceof ColumnElement)
+                ExceptionThrowerUtil.isValidRow(singleRow, ((ColumnElement) p1).getColumnName());
+
+            logger.error("Not Valid SUBSTR parameter type!");
+            throw new MQLQueryExecuteException("Not Valid SUBSTR parameter type!");
         }
     }
 
@@ -142,7 +160,8 @@ public class SUBSTR extends SingleRowFunctionElement {
         } else if (p1 instanceof SingleRowFunctionElement){
             return execute(((SingleRowFunctionElement) p1).executeAbout(singleRow), start, singleRow);
         } else {
-            throw new RuntimeException("Not Valid SUBSTR parameter type!");
+            logger.error("Not Valid SUBSTR parameter type!");
+            throw new MQLQueryExecuteException("Not Valid SUBSTR parameter type!");
         }
     }
 }
