@@ -6,15 +6,22 @@ import com.kcb.mqlService.mqlFactory.exception.MQLQueryExecuteException;
 import com.kcb.mqlService.mqlQueryDomain.mqlQueryClause.FromClause;
 import com.kcb.mqlService.mqlQueryDomain.mqlQueryClause.SelectClause;
 import net.sf.jsqlparser.JSQLParserException;
+import net.sf.jsqlparser.expression.ExpressionVisitorAdapter;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
+import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
+import net.sf.jsqlparser.statement.select.SelectExpressionItem;
+import net.sf.jsqlparser.statement.select.SelectItemVisitorAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.StringReader;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class MQLQueryContext {
     private static final Logger logger = LoggerFactory.getLogger(MQLQueryContext.class);
@@ -37,5 +44,7 @@ public class MQLQueryContext {
             throw new MQLQueryExecuteException("Query ID : " + selectClause.getQueryID() + " | The Data Source ID defined in the MQL script is not included in the Data Source. | " + selectClause.getQueryScript());
         }
     }
+
+
 
 }

@@ -36,8 +36,6 @@ public class MQLExecutionExceptionTest {
         rawDataSource.put("C", TestDataFactory.tableOf("shippers"));
         rawDataSource.put("D", TestDataFactory.tableOf("test"));
         rawDataSource.put("E", TestDataFactory.tableOf("products"));
-        FromClause from = new FromClause();
-        mqlDataStorage = from.makeMqlDataSources("testQueryID", "TestQueryScript", rawDataSource);
     }
 
     @Test
@@ -45,6 +43,19 @@ public class MQLExecutionExceptionTest {
 
         String sql =
                 "SELECT * FROM   MQL_MAIN M1 JOIN MQL_SUB1 M2 ON M1.CRDID  = M2.CRDID";
+
+        SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId, sql);
+        MQLQueryContext context = MQLQueryContextFactory.getInstance().create("testQuery", sql);
+
+        thrown.expect(MQLQueryExecuteException.class);
+        context.executeQuery(rawDataSource);
+    }
+
+    @Test
+    public void rawDataSource에_sql에서정의한_SelectItem이_포함되어있지않을때() {
+
+        String sql =
+                "SELECT E.CRDID FROM Products E";
 
         SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId, sql);
         MQLQueryContext context = MQLQueryContextFactory.getInstance().create("testQuery", sql);
