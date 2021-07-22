@@ -26,8 +26,9 @@ public class MQLQueryContextFactory {
 
     public MQLQueryContext create(String queryId, String script) {
         SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId, script);
+
         if (sqlContextStorage.isValid()) {
-            return new MQLQueryContext(SelectClauseFactory.getInstance().create(sqlContextStorage));
+            return new MQLQueryContext(SelectClauseFactory.getInstance().create(sqlContextStorage), sqlContextStorage.getUsedTableAliasWithName());
         } else {
             logger.error("Query Id : {}, MQL Validation Failed : {}", queryId, script);
             throw new MQLQueryNotValidException(queryId + "is not valid query");

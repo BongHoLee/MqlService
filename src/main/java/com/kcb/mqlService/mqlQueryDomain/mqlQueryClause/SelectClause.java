@@ -59,6 +59,14 @@ public class SelectClause{
         return extractFrom(dataStorage);
     }
 
+    public String getQueryScript() {
+        return queryScript;
+    }
+
+    public String getQueryID() {
+        return queryID;
+    }
+
     private List<Map<String, Object>> extractFrom(MQLDataStorage dataStorage) {
         if (dataStorage.getMqlTable().isGrouped()) {
             return extractFromGroup(dataStorage);
