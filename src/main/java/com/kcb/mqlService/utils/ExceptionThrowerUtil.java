@@ -15,10 +15,7 @@ public class ExceptionThrowerUtil {
             throw new MQLQueryExecuteException("Query Execution Exception. Query ID : " + queryID);
         }
 
-        if (row.get(key) == null) {
-            logger.error("Query ID: {}, Column(Key) `{}` value is null",  queryID, key);
-            throw new MQLQueryExecuteException("Query Execution Exception. Query ID : " + queryID);
-        }
+
 
     }
 
@@ -28,10 +25,7 @@ public class ExceptionThrowerUtil {
             throw new MQLQueryExecuteException("Query Execution Exception. ");
         }
 
-        if (row.get(key) == null) {
-            logger.error("Column(Key) `{}` value is null",  key);
-            throw new MQLQueryExecuteException("Query Execution Exception. Column(key) ");
-        }
+
     }
 
 

@@ -11,7 +11,14 @@ public class MQLDataSource {
         for (String dataSourceId : dataSourceIds) {
             List<Map<String, Object>> rawDataSource = rawDataSources.get(dataSourceId);
             List<Map<String, Object>> mqlDataSource = rawDataSource.stream().map(
-                    eachMap -> eachMap.entrySet().stream().collect(Collectors.toMap(entry -> dataSourceId + "." + entry.getKey(), Map.Entry::getValue))
+                    eachMap -> {
+                        Map<String, Object> copied = new HashMap<>();
+                        for (String key : eachMap.keySet()) {
+                            String convertKey = dataSourceId + "." + key;
+                            copied.put(convertKey, eachMap.get(key));
+                        }
+                        return copied;
+                    }
             ).collect(Collectors.toList());
 
             mqlDataSources.put(dataSourceId, mqlDataSource);

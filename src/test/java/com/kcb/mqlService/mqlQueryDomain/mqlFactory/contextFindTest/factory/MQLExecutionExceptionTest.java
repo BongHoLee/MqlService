@@ -14,6 +14,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -62,6 +63,28 @@ public class MQLExecutionExceptionTest {
 
         thrown.expect(MQLQueryExecuteException.class);
         context.executeQuery(rawDataSource);
+    }
+
+    @Test
+    public void ColumnValue가_null일때() {
+
+        String sql =
+                "SELECT E.ProductID FROM Products E WHERE E.ProductID = E.ProductID2";
+
+        SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId, sql);
+        MQLQueryContext context = MQLQueryContextFactory.getInstance().create("testQuery", sql);
+
+        Map<String, Object> copiedRow = new HashMap<>(rawDataSource.get("E").get(0));
+        copiedRow.put("ProductID", null);
+        copiedRow.put("ProductID2", null);
+        rawDataSource.get("E").add(copiedRow);
+
+        Map<String, List<Map<String, Object>>> tempSource = new HashMap<>();
+        List<Map<String, Object>> tempList = new ArrayList<>();
+        tempList.add(copiedRow);
+        tempSource.put("E", tempList);
+        
+        context.executeQuery(tempSource);
     }
 
 

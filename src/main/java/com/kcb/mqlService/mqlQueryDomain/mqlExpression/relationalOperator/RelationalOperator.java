@@ -1,19 +1,27 @@
 package com.kcb.mqlService.mqlQueryDomain.mqlExpression.relationalOperator;
 
+import com.kcb.mqlService.mqlFactory.exception.MQLQueryExecuteException;
+import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.singleRowFunction.LENGTH;
 import com.kcb.mqlService.utils.DateFormatUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 
 public class RelationalOperator {
+    private static final Logger logger = LoggerFactory.getLogger(RelationalOperator.class);
 
     // EqualTo (==)
     public static boolean equalTo(Object t1, Object t2) {
+
+
         if (t1 instanceof String && t2 instanceof String) {
             return equalTo((String)t1, (String)t2);
         } else if (t1 instanceof Number && t2 instanceof Number) {
             return equalTo((Number)t1, (Number) t2);
         } else {
-            throw new RuntimeException("Not Matched Type!!!");
+            logger.error("Can't Operate.. Not Matched Type : {} == {}", t1 == null ? "null" : t1.toString(), t2 == null ? "null" : t2.toString());
+            throw new MQLQueryExecuteException("Not Matched Type!!!");
         }
 
     }
@@ -38,7 +46,8 @@ public class RelationalOperator {
         } else if (t1 instanceof Number && t2 instanceof Number) {
             return notEqualTo((Number)t1, (Number) t2);
         } else {
-            throw new RuntimeException("Not Matched Type!!!");
+            logger.error("Can't Operate.. Not Matched Type : {} != {}", t1 == null ? "null" : t1.toString(), t2 == null ? "null" : t2.toString());
+            throw new MQLQueryExecuteException("Not Matched Type!!!");
         }
 
     }
@@ -61,7 +70,8 @@ public class RelationalOperator {
         } else if (t1 instanceof Number && t2 instanceof Number) {
             return largerThan((Number)t1, (Number) t2);
         } else {
-            throw new RuntimeException("Not Matched Type!!!");
+            logger.error("Can't Operate.. Not Matched Type : {} > {}", t1 == null ? "null" : t1.toString(), t2 == null ? "null" : t2.toString());
+            throw new MQLQueryExecuteException("Not Matched Type!!!");
         }
     }
 
@@ -88,7 +98,8 @@ public class RelationalOperator {
         } else if (t1 instanceof Number && t2 instanceof Number) {
             return largerThanEqualTo((Number)t1, (Number) t2);
         } else {
-            throw new RuntimeException("Not Matched Type!!!");
+            logger.error("Can't Operate.. Not Matched Type : {} >= {}", t1 == null ? "null" : t1.toString(), t2 == null ? "null" : t2.toString());
+            throw new MQLQueryExecuteException("Not Matched Type!!!");
         }
     }
 
@@ -115,7 +126,8 @@ public class RelationalOperator {
         } else if (t1 instanceof Number && t2 instanceof Number) {
             return lessThan((Number)t1, (Number) t2);
         } else {
-            throw new RuntimeException("Not Matched Type!!!");
+            logger.error("Can't Operate.. Not Matched Type : {} < {}", t1 == null ? "null" : t1.toString(), t2 == null ? "null" : t2.toString());
+            throw new MQLQueryExecuteException("Not Matched Type!!!");
         }
     }
 
@@ -142,7 +154,8 @@ public class RelationalOperator {
         } else if (t1 instanceof Number && t2 instanceof Number) {
             return lessThanEqualTo((Number)t1, (Number) t2);
         } else {
-            throw new RuntimeException("Not Matched Type!!!");
+            logger.error("Can't Operate.. Not Matched Type : {} <= {}", t1 == null ? "null" : t1.toString(), t2 == null ? "null" : t2.toString());
+            throw new MQLQueryExecuteException("Not Matched Type!!!");
         }
     }
 
@@ -159,6 +172,13 @@ public class RelationalOperator {
         BigDecimal b2 = new BigDecimal(String.valueOf(t2));
 
         return b1.compareTo(b2) <= 0;
+    }
+
+    private void avoidNull(Object t1, Object t2) {
+        if (t1 == null || t2 == null) {
+            logger.error("Can't Operate.. Not Matched Type : {} <= {}", t1 == null ? "null" : t1.toString(), t2 == null ? "null" : t2.toString());
+            throw new MQLQueryExecuteException("Not Matched Type!!!");
+        }
     }
 
 
