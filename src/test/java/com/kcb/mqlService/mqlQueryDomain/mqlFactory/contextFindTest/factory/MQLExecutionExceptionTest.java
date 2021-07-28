@@ -29,7 +29,6 @@ public class MQLExecutionExceptionTest {
 
     @Before
     public void makeMqlDataSource() {
-        MQLDataSource mqlDataSource = new MQLDataSource();
 
         rawDataSource = new HashMap<>();
         rawDataSource.put("A", TestDataFactory.tableOf("categories"));
@@ -45,7 +44,6 @@ public class MQLExecutionExceptionTest {
         String sql =
                 "SELECT * FROM   MQL_MAIN M1 JOIN MQL_SUB1 M2 ON M1.CRDID  = M2.CRDID";
 
-        SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId, sql);
         MQLQueryContext context = MQLQueryContextFactory.getInstance().create("testQuery", sql);
 
         thrown.expect(MQLQueryExecuteException.class);
@@ -58,7 +56,6 @@ public class MQLExecutionExceptionTest {
         String sql =
                 "SELECT E.CRDID FROM Products E";
 
-        SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId, sql);
         MQLQueryContext context = MQLQueryContextFactory.getInstance().create("testQuery", sql);
 
         thrown.expect(MQLQueryExecuteException.class);
@@ -69,22 +66,21 @@ public class MQLExecutionExceptionTest {
     public void ColumnValue가_null일때() {
 
         String sql =
-                "SELECT E.ProductID FROM Products E WHERE E.ProductID = E.ProductID2";
+                "SELECT * FROM Products E WHERE E.ProductName IS NULL";
 
-        SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId, sql);
         MQLQueryContext context = MQLQueryContextFactory.getInstance().create("testQuery", sql);
 
         Map<String, Object> copiedRow = new HashMap<>(rawDataSource.get("E").get(0));
-        copiedRow.put("ProductID", null);
-        copiedRow.put("ProductID2", null);
+        copiedRow.put("ProductID", 78);
+        copiedRow.put("ProductName", null);
         rawDataSource.get("E").add(copiedRow);
 
-        Map<String, List<Map<String, Object>>> tempSource = new HashMap<>();
-        List<Map<String, Object>> tempList = new ArrayList<>();
-        tempList.add(copiedRow);
-        tempSource.put("E", tempList);
-        
-        context.executeQuery(tempSource);
+//        Map<String, List<Map<String, Object>>> tempSource = new HashMap<>();
+//        List<Map<String, Object>> tempList = new ArrayList<>();
+//        tempList.add(copiedRow);
+//        tempSource.put("E", tempList);
+
+        print(context.executeQuery(rawDataSource));
     }
 
 

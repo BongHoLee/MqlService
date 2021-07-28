@@ -31,6 +31,7 @@ public class OptionalClauseFactory {
     private final String MINOR_THAN_EQUAL_TO = "MINOR_THAN_EQUAL_TO";
     private final String GREATER_THAN = "GREATER_THAN";
     private final String GREATER_THAN_EQUAL_TO = "GREATER_THAN_EQUAL_TO";
+    private final String IS_NULL = "IS_NULL";
 
     private final String DOUBLE = "DOUBLE";
     private final String LONG = "LONG";
@@ -40,6 +41,8 @@ public class OptionalClauseFactory {
     private final String FUNCTION = "FUNCTION";
     private final String AND = "AND";
     private final String OR = "OR";
+    private final String NULL = "NULL";
+    private final String PARENTHESIS = "PARENTHESIS";
 
     private static OptionalClauseFactory factory;
 
@@ -114,7 +117,10 @@ public class OptionalClauseFactory {
 
     private MQLOperatingExpression createOperation(Expression expression) {
         if (expression != null) {
-            if (getExpressionType(expression).equals(AND)) {
+
+            if (getExpressionType(expression).equals(PARENTHESIS)) {
+                return createOperation(((Parenthesis)expression).getExpression());
+            } else if (getExpressionType(expression).equals(AND)) {
 
                 ANDOperator andOperator = new ANDOperator();
                 MQLOperatingExpression left = createOperation(((AndExpression) expression).getLeftExpression());
@@ -174,6 +180,14 @@ public class OptionalClauseFactory {
                 MQLElement compare = createElement(((GreaterThanEquals)expression).getRightExpression());
                 return createOperand(standard, compare, operation);
 
+            } else if (getExpressionType(expression).equals(IS_NULL)) {
+
+                boolean isNotNull = ((IsNullExpression)expression).isNot();
+                RelationalOperation operation = isNotNull ? RelationalOperator::isNotNull : RelationalOperator::isNull;
+                MQLElement standard = createElement(((IsNullExpression)expression).getLeftExpression());
+                MQLElement compare = isNotNull ? new ValueElement("notNull") : new ValueElement(null);
+
+                return createOperand(standard, compare, operation);
             }
         }
 
@@ -196,6 +210,8 @@ public class OptionalClauseFactory {
                 element = new ValueElement(((StringValue)expression).getValue());
             } else if (getExpressionType(expression).equals(DATE)) {
                 element = new ValueElement(((DateValue)expression).getValue().toString());
+            } else if (getExpressionType(expression).equals(NULL)) {
+                element = new ValueElement(null);
             }
         }
 
@@ -386,7 +402,9 @@ public class OptionalClauseFactory {
 
     private String getExpressionType(Expression expression) {
         if (expression != null) {
-            if (expression instanceof AndExpression) {
+            if (expression instanceof Parenthesis) {
+                return PARENTHESIS;
+            } else if (expression instanceof AndExpression) {
                 return AND;
             } else if (expression instanceof OrExpression) {
                 return OR;
@@ -402,6 +420,8 @@ public class OptionalClauseFactory {
                 return GREATER_THAN;
             } else if (expression instanceof GreaterThanEquals) {
                 return GREATER_THAN_EQUAL_TO;
+            } else if (expression instanceof IsNullExpression) {
+                return IS_NULL;
             } else if (expression instanceof Column) {
                 return COLUMN;
             } else if (expression instanceof Function) {
@@ -414,6 +434,8 @@ public class OptionalClauseFactory {
                 return DATE;
             } else if (expression instanceof StringValue) {
                 return STRING;
+            } else if (expression instanceof NullValue) {
+                return NULL;
             }
         }
 

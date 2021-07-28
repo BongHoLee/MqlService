@@ -96,8 +96,12 @@ public class SUBSTR extends SingleRowFunctionElement {
         MQLElement p1 = parameters.get(0);
         MQLElement p2 = parameters.get(1);
 
+        if (isNullParam(p1, singleRow)) {
+            return null;
+        }
+
         if (!(p2 instanceof ValueElement)) {
-            logger.error("MQL Execute Exception. SUBSTR's Second Parameter Type Must `Value`");
+            logger.error("MQL Execute Exception. SUBSTR's Second Parameter Type Must `Integer Value`");
             throw new MQLQueryExecuteException("SUBSTR second Parameter type is not valid");
         }
 

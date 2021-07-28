@@ -1,7 +1,6 @@
 package com.kcb.mqlService.mqlQueryDomain.mqlExpression.relationalOperator;
 
 import com.kcb.mqlService.mqlFactory.exception.MQLQueryExecuteException;
-import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.singleRowFunction.LENGTH;
 import com.kcb.mqlService.utils.DateFormatUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +13,8 @@ public class RelationalOperator {
     // EqualTo (==)
     public static boolean equalTo(Object t1, Object t2) {
 
+        if (nullCheck(t1, t2))
+            return false;
 
         if (t1 instanceof String && t2 instanceof String) {
             return equalTo((String)t1, (String)t2);
@@ -40,6 +41,8 @@ public class RelationalOperator {
     // NotEqualTo  (!=)
 
     public static boolean notEqualTo(Object t1, Object t2) {
+        if (nullCheck(t1, t2))
+            return false;
 
         if (t1 instanceof String && t2 instanceof String) {
             return notEqualTo((String)t1, (String)t2);
@@ -64,6 +67,8 @@ public class RelationalOperator {
 
     // LargerThan (>=)
     public static boolean largerThan(Object t1, Object t2) {
+        if (nullCheck(t1, t2))
+            return false;
 
         if (t1 instanceof String && t2 instanceof String) {
             return largerThan((String)t1, (String)t2);
@@ -92,6 +97,8 @@ public class RelationalOperator {
 
     // LargerThanEqualTo (>=)
     public static boolean largerThanEqualTo(Object t1, Object t2) {
+        if (nullCheck(t1, t2))
+            return false;
 
         if (t1 instanceof String && t2 instanceof String) {
             return largerThanEqualTo((String)t1, (String)t2);
@@ -120,6 +127,8 @@ public class RelationalOperator {
 
     // LessThan (<)
     public static boolean lessThan(Object t1, Object t2) {
+        if (nullCheck(t1, t2))
+            return false;
 
         if (t1 instanceof String && t2 instanceof String) {
             return lessThan((String)t1, (String)t2);
@@ -132,6 +141,9 @@ public class RelationalOperator {
     }
 
     private static boolean lessThan(String t1, String t2) {
+        if (nullCheck(t1, t2))
+            return false;
+
         if (DateFormatUtil.isDateFormat(t1) && DateFormatUtil.isDateFormat(t2)) {
             return DateFormatUtil.lessThan(t1, t2);
         } else {
@@ -148,6 +160,8 @@ public class RelationalOperator {
 
     // LessThanEqualTo (<=)
     public static boolean lessThanEqualTo(Object t1, Object t2) {
+        if (nullCheck(t1, t2))
+            return false;
 
         if (t1 instanceof String && t2 instanceof String) {
             return lessThanEqualTo((String)t1, (String)t2);
@@ -174,11 +188,16 @@ public class RelationalOperator {
         return b1.compareTo(b2) <= 0;
     }
 
-    private void avoidNull(Object t1, Object t2) {
-        if (t1 == null || t2 == null) {
-            logger.error("Can't Operate.. Not Matched Type : {} <= {}", t1 == null ? "null" : t1.toString(), t2 == null ? "null" : t2.toString());
-            throw new MQLQueryExecuteException("Not Matched Type!!!");
-        }
+    public static boolean isNull(Object t1, Object t2) {
+        return t1 == null && t2 == null;
+    }
+
+    public static boolean isNotNull(Object t1, Object t2) {
+        return t1 != null && t2 != null;
+    }
+
+    private static boolean nullCheck(Object t1, Object t2) {
+        return t1 == null || t2 == null;
     }
 
 

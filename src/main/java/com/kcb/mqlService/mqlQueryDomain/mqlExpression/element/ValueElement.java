@@ -9,8 +9,10 @@ public class ValueElement implements MQLElement{
 
         if (value instanceof Number)
             valueType = ValueType.NUMBER;
-        else
+        else if (value instanceof String)
             valueType = ValueType.STRING;
+        else if (value == null)
+            valueType = ValueType.NULL;
     }
 
     public Object getValue() {

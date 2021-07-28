@@ -71,4 +71,20 @@ public abstract class SingleRowFunctionElement implements MQLElement {
     public String getColumnParameterName() {
         return columnParameterName;
     }
+
+    protected boolean isNullParam(Object param, Map<String, Object> singleRow) {
+         if (param instanceof ValueElement && ((ValueElement) param).getValue() == null) {
+             return true;
+        }
+
+         if (param instanceof ColumnElement && singleRow.get(((ColumnElement) param).getColumnName()) == null) {
+             return true;
+         }
+
+         if (param == null) {
+             return true;
+         }
+
+         return false;
+    }
 }

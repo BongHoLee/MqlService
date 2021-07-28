@@ -95,9 +95,12 @@ public class LENGTH extends SingleRowFunctionElement {
     }
 
     private Object execute(Object param, Map<String, Object> singleRow)  {
+        if (isNullParam(param, singleRow)) {
+            return null;
+        }
         if (param instanceof String) {
             return ((String) param).length();
-        }else if (param instanceof ValueElement && ((ValueElement) param).getValue() instanceof String) {
+        }  else if (param instanceof ValueElement && ((ValueElement) param).getValue() instanceof String) {
             return ((String) ((ValueElement) param).getValue()).length();
         } else if(param instanceof ValueElement && ((ValueElement) param).getValue() instanceof Number) {
             return (String.valueOf(((ValueElement) param).getValue())).length();

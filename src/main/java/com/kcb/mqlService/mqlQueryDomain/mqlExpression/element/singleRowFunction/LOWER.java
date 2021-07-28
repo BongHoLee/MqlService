@@ -92,6 +92,10 @@ public class LOWER extends SingleRowFunctionElement {
     }
 
     private Object execute(Object param, Map<String, Object> singleRow) {
+        if (isNullParam(param, singleRow)) {
+            return null;
+        }
+
         if (param instanceof String) {
             return ((String) param).toLowerCase();
         } else if (param instanceof ValueElement && ((ValueElement) param).getValue() instanceof String) {
