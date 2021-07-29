@@ -29,6 +29,10 @@ public class SelectClause{
         distinguish();
     }
 
+    public SelectClause(String queryID, String queryScript, List<MQLElement> selectElements, FromClause from, OptionalClause ... optionalClauses) {
+        this(queryID, queryScript, selectElements, from, Arrays.asList(optionalClauses));
+    }
+
 
     public SelectClause(List<MQLElement> selectElements, FromClause from, OptionalClause ... optionalClauses) {
         this("", "", selectElements, from, Arrays.asList(optionalClauses));

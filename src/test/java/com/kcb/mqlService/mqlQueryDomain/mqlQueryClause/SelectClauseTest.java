@@ -57,7 +57,7 @@ public class SelectClauseTest {
         rawDataSource.put("D", TestDataFactory.tableOf("test"));
         rawDataSource.put("E", TestDataFactory.tableOf("products"));
         FromClause from = new FromClause();
-        mqlDataStorage = from.makeMqlDataSources(rawDataSource);
+        //mqlDataStorage = from.makeMqlDataSources(rawDataSource);
     }
 
     /**
@@ -718,6 +718,57 @@ public class SelectClauseTest {
 
         List<MQLElement> selectItems = Arrays.asList(element1, element2, element3, element4);
         SelectClause select = new SelectClause(
+                selectItems,
+                new FromClause(),
+                new GeneralConditionClause(
+                        new WhereClause(
+                                new SingleRowFunctionOperandExpression(
+                                        new LENGTH(new ColumnElement("E.ProductName")),
+                                        RelationalOperator::largerThan,
+                                        new WithSingleRowFunctionTargetOperating(new LENGTH(new ColumnElement("E.Unit")))
+                                )
+                        )
+                )
+        );
+
+        List<Map<String, Object>> result = select.executeQueryWith(dataSource);
+        print(result);
+
+        result.forEach(eachRow -> {
+            assertThat(eachRow.keySet(), hasItems("ProductName", "Unit", "ProductNameLength", "UnitLength"));
+            assertThat(eachRow.keySet(), hasSize(4));
+            assertThat(String.valueOf(eachRow.get("ProductName")).length(), is(equalTo((int)eachRow.get("ProductNameLength"))));
+            assertThat(String.valueOf(eachRow.get("Unit")).length(), is(equalTo((int)eachRow.get("UnitLength"))));
+            assertThat((int)eachRow.get("ProductNameLength"), is(greaterThan((int)eachRow.get("UnitLength"))));
+        });
+    }
+
+    /**
+     SELECT E.ProductName AS ProductName, LENGTH(E.ProductName) AS ProductNameLength, E.Unit AS Unit, LENGTH(E.Unit) AS UnitLength
+     FROM Products
+     WHERE LENGTH(E.ProductName) > LENGTH(E.Unit)
+     ORDER BY E.ProductName ASC
+     */
+    @Test
+    public void selectSingleRowFunctionWithSingleRowFunctionAndAliasWithOrderBy() {
+        String sql = "     SELECT E.ProductName AS ProductName, LENGTH(E.ProductName) AS ProductNameLength, E.Unit AS Unit, LENGTH(E.Unit) AS UnitLength\n" +
+                "     FROM Products\n" +
+                "     WHERE LENGTH(E.ProductName) > LENGTH(E.Unit)";
+
+        String queryID = "queryID";
+
+        Map<String, List<Map<String, Object>>> dataSource = new HashMap<>();
+        dataSource.put("E", rawDataSource.get("E"));
+
+        MQLElement element1 = new ColumnElement("ProductName", "E.ProductName");
+        MQLElement element2 = new LENGTH("ProductNameLength", element1);
+        MQLElement element3 = new ColumnElement("Unit", "E.Unit");
+        MQLElement element4 = new LENGTH("UnitLength", element3);
+
+        List<MQLElement> selectItems = Arrays.asList(element1, element2, element3, element4);
+        SelectClause select = new SelectClause(
+                queryID,
+                sql,
                 selectItems,
                 new FromClause(),
                 new GeneralConditionClause(

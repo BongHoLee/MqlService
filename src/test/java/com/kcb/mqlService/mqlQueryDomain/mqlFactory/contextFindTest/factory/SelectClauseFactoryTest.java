@@ -39,7 +39,7 @@ public class SelectClauseFactoryTest {
         rawDataSource.put("D", TestDataFactory.tableOf("test"));
         rawDataSource.put("E", TestDataFactory.tableOf("products"));
         FromClause from = new FromClause();
-        mqlDataStorage = from.makeMqlDataSources("testQueryID", "TestQueryScript", rawDataSource);
+        //mqlDataStorage = from.makeMqlDataSources("testQueryID", "TestQueryScript", rawDataSource);
     }
 
     /**
@@ -214,6 +214,23 @@ public class SelectClauseFactoryTest {
             assertThat((Double)eachRow.get("E.Price"), is(lessThan(100.0)));
         });
 
+    }
+
+    @Test
+    public void ORDERBY_TEST() {
+
+        String sql =
+                " SELECT E.ProductID, E.SupplierID, A.CategoryID, E.Price\n" +
+                        " FROM Categories A, Products E\n" +
+                        " WHERE A.CategoryID=E.ProductID AND E.SupplierID < A.CategoryID AND E.Price < 100\n" +
+                        " ORDER BY E.ProductID DESC";
+
+        SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId, sql);
+        sqlContextStorage.isValid();
+        SelectClause selectClause = SelectClauseFactory.getInstance().create(sqlContextStorage);
+
+        List<Map<String, Object>> result = selectClause.executeQueryWith(rawDataSource);
+        print(result);
 
     }
 
