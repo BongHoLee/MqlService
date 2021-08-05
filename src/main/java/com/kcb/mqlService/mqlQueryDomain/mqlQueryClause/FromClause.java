@@ -31,6 +31,8 @@ public class FromClause {
         mqlDataSource.makeFromRawDataSources(rawDataSources);
         selectItemsValidationWithRawDataSources(mqlDataSource.getMqlDataSources(), queryID, queryScript);
 
+
+
         MQLDataStorage mqlDataStorage = new MQLDataStorage(
                 queryID,
                 queryScript,

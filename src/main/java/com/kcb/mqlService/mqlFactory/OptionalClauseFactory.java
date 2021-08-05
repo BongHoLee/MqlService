@@ -12,17 +12,16 @@ import com.kcb.mqlService.mqlQueryDomain.mqlExpression.relationalOperator.Relati
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.relationalOperator.RelationalOperator;
 import com.kcb.mqlService.mqlQueryDomain.mqlQueryClause.OptionalClause;
 import com.kcb.mqlService.mqlQueryDomain.mqlQueryClause.optionalClause.*;
-import com.kcb.mqlService.utils.DefinedFunction;
+import com.kcb.mqlService.mqlQueryDomain.mqlQueryClause.optionalClause.OrderByClause;
 import net.sf.jsqlparser.expression.*;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
 import net.sf.jsqlparser.expression.operators.conditional.OrExpression;
 import net.sf.jsqlparser.expression.operators.relational.*;
 import net.sf.jsqlparser.schema.Column;
-import net.sf.jsqlparser.statement.select.Join;
+import net.sf.jsqlparser.statement.select.OrderByElement;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class OptionalClauseFactory {
     private final String EQUAL_TO = "EQUAL_TO";
@@ -62,7 +61,8 @@ public class OptionalClauseFactory {
                 sqlContextStorage.getPlainSelect().getJoins() != null ||
                 sqlContextStorage.getPlainSelect().getWhere() != null ||
                 sqlContextStorage.getPlainSelect().getGroupBy() != null ||
-                sqlContextStorage.getPlainSelect().getHaving() != null
+                sqlContextStorage.getPlainSelect().getHaving() != null ||
+                sqlContextStorage.getPlainSelect().getOrderByElements() != null
         ) {
 
             // JOIN and WHERE Clause
@@ -86,6 +86,8 @@ public class OptionalClauseFactory {
                 }
 
                 optionalClauses.add(conditionClause);
+            } else {
+                optionalClauses.add(new NoneClause());
             }
 
             // GROUP BY Clause
@@ -97,18 +99,31 @@ public class OptionalClauseFactory {
                 });
 
                 optionalClauses.add(new GroupByClause(groupByElements));
+
+                // HAVING Clause
+                if (sqlContextStorage.getPlainSelect().getHaving() != null) {
+
+                    HavingClause havingClause = new HavingClause();
+                    havingClause.setOperatingExpression(createOperation(sqlContextStorage.getPlainSelect().getHaving()));
+
+                    optionalClauses.add(havingClause);
+                }
             }
 
-            if (sqlContextStorage.getPlainSelect().getHaving() != null) {
+            if (sqlContextStorage.getPlainSelect().getOrderByElements() != null) {
+                OrderByClause orderByClause = new OrderByClause();
+                List<OrderByMQLElement> orderByMQLElements = new ArrayList<>();
 
-                HavingClause havingClause = new HavingClause();
-                havingClause.setOperatingExpression(createOperation(sqlContextStorage.getPlainSelect().getHaving()));
+                for (OrderByElement orderByElement : sqlContextStorage.getPlainSelect().getOrderByElements()) {
+                    MQLElement eachElement = createElement(orderByElement.getExpression());
+                    boolean asc = orderByElement.isAsc();
+                    orderByMQLElements.add(new OrderByMQLElement(eachElement, asc));
+                }
 
-                optionalClauses.add(havingClause);
+                orderByClause.setOrderByElements(orderByMQLElements);
+                optionalClauses.add(orderByClause);
             }
 
-        } else {
-            optionalClauses.add(new NoneClause());
         }
 
         return optionalClauses;

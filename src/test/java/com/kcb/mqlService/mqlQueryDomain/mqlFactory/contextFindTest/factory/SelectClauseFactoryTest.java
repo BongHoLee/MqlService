@@ -216,14 +216,39 @@ public class SelectClauseFactoryTest {
 
     }
 
+    /**
+     * SELECT E.ProductID, E.SupplierID
+     * FROM Products E
+     * GROUP BY E.ProductID
+     */
+
+    @Test
+    public void 조건절없는_GROUPBY일때() {
+
+        String sql =
+                " SELECT E.ProductID, E.SupplierID\n" +
+                        "     FROM Products E\n" +
+                        "     GROUP BY E.ProductID, E.SupplierID";
+
+        SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId, sql);
+        sqlContextStorage.isValid();
+        SelectClause selectClause = SelectClauseFactory.getInstance().create(sqlContextStorage);
+        List<Map<String, Object>> result = selectClause.executeQueryWith(rawDataSource);
+
+        result.forEach(eachRow -> {
+            assertThat(eachRow.keySet(), hasItems("E.SupplierID", "E.ProductID"));
+            assertThat(eachRow.keySet(), hasSize(2));
+        });
+
+    }
+
     @Test
     public void ORDERBY_TEST() {
 
         String sql =
-                " SELECT E.ProductID, E.SupplierID, A.CategoryID, E.Price\n" +
-                        " FROM Categories A, Products E\n" +
-                        " WHERE A.CategoryID=E.ProductID AND E.SupplierID < A.CategoryID AND E.Price < 100\n" +
-                        " ORDER BY E.ProductID DESC";
+                " SELECT E.ProductName AS ProductName, LENGTH(E.ProductName) AS ProductNameLength, E.Unit AS Unit, LENGTH(E.Unit) AS UnitLength\n" +
+                        "     FROM Products E\n" +
+                        "     ORDER BY LENGTH(E.ProductName) DESC, LENGTH(E.Unit) ";
 
         SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId, sql);
         sqlContextStorage.isValid();

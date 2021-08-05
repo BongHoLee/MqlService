@@ -1,16 +1,14 @@
 package com.kcb.mqlService.mqlQueryDomain.mqlQueryClause;
 
-import com.kcb.mqlService.mqlFactory.SelectClauseFactory;
-import com.kcb.mqlService.mqlFactory.SqlContextStorage;
 import com.kcb.mqlService.mqlQueryDomain.mqlData.MQLDataSource;
 import com.kcb.mqlService.mqlQueryDomain.mqlData.MQLDataStorage;
-import com.kcb.mqlService.mqlQueryDomain.mqlData.MQLTable;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.ColumnOperandExpression;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.GroupFunctionOperandExpression;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.SingleRowFunctionOperandExpression;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.ValueOperandExpression;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.ColumnElement;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.MQLElement;
+import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.OrderByMQLElement;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.ValueElement;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.groupFunction.COUNT;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.element.groupFunction.SUM;
@@ -34,9 +32,6 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.lessThan;
-import static org.hamcrest.Matchers.lessThanOrEqualTo;
-
-
 
 
 import java.util.*;
@@ -751,9 +746,9 @@ public class SelectClauseTest {
      */
     @Test
     public void selectSingleRowFunctionWithSingleRowFunctionAndAliasWithOrderBy() {
-        String sql = "     SELECT E.ProductName AS ProductName, LENGTH(E.ProductName) AS ProductNameLength, E.Unit AS Unit, LENGTH(E.Unit) AS UnitLength\n" +
-                "     FROM Products\n" +
-                "     WHERE LENGTH(E.ProductName) > LENGTH(E.Unit)";
+        String sql = "   SELECT E.ProductName AS ProductName, LENGTH(E.ProductName) AS ProductNameLength, E.Unit AS Unit, LENGTH(E.Unit) AS UnitLength\n" +
+                "     FROM Products E\n" +
+                "     ORDER BY LENGTH(E.ProductName), LENGTH(E.Unit)";
 
         String queryID = "queryID";
 
@@ -771,27 +766,16 @@ public class SelectClauseTest {
                 sql,
                 selectItems,
                 new FromClause(),
-                new GeneralConditionClause(
-                        new WhereClause(
-                                new SingleRowFunctionOperandExpression(
-                                        new LENGTH(new ColumnElement("E.ProductName")),
-                                        RelationalOperator::largerThan,
-                                        new WithSingleRowFunctionTargetOperating(new LENGTH(new ColumnElement("E.Unit")))
-                                )
-                        )
-                )
+                new NoneClause(),
+                new OrderByClause(Arrays.asList(
+                        new OrderByMQLElement(new LENGTH(new ColumnElement("E.ProductName")), false),
+                        new OrderByMQLElement(new LENGTH(new ColumnElement("E.Unit")), false)
+                ))
         );
 
         List<Map<String, Object>> result = select.executeQueryWith(dataSource);
         print(result);
 
-        result.forEach(eachRow -> {
-            assertThat(eachRow.keySet(), hasItems("ProductName", "Unit", "ProductNameLength", "UnitLength"));
-            assertThat(eachRow.keySet(), hasSize(4));
-            assertThat(String.valueOf(eachRow.get("ProductName")).length(), is(equalTo((int)eachRow.get("ProductNameLength"))));
-            assertThat(String.valueOf(eachRow.get("Unit")).length(), is(equalTo((int)eachRow.get("UnitLength"))));
-            assertThat((int)eachRow.get("ProductNameLength"), is(greaterThan((int)eachRow.get("UnitLength"))));
-        });
     }
 
     public void print(List<Map<String, Object>> result) {

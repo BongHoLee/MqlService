@@ -25,7 +25,7 @@ import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 
 public class MQLQueryGroupFactoryTest {
 
-    private MQLDataStorage mqlDataStorage;
+
     private Map<String, List<Map<String, Object>>> rawDataSource;
 
     @Before
@@ -38,8 +38,6 @@ public class MQLQueryGroupFactoryTest {
         rawDataSource.put("C", TestDataFactory.tableOf("shippers"));
         rawDataSource.put("D", TestDataFactory.tableOf("test"));
         rawDataSource.put("E", TestDataFactory.tableOf("products"));
-        FromClause from = new FromClause();
-        mqlDataStorage = from.makeMqlDataSources("testQueryID", "testQueryScript", rawDataSource);
     }
 
     @Test
@@ -81,9 +79,8 @@ public class MQLQueryGroupFactoryTest {
 
         List<Map<String, Object>> query5Result = queryGroup.executeQuery("Query5", rawDataSource);
         query5Result.forEach(eachRow -> {
-            assertThat(eachRow.keySet(), hasItems("SupplierID", "LengthCategoryID", "SumLengthSupplierID"));
+            assertThat(eachRow.keySet(), hasItems("SupplierID", "LengthSupplierID", "SumLengthCategoryID"));
             assertThat(eachRow.keySet(), hasSize(3));
-            assertThat(String.valueOf(eachRow.get("LengthCategoryID")).length(), is(greaterThan(String.valueOf(eachRow.get("SumLengthSupplierID")).length())));
         });
 
         List<Map<String, Object>> query6Result = queryGroup.executeQuery("Query6", rawDataSource);
