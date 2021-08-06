@@ -116,6 +116,15 @@ public  class ANDOperator implements MQLOperatingExpression {
 
     private boolean isValueMatched(Map<String, Object> leftRow, Map<String, Object> rightRow, Set<String> matchedColumnSet) {
         for (String eachColumn : matchedColumnSet) {
+
+            if (leftRow.get(eachColumn) == null && rightRow.get(eachColumn) == null) {
+                continue;
+            }
+
+            if (leftRow.get(eachColumn) == null || rightRow.get(eachColumn) == null) {
+                return false;
+            }
+
             if (!RelationalOperator.equalTo(leftRow.get(eachColumn), rightRow.get(eachColumn))) {
                 return false;
             }
