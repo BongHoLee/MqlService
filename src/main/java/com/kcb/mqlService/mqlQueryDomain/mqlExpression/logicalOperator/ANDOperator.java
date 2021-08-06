@@ -4,6 +4,7 @@ import com.kcb.mqlService.mqlQueryDomain.mqlData.MQLDataSource;
 import com.kcb.mqlService.mqlQueryDomain.mqlData.MQLDataStorage;
 import com.kcb.mqlService.mqlQueryDomain.mqlData.MQLTable;
 import com.kcb.mqlService.mqlQueryDomain.mqlExpression.MQLOperatingExpression;
+import com.kcb.mqlService.mqlQueryDomain.mqlExpression.relationalOperator.RelationalOperator;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -115,8 +116,9 @@ public  class ANDOperator implements MQLOperatingExpression {
 
     private boolean isValueMatched(Map<String, Object> leftRow, Map<String, Object> rightRow, Set<String> matchedColumnSet) {
         for (String eachColumn : matchedColumnSet) {
-            if (!(leftRow.get(eachColumn).equals(rightRow.get(eachColumn))))
+            if (!RelationalOperator.equalTo(leftRow.get(eachColumn), rightRow.get(eachColumn))) {
                 return false;
+            }
         }
         return true;
     }
