@@ -259,6 +259,26 @@ public class SelectClauseFactoryTest {
 
     }
 
+    @Test
+    public void LIKE_TEST() {
+
+        String sql =
+                " SELECT *\n" +
+                        "FROM TEMP1 M1 JOIN TEMP2 M2\n" +
+                        "ON M1.CRDID = M2.CRDID\n" +
+                        "AND M1.AP_AMT > 57429398\n" +
+                        "AND M1.REG_USR_ID IS NULL\n" +
+                        "WHERE M1.REG = 1 AND M2.CHG_USR_ID  LIKE '%l'";
+
+        SqlContextStorage sqlContextStorage = new SqlContextStorage(queryId, sql);
+        sqlContextStorage.isValid();
+        SelectClause selectClause = SelectClauseFactory.getInstance().create(sqlContextStorage);
+
+        List<Map<String, Object>> result = selectClause.executeQueryWith(rawDataSource);
+        print(result);
+
+    }
+
 
 
     public void print(List<Map<String, Object>> result) {
